@@ -11,7 +11,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&display=swap"
         rel="stylesheet">
-    <link rel="stylesheet" href="onlymodels-premium.css">
+    <link rel="stylesheet" href="styles.css">
     <style>
         /* Specific overrides for profile page */
         .profile-page-container {
@@ -129,17 +129,17 @@
     <!-- Header Premium -->
     <header class="header-premium">
         <div class="header-container">
-            <a href="onlymodels-premium.html" class="btn-back-premium">
+            <a href="index.html" class="btn-back-premium">
                 <span class="icon">←</span>
             </a>
 
-            <a href="onlymodels-premium.html" class="logo-premium"
+            <a href="index.html" class="logo-premium"
                 style="text-decoration:none; display:flex; align-items:center;">
                 <img src="assets/logos/onlymodels.png" alt="OnlyModels">
             </a>
 
             <nav class="header-nav">
-                <a href="onlymodels-premium.html" class="nav-link">Home</a>
+                <a href="index.html" class="nav-link">Home</a>
                 <button class="btn-login">Entrar</button>
             </nav>
         </div>
@@ -152,7 +152,7 @@
         </div>
     </div>
 
-    <script src="onlymodels-premium.js?v=2"></script>
+    <script src="app.js?v=2"></script>
     <script>
         // Pull-to-Refresh
         let ptr_startY = 0;
@@ -189,7 +189,7 @@
                         document.getElementById('profileContainer').innerHTML = '<h2 style="color:red; text-align:center; margin-top:50px;">Erro: Função de renderização não encontrada. JS pode não ter carregado.</h2>';
                     }
                 } else {
-                    window.location.href = 'onlymodels-premium.html';
+                    window.location.href = 'index.html';
                 }
             } catch (e) {
                 console.error(e);
