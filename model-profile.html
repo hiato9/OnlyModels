@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+    <meta name="description" content="Perfil Completo - OnlyModels">
+    <meta name="theme-color" content="#000000">
+    <title>Perfil Completo - OnlyModels</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="onlymodels-premium.css">
+    <style>
+        /* Specific overrides for profile page */
+        .profile-page-container {
+            max-width: 1000px;
+            margin: 4rem auto;
+            background: var(--dark-bg);
+            border-radius: 24px;
+            border: 2px solid var(--gold);
+            position: relative;
+            min-height: 80vh;
+        }
+
+        .back-nav {
+            padding: 2rem 2rem 0;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+    </style>
+    <meta name="google-site-verification" content="hNCMVxwJ0cOxF8TrmcqcLf88BEED8YW4vBz90dsIhVU" />
+            <script type="application/ld+json">
+    [
+    {
+        "@context": "https://schema.org",
+        "@type": "WebPage",
+        "name": "Perfil Completo - OnlyModels",
+        "description": "Perfil Completo - OnlyModels",
+        "url": "https://onlygrupos.online/model-profile.html"
+    }
+]
+    </script>
+</head>
+
+<body>
+
+
+
+    <!-- Checkout Modal (Embedded Payment) -->
+    <div id="checkoutModal" class="modal-premium" style="z-index: 10005;">
+        <div class="modal-content-premium" style="max-width: 500px; padding: 0;">
+            <div class="checkout-header"
+                style="padding: 20px; text-align: center; border-bottom: 1px solid rgba(255,215,0,0.2);">
+                <button class="modal-close" onclick="closeCheckoutModal()">&times;</button>
+                <h2 style="color: var(--gold); margin-bottom: 5px;">Finalizar Assinatura</h2>
+                <p style="color: #aaa; font-size: 0.9rem;">Você está prestes a se tornar Premium.</p>
+            </div>
+
+            <div class="checkout-body" style="padding: 20px;">
+                <div class="checkout-product-info"
+                    style="display:flex; align-items:center; gap: 15px; margin-bottom: 25px; background: rgba(0,0,0,0.3); padding: 15px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.05);">
+                    <img id="checkoutCreatorAvatar" src="" alt="Creator"
+                        style="width: 50px; height: 50px; border-radius: 50%; object-fit: cover;">
+                    <div style="flex: 1;">
+                        <h4 id="checkoutPlanName" style="margin-bottom: 2px;">Plano Premium</h4>
+                        <p id="checkoutCreatorName" style="color: #aaa; font-size: 0.85rem;">Nome da Modelo</p>
+                    </div>
+                    <div id="checkoutPrice" style="font-size: 1.2rem; font-weight: bold; color: var(--gold);">R$ 0,00
+                    </div>
+                </div>
+
+                <div class="checkout-form">
+                    <div style="margin-bottom: 15px;">
+                        <label style="display:block; margin-bottom:5px; font-size:0.85rem; color:#ccc;">Dados
+                            Pessoais</label>
+                        <input type="text" id="checkoutPayerName" placeholder="Nome completo" class="checkout-input">
+                        <input type="email" id="checkoutPayerEmail" placeholder="E-mail principal"
+                            class="checkout-input" style="margin-top: 10px;">
+                        <input type="text" id="checkoutPayerCPF" placeholder="CPF" class="checkout-input"
+                            style="margin-top: 10px;">
+                    </div>
+
+                    <div style="margin-bottom: 20px;">
+                        <label style="display:block; margin-bottom:10px; font-size:0.85rem; color:#ccc;">Forma de
+                            Pagamento</label>
+                        <div class="payment-methods" style="display:flex; gap:10px;">
+                            <button class="payment-btn active" onclick="selectPayment('pix')" id="btnPix"
+                                style="width: 100%;">
+                                <span>PIX</span>
+                                <small>Aprovação Imediata</small>
+                            </button>
+                        </div>
+                    </div>
+
+                    <button id="btnProcessPayment" class="btn-primary-large"
+                        style="width: 100%; border-radius: 8px; padding: 15px;" onclick="processPayment()">
+                        PAGAR E DESBLOQUEAR SEGREDO
+                    </button>
+
+                    <!-- PIX Code Display -->
+                    <div id="pixDisplayArea"
+                        style="display:none; text-align:center; margin-top: 20px; padding: 15px; background: rgba(0,0,0,0.4); border-radius: 10px; border: 1px dashed var(--gold);">
+                        <h3 style="color: var(--gold); margin-bottom: 10px;">Escaneie o QR Code PIX</h3>
+                        <img id="pixQrCodeImage" src="" alt="QR Code PIX"
+                            style="width: 200px; height: 200px; margin: 0 auto; display: block; border-radius: 10px;">
+                        <p style="margin-top: 15px; font-size: 0.9rem; color: #ccc;">Ou copie e cole o código abaixo:
+                        </p>
+                        <div style="display: flex; gap: 10px; margin-top: 10px;">
+                            <input type="text" id="pixCodeInput" readonly
+                                style="flex: 1; padding: 10px; border-radius: 5px; background: rgba(0,0,0,0.5); border: 1px solid rgba(255,215,0,0.3); color: #fff;">
+                            <button onclick="copyPixCode()"
+                                style="background: var(--gold); color: #000; padding: 10px 15px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold;">COPIAR</button>
+                        </div>
+                    </div>
+
+                    <div
+                        style="text-align:center; font-size:0.75rem; color:#666; margin-top:15px; display:flex; align-items:center; justify-content:center; gap:5px;">
+                        <span>🔒 Pagamento 100% Seguro e Sigiloso</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Story Viewer Overlay -->
+    <!-- Header Premium -->
+    <header class="header-premium">
+        <div class="header-container">
+            <a href="onlymodels-premium.html" class="btn-back-premium">
+                <span class="icon">←</span>
+            </a>
+
+            <a href="onlymodels-premium.html" class="logo-premium"
+                style="text-decoration:none; display:flex; align-items:center;">
+                <img src="assets/logos/onlymodels.png" alt="OnlyModels">
+            </a>
+
+            <nav class="header-nav">
+                <a href="onlymodels-premium.html" class="nav-link">Home</a>
+                <button class="btn-login">Entrar</button>
+            </nav>
+        </div>
+    </header>
+
+    <div id="profileContainer" class="profile-page-class">
+        <!-- Content will be injected here by JS -->
+        <div style="text-align: center; padding: 5rem; color: var(--gold);">
+            <h2>Carregando perfil...</h2>
+        </div>
+    </div>
+
+    <script src="onlymodels-premium.js?v=2"></script>
+    <script>
+        // Pull-to-Refresh
+        let ptr_startY = 0;
+        let ptr_pulling = false;
+        document.addEventListener('touchstart', e => {
+            if (window.scrollY === 0) {
+                ptr_startY = e.touches[0].clientY;
+                ptr_pulling = true;
+            }
+        }, { passive: true });
+        document.addEventListener('touchend', e => {
+            if (ptr_pulling) {
+                const endY = e.changedTouches[0].clientY;
+                if (endY - ptr_startY > 80) {
+                    location.reload();
+                }
+            }
+            ptr_pulling = false;
+        }, { passive: true });
+    </script>
+    <script>
+        // Inline script to trigger profile render on load
+        document.addEventListener('DOMContentLoaded', () => {
+            try {
+                const urlParams = new URLSearchParams(window.location.search);
+                const creatorIndex = urlParams.get('id');
+
+                if (creatorIndex !== null) {
+                    // Check if renderFullProfilePage exists
+                    if (typeof renderFullProfilePage === 'function') {
+                        renderFullProfilePage(parseInt(creatorIndex));
+                    } else {
+                        console.error('renderFullProfilePage function not found!');
+                        document.getElementById('profileContainer').innerHTML = '<h2 style="color:red; text-align:center; margin-top:50px;">Erro: Função de renderização não encontrada. JS pode não ter carregado.</h2>';
+                    }
+                } else {
+                    window.location.href = 'onlymodels-premium.html';
+                }
+            } catch (e) {
+                console.error(e);
+                alert('Erro ao carregar perfil: ' + e.message);
+            }
+        });
+    </script>
+    <!-- Secure Footer -->
+    <footer class="secure-footer">
+        <div class="secure-footer-content">
+            <div class="secure-badge">
+                <span class="secure-icon">🔒</span>
+                <span>Pagamento 100% Criptografado</span>
+            </div>
+            <div class="secure-badge">
+                <span class="secure-icon">👁️‍🗨️</span>
+                <span>Fatura Discreta e Sigilosa</span>
+            </div>
+            <div class="secure-badge">
+                <span class="secure-icon">🛡️</span>
+                <span>Sem Renovação Automática Oculta</span>
+            </div>
+        </div>
+        <div class="secure-footer-copy">
+            &copy; 2026 OnlyModels VIP. Todos os direitos reservados.
+        </div>
+    </footer>
+</body>
+
+</html>
