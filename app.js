@@ -15,6 +15,19 @@ const ACHIEVEMENTS = {
     'trending': { icon: '🔥', name: 'Em Alta' }
 };
 
+const MODELS_PER_PAGE = 8;
+const PAGE_FILES = ['index.html', 'pagina-2.html'];
+
+function getCurrentPage() {
+    const path = window.location.pathname.toLowerCase();
+    const idx = PAGE_FILES.findIndex(f => path.endsWith('/' + f) || path.endsWith(f));
+    return idx >= 0 ? idx : 0;
+}
+
+function getTotalPages() {
+    return Math.ceil(creatorsData.length / MODELS_PER_PAGE);
+}
+
 // Creators Data - Real Brazilian Models
 const creatorsData = [
     {
@@ -881,14 +894,25 @@ function renderHomeMarketplace() {
     `;
     container.appendChild(marqueeSection);
 
-    // 2. FEATURED SECTION (Marketplace Grid)
+    // 2. FEATURED SECTION (Marketplace Grid) — paginated
+    const currentPage = getCurrentPage();
+    const totalPages = getTotalPages();
+    const sliceStart = currentPage * MODELS_PER_PAGE;
+    const sliceEnd = sliceStart + MODELS_PER_PAGE;
+    const pagedCreators = creatorsData.slice(sliceStart, sliceEnd);
+
+    const sectionTitle = totalPages > 1
+        ? `Modelos em Destaque <span style="color:#888; font-weight:400; font-size:0.7em;">— Página ${currentPage + 1} de ${totalPages}</span>`
+        : 'Modelos em Destaque';
+
     const featuredSection = document.createElement('section');
     featuredSection.id = 'featuredSection';
     featuredSection.className = 'home-section';
     featuredSection.innerHTML = `
-        <div class="home-section-title">Modelos em Destaque</div>
+        <div class="home-section-title">${sectionTitle}</div>
         <div class="marketplace-grid">
-            ${creatorsData.map((creator, index) => {
+            ${pagedCreators.map((creator, localIndex) => {
+        const index = sliceStart + localIndex;
         // Mock Category for Premium Feel
         const categories = ['VIP • Exclusiva', 'Top 1% Global', 'Novidade', 'Trending', 'Diamond', 'Creator'];
         const randomCategory = categories[index % categories.length];
@@ -904,17 +928,17 @@ function renderHomeMarketplace() {
                     <a href="model-profile.html?id=${index}" class="marketplace-card" onclick="saveHomeScroll()">
                         <div class="mp-card-img-container">
                             <img src="${creator.avatar || creator.photos[0]}" class="mp-card-img" loading="lazy" alt="${creator.name}">
-                            
+
                             <!-- New Gradient Overlay Content -->
                             <div class="mp-card-overlay">
                                 <div class="mp-card-category">${randomCategory}</div>
                                 <div class="mp-card-name">
-                                    ${sanitizeHTML(creator.name)} 
+                                    ${sanitizeHTML(creator.name)}
                                     ${creator.verified ? verifiedBadge : ''}
                                 </div>
                             </div>
                         </div>
-                        
+
                         <!-- Solid Gold Button Area -->
                         <div class="mp-card-actions">
                             <button class="mp-card-btn">VER PERFIL</button>
@@ -923,6 +947,17 @@ function renderHomeMarketplace() {
                 `;
     }).join('')}
         </div>
+        ${totalPages > 1 ? `
+            <nav class="pagination-nav" aria-label="Paginação de modelos">
+                ${PAGE_FILES.slice(0, totalPages).map((file, i) => `
+                    <a href="${file}"
+                       class="pagination-btn ${i === currentPage ? 'active' : ''}"
+                       aria-current="${i === currentPage ? 'page' : 'false'}">
+                        ${i + 1}
+                    </a>
+                `).join('')}
+            </nav>
+        ` : ''}
     `;
     container.appendChild(featuredSection);
 
