@@ -18,70 +18,6 @@ const ACHIEVEMENTS = {
 // Creators Data - Real Brazilian Models
 const creatorsData = [
     {
-        name: "Beatriz Ferraz",
-        verified: true,
-        level: "platinum",
-        badges: ["verified", "top-creator", "trending"],
-        bio: "Cachos dourados e curvas perigosas. 🦁✨ A leoa que você quer domar. Conteúdo exclusivo sem tabus.",
-        avatar: "assets/models/beatriz ferraz/BZiWavbf.jpeg",
-        photos: [
-            "assets/Previas Modelos/previas beatrizferraz/cSbaJusM.jpeg",
-            "assets/Previas Modelos/previas beatrizferraz/oqtNIK7G.jpeg",
-            "assets/Previas Modelos/previas beatrizferraz/vC3DAeTO.jpeg",
-            "assets/Previas Modelos/previas beatrizferraz/VNoA2D2o.jpeg"
-        ],
-        stats: { followers: 850, likes: 9200, posts: 45, views: 28000 },
-        achievements: ["100-posts", "1k-likes", "10k-views", "verified", "top-creator", "trending"],
-        subscriptionTiers: {
-            premium: { price: 39.90, benefits: ["Acesso ao Feed VIP", "Chat Liberado", "Conteúdo Diário"] },
-            vip: { price: 99.90, benefits: ["Tudo do Premium", "Vídeos Exclusivos", "Sextou com a Bia (Live)"] }
-        }
-    },
-    {
-        name: "Larissa Guimarães",
-        verified: true,
-        level: "gold",
-        badges: ["verified", "trending"],
-        bio: "Legalize it 🍁. A brisa certa pra sua mente e pro seu corpo. Vem queimar comigo...",
-        avatar: "assets/model_upload_2.jpg",
-        photos: [
-            "assets/Previas Modelos/previas larissagreen/Fl8oPGKr.jpeg",
-            "assets/Previas Modelos/previas larissagreen/gr9jOEyC.jpeg",
-            "assets/Previas Modelos/previas larissagreen/HHiRhPDM.jpeg",
-            "assets/Previas Modelos/previas larissagreen/i5dpBImv.jpeg"
-        ],
-        stats: { followers: 950, likes: 171, posts: 42, views: 13500 },
-        achievements: ["100-posts", "1k-likes", "10k-views", "verified", "trending"],
-        subscriptionTiers: {
-            premium: { price: 29.90, benefits: ["Fotos Inéditas", "Sessão 4:20", "Mural de Recados"] },
-            vip: { price: 79.90, benefits: ["Vídeos +18", "Call Privada", "Pack Mensal"] }
-        },
-        stories: [
-            { image: "assets/model_upload_2.jpg", date: "Hoje", style: "width: 100vw; height: 100vh; object-fit: cover !important;" },
-        ]
-    },
-    {
-        name: "Amanda Souza",
-        verified: true,
-        level: "silver",
-        badges: ["verified"],
-        bio: "No espelho tudo fica melhor. 🚿🔥Momentos íntimos e reais, do jeito que a gente gosta.",
-        objectPosition: "top", // Adjust framing for face
-        avatar: "assets/models/amanda love/8B7logjR.jpeg",
-        photos: [
-            "assets/Previas Modelos/previas amandalove/7XMytY9V.png",
-            "assets/Previas Modelos/previas amandalove/AlmMaG4d.jpeg",
-            "assets/Previas Modelos/previas amandalove/auWwQzye.png",
-            "assets/Previas Modelos/previas amandalove/IObnueoJ.png"
-        ],
-        stats: { followers: 720, likes: 3500, posts: 18, views: 8500 },
-        achievements: ["100-posts", "1k-likes", "verified"],
-        subscriptionTiers: {
-            premium: { price: 24.90, benefits: ["Banho Premium", "Dicas", "Fotos Espelho"] },
-            vip: { price: 69.90, benefits: ["Vídeos Pós-Banho", "Avaliação Física", "Tudo Liberado"] }
-        }
-    },
-    {
         name: "Isabela Martins",
         verified: true,
         level: "platinum",
@@ -102,165 +38,303 @@ const creatorsData = [
         }
     },
     {
-        name: "Babi Gomes",
-        verified: true,
-        level: "silver",
-        badges: ["verified"],
-        bio: "Estudante de Direito ⚖️. A santinha do dia, a diaba da noite. Vem descobrir meu lado oculto...",
-        avatar: "assets/model_upload_8.jpg",
-        photos: [
-            "assets/Previas Modelos/previas babigomes/h2moo6Ud.jpeg",
-            "assets/Previas Modelos/previas babigomes/h9gGhqu0.jpeg",
-            "assets/Previas Modelos/previas babigomes/ObX7Mlqg.jpeg",
-            "assets/Previas Modelos/previas babigomes/StZ9olxU.jpeg"
-        ],
-        stats: { followers: 450, likes: 1800, posts: 9, views: 5000 },
-        achievements: ["100-posts", "1k-likes", "verified"],
-        subscriptionTiers: {
-            premium: { price: 19.90, benefits: ["Fotos Caseiras", "Relatos", "Enquetes"] },
-            vip: { price: 59.90, benefits: ["Vídeos Amadores", "Áudios Picantes", "Chat VIP"] }
-        }
-    },
-    {
-        name: "Mel Fernandes",
-        verified: true,
-        level: "platinum",
-        badges: ["verified", "top-creator"],
-        bio: "Loira, olhos verdes e um corpo escultural. A Barbie que você sempre quis brincar. 👱‍♀️✨",
-        avatar: "assets/model_upload_6.jpg",
-        photos: [
-            "assets/Previas Modelos/previas melissamel/5tHuElYs.png",
-            "assets/Previas Modelos/previas melissamel/rzhCDSPs.png",
-            "assets/Previas Modelos/previas melissamel/VBo4p3Ll.png",
-            "assets/Previas Modelos/previas melissamel/zynkNVDD.png"
-        ],
-        stats: { followers: 2100, likes: 15000, posts: 60, views: 50000 },
-        achievements: ["100-posts", "1k-likes", "10k-views", "verified", "top-creator"],
-        subscriptionTiers: {
-            premium: { price: 49.90, benefits: ["Feed Completo", "Stories Melhores Amigos", "Fotos HD"] },
-            vip: { price: 129.90, benefits: ["Tudo Incluso", "Sessão Fotográfica Exclusiva", "Vídeos 4K"] }
-        }
-    },
-    {
-        name: "Bruna Costa",
-        verified: true,
-        level: "bronze",
-        badges: ["trending"],
-        bio: "Novinha no pedaço! Começando agora e já cheia de vontade. Me ajuda a crescer? 🥺👉👈",
-        avatar: "assets/model_upload_4.jpg",
-        photos: [
-            "assets/Previas Modelos/previas bruninha22/Ck6UoRvs.jpeg",
-            "assets/Previas Modelos/previas bruninha22/d231OowH.png",
-            "assets/Previas Modelos/previas bruninha22/videoframe_5000.png",
-            "assets/Previas Modelos/previas bruninha22/xA3ZKdN7.jpeg"
-        ],
-        stats: { followers: 120, likes: 450, posts: 4, views: 900 },
-        achievements: ["1k-likes", "trending"],
-        subscriptionTiers: {
-            premium: { price: 14.90, benefits: ["Apoie meu Início", "Fotos Simples", "Carinho"] },
-            vip: { price: 39.90, benefits: ["Vídeos Curtos", "Pedido Especial", "Chat"] }
-        }
-    },
-    {
-        name: "Rebeca Silva",
+        name: "Helena Rocha",
         verified: true,
         level: "gold",
-        badges: ["verified"],
-        bio: "Tatuada, alternativa e sem pudores 🤘. Gosto de tudo que é intenso. Rock, moto e... você sabe o quê.",
-        avatar: "assets/model_upload_5.jpg",
+        badges: ["verified", "trending"],
+        bio: "Carioca da gema 🌊. Pés na areia, olhar travesso. Uma mulher que sabe o que quer e como conseguir. Vem comigo?",
+        avatar: "assets/models/novas/helenarocha/perfil.jpg",
         photos: [
-            "assets/Previas rebecawolf/o3FABXCy.png",
-            "assets/Previas rebecawolf/r0hxgB0Y.png",
-            "assets/Previas rebecawolf/V0f1u27c.png",
-            "assets/Previas rebecawolf/W6sg6IyS.png"
+            "assets/models/novas/helenarocha/kcu0d8mn.jpg",
+            "assets/models/novas/helenarocha/O9PaXpjo.jpg",
+            "assets/models/novas/helenarocha/PnnPQvqS.jpg",
+            "assets/models/novas/helenarocha/YjUK6tYw.jpg"
         ],
-        stats: { followers: 980, likes: 5500, posts: 31, views: 18000 },
-        achievements: ["100-posts", "1k-likes", "verified"],
+        stats: { followers: 1120, likes: 6800, posts: 38, views: 19500 },
+        achievements: ["100-posts", "1k-likes", "10k-views", "verified", "trending"],
         subscriptionTiers: {
-            premium: { price: 35.90, benefits: ["Ensaios Alternativos", "Backstage", "Playlist"] },
-            vip: { price: 89.90, benefits: ["Vídeos Hard", "Sessão Privada", "Mimos"] }
+            premium: { price: 34.90, benefits: ["Praia Sem Censura", "Chat Aberto", "Conteúdo Semanal"] },
+            vip: { price: 84.90, benefits: ["Tudo do Premium", "Vídeos Exclusivos", "Pedidos Personalizados"] }
         }
     },
     {
-        name: "Patricia Alves",
-        verified: true,
-        level: "gold",
-        badges: ["verified"],
-        bio: "Experiência é tudo, meu bem. 🍷 Milf assumida, pronta para ensinar os novinhos como se faz.",
-        avatar: "assets/model_upload_9.jpg",
-        photos: [
-            "assets/Previas Modelos/previas titiasafada/5aaqPrQQ.jpeg",
-            "assets/Previas Modelos/previas titiasafada/qQ3ejVwK.jpeg",
-            "assets/Previas Modelos/previas titiasafada/xTnvZF1I.jpeg",
-            "assets/Previas Modelos/previas titiasafada/Y0cQhwkn.jpeg"
-        ],
-        stats: { followers: 750, likes: 3800, posts: 45, views: 11000 },
-        achievements: ["100-posts", "1k-likes", "verified"],
-        subscriptionTiers: {
-            premium: { price: 39.90, benefits: ["Aulas Particulares", "Conselhos", "Fotos Maduras"] },
-            vip: { price: 99.90, benefits: ["Vídeos Caseiros Reais", "Encontros (Sorteio)", "Telefone"] }
-        }
-    },
-    {
-        name: "Fernanda Lins",
-        verified: true,
-        level: "silver",
-        badges: ["verified"],
-        bio: "Morena tropicana 🌴. Bronze em dia, marquinha perfeita e sorriso que encanta. 100% brasileira.",
-        avatar: "assets/model_upload_7.jpg",
-        photos: [
-            "assets/Previas Modelos/previas fernandalins/10wXkFXL.png",
-            "assets/Previas Modelos/previas fernandalins/dTDgxyxU.png",
-            "assets/Previas Modelos/previas fernandalins/p.png",
-            "assets/Previas Modelos/previas fernandalins/U8bTm4Mj.png"
-        ],
-        stats: { followers: 420, likes: 1600, posts: 11, views: 4000 },
-        achievements: ["100-posts", "1k-likes", "verified"],
-        subscriptionTiers: {
-            premium: { price: 22.90, benefits: ["Praia e Sol", "Biquíni", "Natural"] },
-            vip: { price: 55.90, benefits: ["Sem Biquíni", "Banho", "Vídeos"] }
-        }
-    },
-    {
-        name: "Pietra Lima",
+        name: "Camila Vieira",
         verified: true,
         level: "platinum",
         badges: ["verified", "top-creator", "trending"],
-        bio: "Cosplayer e gamer 🎮. Transformo seus personagens favoritos em versões +18 que você nunca imaginou.",
-        avatar: "assets/model_upload_10.jpg",
+        bio: "Universitária pelo dia, devassa pela noite. 📚🔥 Pronta pra te dar aulas particulares de prazer.",
+        avatar: "assets/models/novas/camilavieira/perfil.jpeg",
         photos: [
-            "assets/Previas Modelos/previas pietrax/bkq6DlW5.jpeg",
-            "assets/Previas Modelos/previas pietrax/swrg1lah.jpeg",
-            "assets/Previas Modelos/previas pietrax/Wpr9IyI3.jpeg",
-            "assets/Previas Modelos/previas pietrax/XeRkOkvi.jpeg"
+            "assets/models/novas/camilavieira/D24HYpli.jpeg",
+            "assets/models/novas/camilavieira/kzR9OBXw.jpeg",
+            "assets/models/novas/camilavieira/O5dojocu.jpeg",
+            "assets/models/novas/camilavieira/Q7rOU4Wf.jpeg"
         ],
-        stats: { followers: 3100, likes: 22000, posts: 55, views: 80000 },
+        stats: { followers: 2340, likes: 17500, posts: 58, views: 62000 },
         achievements: ["100-posts", "1k-likes", "10k-views", "verified", "top-creator", "trending"],
-        objectPosition: "top", // Adjust framing for face
         subscriptionTiers: {
-            premium: { price: 59.90, benefits: ["Sets Cosplay", "Bastidores Eventos", "Fansing"] },
-            vip: { price: 149.90, benefits: ["Cosplay Nude", "Vídeos Roleplay", "Pedido Personagem"] }
+            premium: { price: 44.90, benefits: ["Aulas Particulares", "Stories Exclusivos", "Fotos HD"] },
+            vip: { price: 119.90, benefits: ["Tudo Liberado", "Videochamada Privada", "Pacote Mensal"] }
         }
     },
     {
-        name: "Natália Paz",
+        name: "Yasmin Castro",
+        verified: true,
+        level: "silver",
+        badges: ["verified"],
+        bio: "Acabei de chegar na plataforma 💋. Curiosa, safada e disposta a tudo. Vamos explorar juntos?",
+        avatar: "assets/models/novas/yasmincastro/perfil.jpeg",
+        photos: [
+            "assets/models/novas/yasmincastro/eSRFLpGZ.jpeg",
+            "assets/models/novas/yasmincastro/np48l3s8.jpeg",
+            "assets/models/novas/yasmincastro/pzxnYBhZ.jpeg",
+            "assets/models/novas/yasmincastro/T6Omwm5l.jpeg"
+        ],
+        stats: { followers: 380, likes: 1450, posts: 12, views: 4800 },
+        achievements: ["1k-likes", "verified"],
+        subscriptionTiers: {
+            premium: { price: 19.90, benefits: ["Conteúdo Exclusivo", "Chat Comigo", "Fotos Inéditas"] },
+            vip: { price: 54.90, benefits: ["Vídeos +18", "Áudios Picantes", "Pedidos Liberados"] }
+        }
+    },
+    {
+        name: "Júlia Rezende",
         verified: true,
         level: "gold",
         badges: ["verified"],
-        bio: "Espiritualizada mas nem tanto 🧘‍♀️. Yoga, meditação e tantra. Vem equilibrar seus chakras comigo...",
-        avatar: "assets/model_upload_11.jpg",
+        bio: "Loira do Sul ❄️. Frio lá fora, fogo aqui dentro. Gosto de conversar antes e te mimar depois.",
+        avatar: "assets/models/novas/juliarezende/perfil.jpeg",
         photos: [
-            "assets/Previas Modelos/previas natalia paz/7jluv2Ww.jpeg",
-            "assets/Previas Modelos/previas natalia paz/bp15GG56.jpeg",
-            "assets/Previas Modelos/previas natalia paz/xttALdfB.jpeg",
-            "assets/Previas Modelos/previas natalia paz/YE5OInhR.jpeg"
+            "assets/models/novas/juliarezende/5DdHuhKq.jpeg",
+            "assets/models/novas/juliarezende/68Vgk9eY.jpeg",
+            "assets/models/novas/juliarezende/PNtuJDVO.jpeg",
+            "assets/models/novas/juliarezende/weI07nKS.jpeg"
         ],
-        stats: { followers: 680, likes: 2900, posts: 20, views: 9500 },
-        achievements: ["100-posts", "1k-likes", "verified"],
-        objectPosition: "top", // Adjust framing for face
+        stats: { followers: 890, likes: 4900, posts: 28, views: 14000 },
+        achievements: ["100-posts", "1k-likes", "10k-views", "verified"],
         subscriptionTiers: {
-            premium: { price: 34.90, benefits: ["Yoga Nude", "Massagem", "Relax"] },
-            vip: { price: 84.90, benefits: ["Tantra", "Vídeos Longos", "Conexão"] }
+            premium: { price: 32.90, benefits: ["Feed Premium", "Chat Aberto", "Conteúdo Semanal"] },
+            vip: { price: 79.90, benefits: ["Vídeos Exclusivos", "Lives Privadas", "Mimos no DM"] }
+        }
+    },
+    {
+        name: "Sophia Mendes",
+        verified: true,
+        level: "platinum",
+        badges: ["verified", "top-creator"],
+        bio: "Modelo internacional 🌍. Já desfilei em Milão, agora estou aqui só pra você. Puro luxo, puro prazer.",
+        avatar: "assets/models/novas/sophiamendes/perfil.jpeg",
+        photos: [
+            "assets/models/novas/sophiamendes/gjF4TfOw.jpeg",
+            "assets/models/novas/sophiamendes/HmEBLRoi.jpeg",
+            "assets/models/novas/sophiamendes/jpWBfQTl.jpeg",
+            "assets/models/novas/sophiamendes/yAOxJpT3.jpeg"
+        ],
+        stats: { followers: 2780, likes: 19500, posts: 64, views: 71000 },
+        achievements: ["100-posts", "1k-likes", "10k-views", "verified", "top-creator"],
+        subscriptionTiers: {
+            premium: { price: 49.90, benefits: ["Ensaios Profissionais", "Bastidores", "Stories Diários"] },
+            vip: { price: 139.90, benefits: ["Tudo Incluso", "Sessões Exclusivas 4K", "Atendimento VIP"] }
+        }
+    },
+    {
+        name: "Letícia Andrade",
+        verified: true,
+        level: "silver",
+        badges: ["verified"],
+        bio: "Pequena, mas com personalidade gigante. 🍒 Doce no rosto, pecaminosa no resto. Vem descobrir.",
+        avatar: "assets/models/novas/leticiaandrade/perfil.jpeg",
+        photos: [
+            "assets/models/novas/leticiaandrade/DZAGd32f.jpeg",
+            "assets/models/novas/leticiaandrade/LPjNQNWY.jpeg",
+            "assets/models/novas/leticiaandrade/lQQgGI6J.jpeg",
+            "assets/models/novas/leticiaandrade/mO9zAxU8.jpeg"
+        ],
+        stats: { followers: 540, likes: 2100, posts: 15, views: 6300 },
+        achievements: ["100-posts", "1k-likes", "verified"],
+        subscriptionTiers: {
+            premium: { price: 22.90, benefits: ["Fotos Ousadas", "Chat Liberado", "Mural de Recados"] },
+            vip: { price: 64.90, benefits: ["Vídeos Caseiros", "Áudios Quentes", "Pedidos Aceitos"] }
+        }
+    },
+    {
+        name: "Gabriela Moura",
+        verified: true,
+        level: "gold",
+        badges: ["verified", "trending"],
+        bio: "Mineira da gema, cintura fina e jeitinho manhoso 💛. Uai sô, cê vai amar o que tô preparando aqui...",
+        avatar: "assets/models/novas/gabrielamoura/perfil.jpeg",
+        photos: [
+            "assets/models/novas/gabrielamoura/1W3e36mz.jpeg",
+            "assets/models/novas/gabrielamoura/FzNf97jW.jpeg",
+            "assets/models/novas/gabrielamoura/TWdpY5rT.jpeg",
+            "assets/models/novas/gabrielamoura/Yw2abL5J.jpeg"
+        ],
+        stats: { followers: 1340, likes: 7800, posts: 36, views: 21500 },
+        achievements: ["100-posts", "1k-likes", "10k-views", "verified", "trending"],
+        subscriptionTiers: {
+            premium: { price: 36.90, benefits: ["Fotos Inéditas", "Chat 24h", "Conteúdo Diário"] },
+            vip: { price: 89.90, benefits: ["Vídeos Sem Cortes", "Live Privada", "Pacote Surpresa"] }
+        }
+    },
+    {
+        name: "Mariana Pires",
+        verified: true,
+        level: "silver",
+        badges: ["verified"],
+        bio: "Apaixonada por academia 🏋️‍♀️. Bumbum durinho, abdômen trincado. Tudo natural pra te enlouquecer.",
+        avatar: "assets/models/novas/marianapires/perfil.jpeg",
+        photos: [
+            "assets/models/novas/marianapires/4S45lndb.jpeg",
+            "assets/models/novas/marianapires/tbJKOdpr.jpeg",
+            "assets/models/novas/marianapires/UGN41Uiy.jpeg",
+            "assets/models/novas/marianapires/x42mRyVW.jpeg"
+        ],
+        stats: { followers: 720, likes: 3400, posts: 22, views: 9800 },
+        achievements: ["100-posts", "1k-likes", "verified"],
+        subscriptionTiers: {
+            premium: { price: 27.90, benefits: ["Treino Sensual", "Pós-Treino", "Dicas Fitness"] },
+            vip: { price: 74.90, benefits: ["Vídeos no Vestiário", "Sessões Quentes", "Plano de Treino +18"] }
+        }
+    },
+    {
+        name: "Bianca Cardoso",
+        verified: true,
+        level: "platinum",
+        badges: ["verified", "top-creator", "trending"],
+        bio: "Ruiva de corpinho perfeito 🔥. Diz a lenda que ruiva é fogo… vem comprovar pessoalmente.",
+        avatar: "assets/models/novas/biancacardoso/perfil.jpeg",
+        photos: [
+            "assets/models/novas/biancacardoso/cPQgIUyp.jpeg",
+            "assets/models/novas/biancacardoso/Dx0G4QDy.jpeg",
+            "assets/models/novas/biancacardoso/GiTmHtLD.jpeg",
+            "assets/models/novas/biancacardoso/ZYTfmYAx.jpeg"
+        ],
+        stats: { followers: 3450, likes: 24000, posts: 67, views: 89000 },
+        achievements: ["100-posts", "1k-likes", "10k-views", "verified", "top-creator", "trending"],
+        subscriptionTiers: {
+            premium: { price: 54.90, benefits: ["Feed Sem Censura", "Chat Direto", "Stories Exclusivos"] },
+            vip: { price: 149.90, benefits: ["Tudo Incluso", "Videochamada Mensal", "Pacote Personalizado"] }
+        }
+    },
+    {
+        name: "Carolina Duarte",
+        verified: true,
+        level: "gold",
+        badges: ["verified"],
+        bio: "Médica formada que descobriu uma nova vocação 🩺. Vou cuidar muito bem de você, prometo.",
+        avatar: "assets/models/novas/carolinaduarte/perfil.jpeg",
+        photos: [
+            "assets/models/novas/carolinaduarte/5fO4qDWv.jpeg",
+            "assets/models/novas/carolinaduarte/76b2Lfty.jpeg",
+            "assets/models/novas/carolinaduarte/HG8sjGYa4AAWL0M.jpg",
+            "assets/models/novas/carolinaduarte/pQ3w1AsA.jpeg"
+        ],
+        stats: { followers: 1080, likes: 5600, posts: 33, views: 17200 },
+        achievements: ["100-posts", "1k-likes", "10k-views", "verified"],
+        subscriptionTiers: {
+            premium: { price: 39.90, benefits: ["Consulta Privada", "Bastidores", "Fotos Sem Jaleco"] },
+            vip: { price: 94.90, benefits: ["Tratamento Intensivo", "Vídeos Exclusivos", "Atendimento 24h"] }
+        }
+    },
+    {
+        name: "Vitória Antunes",
+        verified: true,
+        level: "bronze",
+        badges: ["trending"],
+        bio: "Estreando aqui hoje! 🥺 Aceito sugestões, pedidos e feedbacks. Curiosa pra te conhecer melhor.",
+        avatar: "assets/models/novas/vitoriaantunes/perfil.jpg",
+        photos: [
+            "assets/models/novas/vitoriaantunes/photo_1_2026-05-14_02-45-09.jpg",
+            "assets/models/novas/vitoriaantunes/photo_2_2026-05-14_02-45-09.jpg",
+            "assets/models/novas/vitoriaantunes/photo_3_2026-05-14_02-45-09.jpg",
+            "assets/models/novas/vitoriaantunes/photo_4_2026-05-14_02-45-09.jpg"
+        ],
+        stats: { followers: 145, likes: 520, posts: 5, views: 1100 },
+        achievements: ["1k-likes", "trending"],
+        subscriptionTiers: {
+            premium: { price: 14.90, benefits: ["Apoie meu Início", "Fotos Diárias", "Chat Aberto"] },
+            vip: { price: 39.90, benefits: ["Vídeos de Estreia", "Pedido Personalizado", "Atenção Total"] }
+        }
+    },
+    {
+        name: "Rafaela Borges",
+        verified: true,
+        level: "silver",
+        badges: ["verified"],
+        bio: "Chefe de cozinha, mas o prato principal sou eu 🍽️🔥. Servida com molho extra.",
+        avatar: "assets/models/novas/rafaelaborges/photo_1_2026-05-14_02-44-16.jpg",
+        photos: [
+            "assets/models/novas/rafaelaborges/photo_2_2026-05-14_02-44-16.jpg",
+            "assets/models/novas/rafaelaborges/photo_3_2026-05-14_02-44-16.jpg",
+            "assets/models/novas/rafaelaborges/photo_4_2026-05-14_02-44-16.jpg",
+            "assets/models/novas/rafaelaborges/photo_5_2026-05-14_02-44-16.jpg"
+        ],
+        stats: { followers: 620, likes: 2700, posts: 19, views: 7400 },
+        achievements: ["100-posts", "1k-likes", "verified"],
+        subscriptionTiers: {
+            premium: { price: 24.90, benefits: ["Receita Picante", "Bastidores Cozinha", "Fotos com Avental"] },
+            vip: { price: 64.90, benefits: ["Vídeos Sem Avental", "Chat Direto", "Pedido do Dia"] }
+        }
+    },
+    {
+        name: "Manuela Cunha",
+        verified: true,
+        level: "gold",
+        badges: ["verified"],
+        bio: "Bailarina clássica desde os 5 anos 🩰. Flexibilidade total, pra todos os gostos.",
+        avatar: "assets/models/novas/manuelacunha/perfil.jpg",
+        photos: [
+            "assets/models/novas/manuelacunha/photo_2_2026-05-14_02-45-01.jpg",
+            "assets/models/novas/manuelacunha/photo_3_2026-05-14_02-45-01.jpg",
+            "assets/models/novas/manuelacunha/photo_4_2026-05-14_02-45-01.jpg",
+            "assets/models/novas/manuelacunha/photo_5_2026-05-14_02-45-01.jpg"
+        ],
+        stats: { followers: 1180, likes: 6300, posts: 30, views: 16800 },
+        achievements: ["100-posts", "1k-likes", "10k-views", "verified"],
+        subscriptionTiers: {
+            premium: { price: 36.90, benefits: ["Sessão de Alongamento", "Bastidores", "Fotos Sensuais"] },
+            vip: { price: 89.90, benefits: ["Coreografia Exclusiva", "Vídeos Privados", "Apresentação Personalizada"] }
+        }
+    },
+    {
+        name: "Lorena Bittencourt",
+        verified: true,
+        level: "silver",
+        badges: ["verified"],
+        bio: "Empresária de dia, sem pudor de noite 💼. Trato meus assinantes como sócios privilegiados.",
+        avatar: "assets/models/novas/lorenabittencourt/perfil.jpg",
+        photos: [
+            "assets/models/novas/lorenabittencourt/photo_2_2026-05-14_02-44-47.jpg",
+            "assets/models/novas/lorenabittencourt/photo_3_2026-05-14_02-44-47.jpg",
+            "assets/models/novas/lorenabittencourt/photo_4_2026-05-14_02-44-47.jpg",
+            "assets/models/novas/lorenabittencourt/photo_5_2026-05-14_02-44-47.jpg"
+        ],
+        stats: { followers: 670, likes: 2900, posts: 21, views: 8900 },
+        achievements: ["100-posts", "1k-likes", "verified"],
+        subscriptionTiers: {
+            premium: { price: 29.90, benefits: ["Reunião Privada", "Conteúdo Executivo", "Chat Direto"] },
+            vip: { price: 79.90, benefits: ["Sócio VIP", "Videochamadas", "Conteúdo Sob Medida"] }
+        }
+    },
+    {
+        name: "Antonella Ribeiro",
+        verified: true,
+        level: "platinum",
+        badges: ["verified", "top-creator"],
+        bio: "Italiana descendente 🇮🇹. Bocca dolce, cuore caldo. Ciao amore, vem pra mim e esquece o resto.",
+        avatar: "assets/models/novas/antonellaribeiro/perfil.jpg",
+        photos: [
+            "assets/models/novas/antonellaribeiro/photo_2_2026-05-14_02-44-33.jpg",
+            "assets/models/novas/antonellaribeiro/photo_3_2026-05-14_02-44-33.jpg",
+            "assets/models/novas/antonellaribeiro/photo_4_2026-05-14_02-44-33.jpg",
+            "assets/models/novas/antonellaribeiro/photo_5_2026-05-14_02-44-33.jpg"
+        ],
+        stats: { followers: 2150, likes: 14500, posts: 52, views: 47000 },
+        achievements: ["100-posts", "1k-likes", "10k-views", "verified", "top-creator"],
+        subscriptionTiers: {
+            premium: { price: 47.90, benefits: ["Dolce Vita", "Stories Diários", "Fotos Exclusivas"] },
+            vip: { price: 124.90, benefits: ["Tudo Incluso", "Vídeos Privados", "Atendimento VIP"] }
         }
     }
 ];
@@ -656,7 +730,7 @@ function closeCheckoutModal() {
     if (btn) {
         btn.style.display = 'block';
         btn.disabled = false;
-        btn.innerHTML = 'PAGAR E DESBLOQUEAR SEGREDO';
+        btn.innerHTML = 'GERAR PIX AGORA';
     }
 }
 
@@ -668,93 +742,47 @@ function selectPayment(method) {
     }
 }
 
-// --- UTILITÁRIO DE VALIDAÇÃO DE CPF ---
-function isValidCPF(cpf) {
-    cpf = cpf.replace(/[^\d]+/g, '');
-    if (cpf.length !== 11 || /^(\d)\1{10}$/.test(cpf)) return false;
-    let sum = 0, rest;
-    for (let i = 1; i <= 9; i++) sum = sum + parseInt(cpf.substring(i - 1, i)) * (11 - i);
-    rest = (sum * 10) % 11;
-    if ((rest === 10) || (rest === 11)) rest = 0;
-    if (rest !== parseInt(cpf.substring(9, 10))) return false;
-    sum = 0;
-    for (let i = 1; i <= 10; i++) sum = sum + parseInt(cpf.substring(i - 1, i)) * (12 - i);
-    rest = (sum * 10) % 11;
-    if ((rest === 10) || (rest === 11)) rest = 0;
-    if (rest !== parseInt(cpf.substring(10, 11))) return false;
-    return true;
-}
-
-// Backend API URL Dinâmica
+// Backend API URL — monorepo Vercel (frontend + backend no mesmo deploy)
 const API_BASE_URL = window.location.hostname.includes('localhost') || window.location.hostname.includes('127.0.0.1')
-    ? 'http://localhost:3000'
-    : 'https://onlygrupos-api.vercel.app'; // IMPORTANTE: Mude para a URL real do seu backend na Vercel
+    ? 'http://localhost:3000/api'
+    : '/api';
 
 function processPayment() {
-    const name = document.getElementById('checkoutPayerName').value;
-    const email = document.getElementById('checkoutPayerEmail').value;
-    const cpfRaw = document.getElementById('checkoutPayerCPF').value;
     const btn = document.getElementById('btnProcessPayment');
-
-    const cpf = cpfRaw.replace(/\D/g, ''); // Extract only numbers
-
-    if (!name || !email || !cpf) {
-        alert("Por favor, preencha todos os dados pessoais.");
-        return;
-    }
-
-    if (!isValidCPF(cpf)) {
-        alert("Por favor, digite um CPF válido.");
-        return;
-    }
-
-    // PIX Logic
     const originalText = btn.innerHTML;
     btn.innerHTML = `<span style="display:inline-block; animation: spin 1s linear infinite;">↻</span> Gerando PIX...`;
     btn.disabled = true;
 
-    // Get price string e.g. "R$ 34,90" and extract number
     const priceStr = document.getElementById('checkoutPrice').textContent;
     const price = parseFloat(priceStr.replace('R$ ', '').replace(',', '.'));
-
-    const description = "OnlyModels " + document.getElementById('checkoutPlanName').textContent + " - " + document.getElementById('checkoutCreatorName').textContent;
+    const description =
+        'OnlyModels ' +
+        document.getElementById('checkoutPlanName').textContent +
+        ' - ' +
+        document.getElementById('checkoutCreatorName').textContent;
 
     fetch(`${API_BASE_URL}/create-pix`, {
         method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-            transactionAmount: price,
-            description: description,
-            email: email,
-            cpf: cpf,
-            name: name
-        })
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ transactionAmount: price, description }),
     })
-        .then(response => response.json())
+        .then(r => r.json())
         .then(data => {
             if (data.error) {
-                alert("Erro ao gerar PIX: " + data.error);
+                alert('Erro ao gerar PIX: ' + data.error);
                 btn.innerHTML = originalText;
                 btn.disabled = false;
                 return;
             }
-
-            // Show PIX area
-            document.getElementById('pixQrCodeImage').src = 'data:image/png;base64,' + data.qr_code_base64;
+            document.getElementById('pixQrCodeImage').src = data.qr_code_image_url;
             document.getElementById('pixCodeInput').value = data.qr_code;
             document.getElementById('pixDisplayArea').style.display = 'block';
-
-            // Hide button to prevent regenerate
             btn.style.display = 'none';
-
-            // Scroll to PIX area in modal
             document.getElementById('pixDisplayArea').scrollIntoView({ behavior: 'smooth' });
         })
         .catch(err => {
-            console.error("Error calling server:", err);
-            alert("Erro ao conectar com o servidor. Verifique se o backend (Node.js) está rodando na porta 3000.");
+            console.error('Error calling server:', err);
+            alert('Erro ao conectar com o servidor.');
             btn.innerHTML = originalText;
             btn.disabled = false;
         });
@@ -845,10 +873,10 @@ function renderHomeMarketplace() {
     marqueeSection.className = 'urgent-news-marquee';
     marqueeSection.innerHTML = `
         <div class="marquee-content">
-            <span class="news-item"><span class="pulse-dot"></span> <strong>Beatriz Ferraz</strong> acabou de responder aos assinantes VIP.</span>
-            <span class="news-item"><span class="pulse-dot"></span> <strong>Amanda Souza</strong> enviou uma mídia secreta no privado.</span>
-            <span class="news-item"><span class="pulse-dot"></span> Restam apenas 3 vagas com desconto para o VIP da <strong>Patricia Alves</strong>.</span>
-            <span class="news-item"><span class="pulse-dot"></span> <strong>Mel Fernandes</strong> acessou a plataforma agora.</span>
+            <span class="news-item"><span class="pulse-dot"></span> <strong>Isabela Martins</strong> acabou de responder aos assinantes VIP.</span>
+            <span class="news-item"><span class="pulse-dot"></span> <strong>Camila Vieira</strong> enviou uma mídia secreta no privado.</span>
+            <span class="news-item"><span class="pulse-dot"></span> Restam apenas 3 vagas com desconto para o VIP da <strong>Bianca Cardoso</strong>.</span>
+            <span class="news-item"><span class="pulse-dot"></span> <strong>Sophia Mendes</strong> acessou a plataforma agora.</span>
         </div>
     `;
     container.appendChild(marqueeSection);
@@ -899,7 +927,7 @@ function renderHomeMarketplace() {
     container.appendChild(featuredSection);
 
     // 3. TRENDING SECTION
-    const trendingCreators = [creatorsData[4], creatorsData[0], creatorsData[9]].filter(Boolean); // Melissa, Isabela, Pietra
+    const trendingCreators = [creatorsData[9], creatorsData[2], creatorsData[0]].filter(Boolean); // Bianca, Camila, Isabela
 
     const trendingSection = document.createElement('section');
     trendingSection.className = 'home-section';

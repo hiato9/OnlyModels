@@ -174,16 +174,6 @@
                 </div>
 
                 <div class="checkout-form">
-                    <div style="margin-bottom: 15px;">
-                        <label style="display:block; margin-bottom:5px; font-size:0.85rem; color:#ccc;">Dados
-                            Pessoais</label>
-                        <input type="text" id="checkoutPayerName" placeholder="Nome completo" class="checkout-input">
-                        <input type="email" id="checkoutPayerEmail" placeholder="E-mail principal"
-                            class="checkout-input" style="margin-top: 10px;">
-                        <input type="text" id="checkoutPayerCPF" placeholder="CPF" class="checkout-input"
-                            style="margin-top: 10px;">
-                    </div>
-
                     <div style="margin-bottom: 20px;">
                         <label style="display:block; margin-bottom:10px; font-size:0.85rem; color:#ccc;">Forma de
                             Pagamento</label>
@@ -198,7 +188,7 @@
 
                     <button id="btnProcessPayment" class="btn-primary-large"
                         style="width: 100%; border-radius: 8px; padding: 15px;" onclick="processPayment()">
-                        PAGAR E DESBLOQUEAR SEGREDO
+                        GERAR PIX AGORA
                     </button>
 
                     <!-- PIX Code Display -->
@@ -269,7 +259,7 @@
         </div>
     </footer>
 
-    <script src="app.js?v=2"></script>
+    <script src="app.js?v=3"></script>
     <script>
         // Pull-to-Refresh
         let startY = 0;
