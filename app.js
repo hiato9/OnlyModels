@@ -901,15 +901,11 @@ function renderHomeMarketplace() {
     const sliceEnd = sliceStart + MODELS_PER_PAGE;
     const pagedCreators = creatorsData.slice(sliceStart, sliceEnd);
 
-    const sectionTitle = totalPages > 1
-        ? `Modelos em Destaque <span style="color:#888; font-weight:400; font-size:0.7em;">— Página ${currentPage + 1} de ${totalPages}</span>`
-        : 'Modelos em Destaque';
-
     const featuredSection = document.createElement('section');
     featuredSection.id = 'featuredSection';
     featuredSection.className = 'home-section';
     featuredSection.innerHTML = `
-        <div class="home-section-title">${sectionTitle}</div>
+        <div class="home-section-title">Modelos em Destaque</div>
         <div class="marketplace-grid">
             ${pagedCreators.map((creator, localIndex) => {
         const index = sliceStart + localIndex;
