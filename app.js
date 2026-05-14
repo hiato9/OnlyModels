@@ -957,22 +957,27 @@ function renderHomeMarketplace() {
     `;
     container.appendChild(featuredSection);
 
-    // 3. TRENDING SECTION
-    const trendingCreators = [creatorsData[9], creatorsData[2], creatorsData[0]].filter(Boolean); // Bianca, Camila, Isabela
+    // 3. TRENDING SECTION — fotos paisagem (ratio > 1.3) selecionadas manualmente
+    const trendingPicks = [
+        { idx: 5, photo: 'assets/models/novas/sophiamendes/jpWBfQTl.jpeg' }, // Sophia Mendes — 1.42
+        { idx: 2, photo: 'assets/models/novas/camilavieira/kzR9OBXw.jpeg' }, // Camila Vieira — 1.33
+        { idx: 1, photo: 'assets/models/novas/helenarocha/kcu0d8mn.jpg' }    // Helena Rocha — 1.33
+    ];
 
     const trendingSection = document.createElement('section');
     trendingSection.className = 'home-section';
     trendingSection.innerHTML = `
         <div class="home-section-title">🔥 Modelos em Alta</div>
         <div class="trending-grid">
-            ${trendingCreators.map((creator, i) => {
-        const originalIndex = creatorsData.indexOf(creator);
+            ${trendingPicks.map(pick => {
+        const creator = creatorsData[pick.idx];
+        if (!creator) return '';
         return `
-                    <a href="model-profile.html?id=${originalIndex}" class="trending-card">
-                        <img src="${creator.photos[1] || creator.photos[0]}" class="trending-bg" loading="lazy">
+                    <a href="model-profile.html?id=${pick.idx}" class="trending-card">
+                        <img src="${pick.photo}" class="trending-bg" loading="lazy" alt="${sanitizeHTML(creator.name)}">
                         <div class="trending-overlay">
                             <div class="trending-info">
-                                <h3>${creator.name}</h3>
+                                <h3>${sanitizeHTML(creator.name)}</h3>
                                 <span style="color:#ddd; font-size:0.9rem;">${formatNumber(creator.stats.views)} visualizações</span>
                             </div>
                         </div>
