@@ -1,0 +1,21 @@
+# Vercel
+.vercel
+
+# Secrets / env
+.env
+.env.local
+.env.*.local
+
+# Dependências
+node_modules
+
+# Logs
+*.log
+npm-debug.log*
+
+# Sistema operacional
+.DS_Store
+Thumbs.db
+
+# Settings locais do Claude Code (permissões específicas da máquina)
+.claude/settings.local.json
