@@ -469,9 +469,9 @@ function renderFullProfilePage(index) {
                         <button class="btn-pp-primary" onclick="openCheckoutModal(${index}, 'vip')">
                             🔥 Acessar Conteúdo Exclusivo
                         </button>
-                        <button class="btn-pp-outline" onclick="openCheckoutModal(${index}, 'chat')">
+                        <a href="chat.html?id=${index}" class="btn-pp-outline" style="text-decoration:none;display:inline-flex;align-items:center;justify-content:center;">
                             💬 Conversar com ${sanitizeHTML(creator.name.split(' ')[0])}
-                        </button>
+                        </a>
                     </div>
                 </div>
             </header>
@@ -707,15 +707,8 @@ function openCheckoutModal(creatorIndex, planType) {
     let subtitleText = "Desbloqueio Imediato via PIX";
     let planNameText = "";
 
-    if (planType === 'chat') {
-        plan = { price: 19.90 }; // Fixed chat fee
-        titleText = "Taxa de Mensagem";
-        subtitleText = "Uma oportunidade única de me conhecer além das câmeras.";
-        planNameText = "Conversa Direta VIP";
-    } else {
-        plan = creator.subscriptionTiers[planType];
-        planNameText = planType === 'vip' ? 'Acesso VIP' : 'Plano Premium';
-    }
+    plan = creator.subscriptionTiers[planType];
+    planNameText = planType === 'vip' ? 'Acesso VIP' : 'Plano Premium';
 
     document.getElementById('checkoutCreatorAvatar').src = creator.avatar || creator.photos[0];
     document.getElementById('checkoutCreatorName').textContent = creator.name;
