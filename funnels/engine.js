@@ -22,6 +22,16 @@
     let modelId = null;
     let currentOfferContext = null; // tracks which wait_user node is awaiting payment
 
+    // ---------- Analytics helper ----------
+    function fire(eventName, props) {
+        if (!window.ChatAnalytics || typeof window.ChatAnalytics.track !== 'function') return;
+        const base = {
+            modelId,
+            modelName: creator ? creator.name : null
+        };
+        window.ChatAnalytics.track(eventName, Object.assign(base, props || {}));
+    }
+
     // ---------- Utilities ----------
     function $(id) { return document.getElementById(id); }
 
@@ -279,6 +289,8 @@
                 return;
             }
 
+            fire('funnel_node_reached', { nodeId, nodeType: node.type });
+
             if (node.type === 'model_message') {
                 showTyping();
                 await sleep(node.delayMs || 1500);
@@ -311,6 +323,7 @@
                 hideTyping();
                 const text = node.text ? interpolate(node.text, session.variables) : '';
                 appendHistory({ from: 'model', type: 'offer', text, offer: node.offer });
+                fire('offer_shown', { sku: node.offer.sku, price: node.offer.price, label: node.offer.label, nodeId });
                 running = false;
                 if (node.next) {
                     await processNode(node.next);
@@ -337,7 +350,12 @@
         disableInput();
         $('chatInput').value = '';
 
+        const userMessagesBefore = session.history.filter(h => h.from === 'user').length;
         appendHistory({ from: 'user', type: 'text', text: trimmed });
+
+        if (userMessagesBefore === 0) {
+            fire('chat_first_message_sent', { textLen: trimmed.length });
+        }
 
         const currentNode = funnel.nodes[session.currentNodeId];
         if (!currentNode || currentNode.type !== 'wait_user') {
@@ -353,6 +371,7 @@
 
         const allowed = Object.keys(currentNode.transitions || {});
         const intent = classifyIntent(trimmed, allowed);
+        fire('intent_classified', { nodeId: session.currentNodeId, intent, textLen: trimmed.length });
         const nextNodeId = currentNode.transitions[intent] || currentNode.transitions['default'];
 
         if (!nextNodeId) {
@@ -374,6 +393,8 @@
             // capture the node that owns this offer at time of click
             ownerNodeId: session.currentNodeId
         };
+
+        fire('offer_clicked', { sku: offer.sku, price: offer.price, label: offer.label });
 
         $('chatModalTitle').textContent = 'Desbloquear conteúdo';
         $('chatModalAvatar').src = creator.avatar || creator.photos[0] || '';
@@ -419,6 +440,13 @@
             $('chatModalPixImg').src = data.qr_code_image_url || '';
             $('chatModalPixCode').value = data.qr_code || '';
             $('chatModalPixArea').classList.add('active');
+
+            fire('pix_generated', {
+                sku: currentOfferContext.sku,
+                price: currentOfferContext.price,
+                label: currentOfferContext.label,
+                paymentId: data.payment_id || null
+            });
 
             // Swap pay button for "back to chat"
             btn.innerHTML = '✓ VOLTAR AO CHAT';
@@ -530,7 +558,15 @@
         }
 
         // Init or resume session
+        const resumedFlag = !!loadSession();
         session = loadSession() || newSession();
+
+        fire('chat_opened', {
+            resumed: resumedFlag,
+            entryNode: session.currentNodeId,
+            historyLen: session.history.length,
+            purchasedCount: session.purchasedSkus.length
+        });
 
         // Render existing history
         restoreHistory();
@@ -562,6 +598,24 @@
                 e.preventDefault();
                 handleUserSubmit(input.value);
             }
+        });
+
+        // Session-end tracking (fires once on unload/hide)
+        let endedFired = false;
+        const fireSessionEnded = () => {
+            if (endedFired) return;
+            endedFired = true;
+            fire('chat_session_ended', {
+                lastNodeId: session.currentNodeId,
+                messagesCount: session.history.length,
+                userMessagesCount: session.history.filter(h => h.from === 'user').length,
+                durationMs: Date.now() - session.startedAt,
+                purchasedCount: session.purchasedSkus.length
+            });
+        };
+        window.addEventListener('pagehide', fireSessionEnded);
+        document.addEventListener('visibilitychange', () => {
+            if (document.visibilityState === 'hidden') fireSessionEnded();
         });
     }
 
