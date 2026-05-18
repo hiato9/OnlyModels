@@ -1,0 +1,287 @@
+{
+  "_meta": {
+    "description": "Schema de referência do funil de chat por modelo. Engine de runtime ignora qualquer chave começando com '_'.",
+
+    "nodeTypes": {
+      "model_message": "Modelo envia texto. Avança automaticamente para `next` após `delayMs`.",
+      "model_media":   "Modelo envia mídia (foto/áudio). Avança automaticamente para `next` após `delayMs`. Suporta texto opcional acompanhando.",
+      "model_offer":   "Modelo envia card de oferta PPV. Avança para `next` ao terminar (próximo nó é tipicamente wait_user esperando reação).",
+      "wait_user":     "Aguarda evento do usuário. Texto -> classifica intent -> transitions[intent]. Pagamento gerado -> onPaymentGenerated."
+    },
+
+    "intentVocabulary": [
+      "pronto_pagar",
+      "interessado",
+      "perguntou_preco",
+      "pechinchando",
+      "cetico",
+      "tarado",
+      "vai_pensar",
+      "frio",
+      "despedida",
+      "rude",
+      "confuso",
+      "informed_name",
+      "informed_age",
+      "default"
+    ],
+
+    "interpolation": "Strings com `{{varName}}` são substituídas pelo valor em `session.variables.varName`. Fallback: 'amor' se variável não existir.",
+
+    "sessionStateShape": {
+      "_localStorageKey": "omchat:session:{modelId}",
+      "modelId": 0,
+      "funnelVersion": 1,
+      "currentNodeId": "n_wait_offer_foto_1",
+      "variables": {
+        "userName": "João"
+      },
+      "history": [
+        { "from": "model", "type": "text",  "text": "Oi amor 👀",       "ts": 1747353600000 },
+        { "from": "user",  "type": "text",  "text": "oi linda",          "ts": 1747353620000 },
+        { "from": "model", "type": "offer", "offer": { "sku": "foto_picante_demo", "label": "Foto Exclusiva", "price": 9.90 }, "ts": 1747353700000 }
+      ],
+      "purchasedSkus": ["foto_picante_demo"],
+      "startedAt": 1747353500000,
+      "lastActivityAt": 1747353700000
+    }
+  },
+
+  "modelId": -1,
+  "modelName": "_Schema Demo",
+  "funnelVersion": 2,
+  "entryNode": "n_initial_wait",
+
+  "nodes": {
+
+    "n_initial_wait": {
+      "type": "wait_user",
+      "inputPlaceholder": "Manda uma mensagem pra começar...",
+      "transitions": {
+        "rude":      "n_deflect_rude_intro",
+        "despedida": "n_end_cold",
+        "default":   "n_hook_1"
+      }
+    },
+
+    "n_deflect_rude_intro": {
+      "type": "model_message",
+      "text": "Eita 😅 calma aí, vamo conversar direito",
+      "delayMs": 1500,
+      "next": "n_hook_1"
+    },
+
+    "n_hook_1": {
+      "type": "model_message",
+      "text": "Oiii 😘",
+      "delayMs": 1200,
+      "next": "n_hook_2"
+    },
+
+    "n_hook_2": {
+      "type": "model_message",
+      "text": "Que bom que mandou aqui, tava entediada esperando alguém legal aparecer...",
+      "delayMs": 2400,
+      "next": "n_ask_name"
+    },
+
+    "n_ask_name": {
+      "type": "model_message",
+      "text": "Como tu chama? 🥰",
+      "delayMs": 1500,
+      "next": "n_wait_name"
+    },
+
+    "n_wait_name": {
+      "type": "wait_user",
+      "captureAs": "userName",
+      "transitions": {
+        "rude":    "n_deflect_rude",
+        "default": "n_react_name"
+      }
+    },
+
+    "n_deflect_rude": {
+      "type": "model_message",
+      "text": "Eita, vamo com calma 😅 só queria te conhecer",
+      "delayMs": 1500,
+      "next": "n_ask_name"
+    },
+
+    "n_react_name": {
+      "type": "model_message",
+      "text": "Prazer, {{userName}}. Eu sou a Demo 😘",
+      "delayMs": 1500,
+      "next": "n_tease_1"
+    },
+
+    "n_tease_1": {
+      "type": "model_message",
+      "text": "Acabei de gravar uma coisa que tu vai gostar... quer ver?",
+      "delayMs": 2200,
+      "next": "n_wait_tease_reaction"
+    },
+
+    "n_wait_tease_reaction": {
+      "type": "wait_user",
+      "transitions": {
+        "interessado":  "n_offer_foto_1",
+        "tarado":       "n_offer_foto_1",
+        "cetico":       "n_reassure_1",
+        "vai_pensar":   "n_offer_foto_1",
+        "frio":         "n_retention_1",
+        "default":      "n_offer_foto_1"
+      }
+    },
+
+    "n_reassure_1": {
+      "type": "model_message",
+      "text": "Te juro que vale a pena, {{userName}}. Só te mostro porque tu me deu boa pinta 🤫",
+      "delayMs": 1800,
+      "next": "n_offer_foto_1"
+    },
+
+    "n_offer_foto_1": {
+      "type": "model_offer",
+      "text": "Olha o que separei pra ti...",
+      "offer": {
+        "sku": "foto_picante_demo",
+        "label": "Foto Exclusiva",
+        "price": 9.90,
+        "thumbnailUrl": "assets/placeholders/blurred_preview.jpg",
+        "description": "Foto que ninguém viu ainda. Sem censura."
+      },
+      "delayMs": 2500,
+      "next": "n_wait_offer_reaction"
+    },
+
+    "n_wait_offer_reaction": {
+      "type": "wait_user",
+      "transitions": {
+        "pechinchando": "n_downsell_foto_1",
+        "vai_pensar":   "n_retention_offer_1",
+        "frio":         "n_retention_offer_1",
+        "cetico":       "n_reassure_offer_1",
+        "default":      "n_tease_2"
+      },
+      "onPaymentGenerated": "n_delivery_foto_1"
+    },
+
+    "n_downsell_foto_1": {
+      "type": "model_message",
+      "text": "Tá... só pra ti, {{userName}}: R$ 7,90. Mas não conta pra ninguém viu 🤫",
+      "delayMs": 1800,
+      "next": "n_offer_foto_1_discounted"
+    },
+
+    "n_offer_foto_1_discounted": {
+      "type": "model_offer",
+      "text": "Tá aqui, oferta única:",
+      "offer": {
+        "sku": "foto_picante_demo_disc",
+        "label": "Foto Exclusiva (desconto)",
+        "price": 7.90,
+        "thumbnailUrl": "assets/placeholders/blurred_preview.jpg"
+      },
+      "delayMs": 2000,
+      "next": "n_wait_offer_reaction_disc"
+    },
+
+    "n_wait_offer_reaction_disc": {
+      "type": "wait_user",
+      "transitions": {
+        "frio":     "n_retention_offer_1",
+        "default":  "n_retention_offer_1"
+      },
+      "onPaymentGenerated": "n_delivery_foto_1"
+    },
+
+    "n_reassure_offer_1": {
+      "type": "model_message",
+      "text": "Relaxa, pagamento via PIX, na hora. Discreto. Nem aparece no extrato o que é 🔒",
+      "delayMs": 1800,
+      "next": "n_wait_offer_reaction"
+    },
+
+    "n_retention_offer_1": {
+      "type": "model_message",
+      "text": "Sem problema, {{userName}}. Vou ficar online só mais um pouquinho... volta se mudar de ideia 💋",
+      "delayMs": 2000,
+      "next": "n_end_cold"
+    },
+
+    "n_tease_2": {
+      "type": "model_message",
+      "text": "Tu não respondeu... ficou com vergonha? 🙈",
+      "delayMs": 2000,
+      "next": "n_wait_offer_reaction"
+    },
+
+    "n_retention_1": {
+      "type": "model_message",
+      "text": "Tudo bem, {{userName}}. Volta quando quiser conversar mais 😘",
+      "delayMs": 1500,
+      "next": "n_end_cold"
+    },
+
+    "n_delivery_foto_1": {
+      "type": "model_media",
+      "text": "Toma aqui, amor 😈",
+      "mediaUrl": "assets/placeholders/delivered_photo.jpg",
+      "delayMs": 3000,
+      "next": "n_post_purchase_upsell"
+    },
+
+    "n_post_purchase_upsell": {
+      "type": "model_message",
+      "text": "Gostou? Tenho um pack completo que tu vai pirar...",
+      "delayMs": 2500,
+      "next": "n_offer_pack"
+    },
+
+    "n_offer_pack": {
+      "type": "model_offer",
+      "text": "Pack completo, só pra quem é VIP:",
+      "offer": {
+        "sku": "pack_premium_demo",
+        "label": "Pack Premium",
+        "price": 39.90,
+        "thumbnailUrl": "assets/placeholders/blurred_pack.jpg",
+        "description": "10 fotos + 2 vídeos exclusivos"
+      },
+      "delayMs": 2000,
+      "next": "n_wait_pack_reaction"
+    },
+
+    "n_wait_pack_reaction": {
+      "type": "wait_user",
+      "transitions": {
+        "default": "n_end_warm"
+      },
+      "onPaymentGenerated": "n_delivery_pack"
+    },
+
+    "n_delivery_pack": {
+      "type": "model_media",
+      "text": "Tudo seu agora 😘 te mandei o link do pack",
+      "mediaUrl": "assets/placeholders/delivered_pack.jpg",
+      "delayMs": 3000,
+      "next": "n_end_warm"
+    },
+
+    "n_end_warm": {
+      "type": "model_message",
+      "text": "Adorei te conhecer, {{userName}}. Volta amanhã que tenho mais 💋",
+      "delayMs": 1800,
+      "next": null
+    },
+
+    "n_end_cold": {
+      "type": "model_message",
+      "text": "Tchau 😘",
+      "delayMs": 1200,
+      "next": null
+    }
+
+  }
+}

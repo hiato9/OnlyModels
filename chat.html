@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="theme-color" content="#0a0a0a">
+    <title>Chat - OnlyModels</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        html, body {
+            height: 100%;
+            background: #0a0a0a;
+            overflow: hidden;
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        body.chat-body {
+            display: flex;
+            flex-direction: column;
+            height: 100dvh;
+        }
+
+        /* ---------- HEADER ---------- */
+        .chat-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 14px;
+            background: #111;
+            border-bottom: 1px solid rgba(255, 215, 0, 0.15);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+            flex-shrink: 0;
+            z-index: 10;
+        }
+
+        .chat-back {
+            color: var(--gold);
+            font-size: 26px;
+            text-decoration: none;
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+        }
+        .chat-back:active { background: rgba(255,215,0,0.1); }
+
+        .chat-avatar {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            background-size: cover;
+            background-position: center;
+            border: 2px solid var(--gold);
+            flex-shrink: 0;
+            position: relative;
+        }
+        .chat-avatar::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            right: -2px;
+            width: 12px;
+            height: 12px;
+            background: var(--success);
+            border-radius: 50%;
+            border: 2px solid #111;
+        }
+
+        .chat-info {
+            flex: 1;
+            min-width: 0;
+        }
+        .chat-name {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            line-height: 1.2;
+        }
+        .chat-verified {
+            color: var(--gold);
+            font-size: 0.85rem;
+        }
+        .chat-status {
+            font-size: 0.72rem;
+            color: var(--success);
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            margin-top: 2px;
+        }
+
+        /* ---------- MESSAGES AREA ---------- */
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            overflow-x: hidden;
+            padding: 16px 12px 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            background:
+                radial-gradient(circle at 20% 30%, rgba(255,215,0,0.04) 0%, transparent 50%),
+                radial-gradient(circle at 80% 70%, rgba(255,215,0,0.03) 0%, transparent 50%),
+                #0a0a0a;
+            -webkit-overflow-scrolling: touch;
+        }
+        .chat-messages::-webkit-scrollbar { width: 4px; }
+        .chat-messages::-webkit-scrollbar-thumb { background: rgba(255,215,0,0.2); border-radius: 2px; }
+
+        .bubble {
+            max-width: 78%;
+            padding: 10px 14px;
+            border-radius: 18px;
+            font-size: 0.92rem;
+            line-height: 1.35;
+            word-wrap: break-word;
+            animation: bubbleIn 0.25s ease-out;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.4);
+        }
+
+        @keyframes bubbleIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .bubble.model {
+            background: #1a1a1a;
+            color: #f5f5f5;
+            align-self: flex-start;
+            border-bottom-left-radius: 4px;
+        }
+
+        .bubble.user {
+            background: linear-gradient(135deg, #FFD700 0%, #FFC700 100%);
+            color: #000;
+            align-self: flex-end;
+            border-bottom-right-radius: 4px;
+            font-weight: 500;
+        }
+
+        /* Typing indicator */
+        .bubble.typing {
+            background: #1a1a1a;
+            align-self: flex-start;
+            padding: 12px 16px;
+            border-bottom-left-radius: 4px;
+            display: flex;
+            gap: 4px;
+        }
+        .typing-dot {
+            width: 7px;
+            height: 7px;
+            background: #888;
+            border-radius: 50%;
+            animation: typingBounce 1.2s infinite;
+        }
+        .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+        .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+
+        @keyframes typingBounce {
+            0%, 60%, 100% { transform: translateY(0); opacity: 0.5; }
+            30% { transform: translateY(-6px); opacity: 1; }
+        }
+
+        /* Media bubble */
+        .bubble.media {
+            padding: 4px;
+            max-width: 70%;
+            background: #1a1a1a;
+        }
+        .bubble.media img {
+            width: 100%;
+            border-radius: 14px;
+            display: block;
+        }
+        .bubble.media .media-caption {
+            padding: 8px 10px 4px;
+            font-size: 0.85rem;
+            color: #ddd;
+        }
+
+        /* Offer card */
+        .offer-card {
+            align-self: stretch;
+            margin: 8px 4px;
+            background: linear-gradient(135deg, #1a1a1a 0%, #0f0f0f 100%);
+            border: 1.5px solid var(--gold);
+            border-radius: 16px;
+            overflow: hidden;
+            animation: bubbleIn 0.3s ease-out;
+            box-shadow: 0 4px 16px rgba(255,215,0,0.15);
+        }
+        .offer-card-preview {
+            position: relative;
+            aspect-ratio: 16 / 10;
+            background: #050505;
+            overflow: hidden;
+        }
+        .offer-card-preview img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            filter: blur(20px) brightness(0.6);
+            transform: scale(1.1);
+        }
+        .offer-card-lock {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            color: var(--gold);
+        }
+        .offer-card-lock .lock-icon {
+            font-size: 2rem;
+            filter: drop-shadow(0 2px 8px rgba(255,215,0,0.5));
+        }
+        .offer-card-lock .lock-label {
+            font-size: 0.7rem;
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+        .offer-card-body {
+            padding: 14px;
+        }
+        .offer-card-text {
+            font-size: 0.88rem;
+            color: #f5f5f5;
+            margin-bottom: 4px;
+            font-weight: 600;
+        }
+        .offer-card-desc {
+            font-size: 0.78rem;
+            color: #999;
+            margin-bottom: 10px;
+        }
+        .offer-card-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+        }
+        .offer-card-price {
+            font-size: 1.3rem;
+            font-weight: 800;
+            color: var(--gold);
+        }
+        .offer-card-cta {
+            background: linear-gradient(135deg, #FFD700, #FFC700);
+            color: #000;
+            border: none;
+            padding: 10px 18px;
+            border-radius: 10px;
+            font-weight: 800;
+            font-size: 0.85rem;
+            letter-spacing: 0.5px;
+            cursor: pointer;
+            transition: transform 0.15s, box-shadow 0.15s;
+        }
+        .offer-card-cta:active { transform: scale(0.96); }
+        .offer-card-cta:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            background: #333;
+            color: #888;
+        }
+
+        /* ---------- INPUT BAR ---------- */
+        .chat-input-bar {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 12px calc(10px + env(safe-area-inset-bottom));
+            background: #111;
+            border-top: 1px solid rgba(255, 215, 0, 0.15);
+            flex-shrink: 0;
+        }
+        #chatInput {
+            flex: 1;
+            padding: 11px 16px;
+            background: #1a1a1a;
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 22px;
+            color: #fff;
+            font-family: inherit;
+            font-size: 0.95rem;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+        #chatInput:focus { border-color: var(--gold); }
+        #chatInput:disabled { opacity: 0.5; }
+        #chatSend {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #FFD700, #FFC700);
+            border: none;
+            color: #000;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.15s, opacity 0.2s;
+            flex-shrink: 0;
+        }
+        #chatSend:active { transform: scale(0.92); }
+        #chatSend:disabled { opacity: 0.35; cursor: not-allowed; }
+
+        /* ---------- CHECKOUT MODAL (embedded) ---------- */
+        .chat-modal {
+            position: fixed; inset: 0;
+            background: rgba(0,0,0,0.85);
+            z-index: 1000;
+            display: none;
+            align-items: flex-end;
+            justify-content: center;
+        }
+        .chat-modal.active { display: flex; }
+        .chat-modal-content {
+            background: #111;
+            width: 100%;
+            max-width: 480px;
+            border-top-left-radius: 20px;
+            border-top-right-radius: 20px;
+            border-top: 1.5px solid var(--gold);
+            padding: 20px;
+            animation: slideUp 0.3s ease-out;
+            max-height: 90dvh;
+            overflow-y: auto;
+        }
+        @keyframes slideUp {
+            from { transform: translateY(100%); }
+            to { transform: translateY(0); }
+        }
+        .chat-modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 16px;
+        }
+        .chat-modal-title {
+            color: var(--gold);
+            font-size: 1.05rem;
+            font-weight: 700;
+        }
+        .chat-modal-close {
+            background: transparent;
+            border: none;
+            color: #888;
+            font-size: 1.6rem;
+            cursor: pointer;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .chat-modal-product {
+            display: flex;
+            gap: 12px;
+            padding: 12px;
+            background: rgba(0,0,0,0.4);
+            border-radius: 12px;
+            margin-bottom: 18px;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+        .chat-modal-product img {
+            width: 46px;
+            height: 46px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+        .chat-modal-product-info {
+            flex: 1;
+        }
+        .chat-modal-product-name {
+            font-size: 0.9rem;
+            color: #fff;
+            font-weight: 600;
+        }
+        .chat-modal-product-sub {
+            font-size: 0.78rem;
+            color: #aaa;
+            margin-top: 2px;
+        }
+        .chat-modal-price {
+            font-size: 1.2rem;
+            color: var(--gold);
+            font-weight: 800;
+        }
+        .chat-modal-pay-btn {
+            width: 100%;
+            background: linear-gradient(135deg, #FFD700, #FFC700);
+            color: #000;
+            border: none;
+            padding: 15px;
+            border-radius: 10px;
+            font-weight: 800;
+            font-size: 0.95rem;
+            letter-spacing: 0.5px;
+            cursor: pointer;
+        }
+        .chat-modal-pay-btn:disabled { opacity: 0.6; cursor: wait; }
+        .chat-modal-pix-area {
+            display: none;
+            text-align: center;
+            margin-top: 18px;
+            padding: 14px;
+            background: rgba(0,0,0,0.5);
+            border-radius: 10px;
+            border: 1px dashed var(--gold);
+        }
+        .chat-modal-pix-area.active { display: block; }
+        .chat-modal-pix-area img {
+            width: 180px;
+            height: 180px;
+            margin: 0 auto;
+            display: block;
+            border-radius: 8px;
+            background: #fff;
+        }
+        .chat-modal-pix-code {
+            display: flex;
+            gap: 8px;
+            margin-top: 12px;
+        }
+        .chat-modal-pix-code input {
+            flex: 1;
+            padding: 9px;
+            background: rgba(0,0,0,0.6);
+            border: 1px solid rgba(255,215,0,0.3);
+            border-radius: 6px;
+            color: #fff;
+            font-size: 0.78rem;
+            font-family: monospace;
+        }
+        .chat-modal-pix-code button {
+            background: var(--gold);
+            color: #000;
+            padding: 0 14px;
+            border: none;
+            border-radius: 6px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        /* Disclaimer footer */
+        .chat-disclaimer {
+            font-size: 0.65rem;
+            color: #555;
+            text-align: center;
+            padding: 4px 0;
+            background: #0a0a0a;
+            border-top: 1px solid rgba(255,255,255,0.03);
+            flex-shrink: 0;
+        }
+
+        /* Loading state */
+        .chat-loading {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex: 1;
+            color: var(--gold);
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+
+<body class="chat-body">
+
+    <header class="chat-header" id="chatHeader">
+        <a href="javascript:void(0)" onclick="chatGoBack()" class="chat-back" aria-label="Voltar">←</a>
+        <div class="chat-avatar" id="chatAvatar"></div>
+        <div class="chat-info">
+            <div class="chat-name" id="chatName">
+                <span></span>
+                <span class="chat-verified" id="chatVerified" style="display:none;">✓</span>
+            </div>
+            <div class="chat-status">
+                <span style="width:6px;height:6px;background:var(--success);border-radius:50%;display:inline-block;"></span>
+                Online agora
+            </div>
+        </div>
+    </header>
+
+    <main class="chat-messages" id="chatMessages">
+        <div class="chat-loading">Carregando conversa...</div>
+    </main>
+
+    <div class="chat-disclaimer">
+        Personagem digital de entretenimento.
+    </div>
+
+    <footer class="chat-input-bar">
+        <input id="chatInput" type="text" placeholder="Mensagem..." autocomplete="off" disabled>
+        <button id="chatSend" disabled aria-label="Enviar">➤</button>
+    </footer>
+
+    <!-- Checkout Modal (self-contained) -->
+    <div class="chat-modal" id="chatCheckoutModal">
+        <div class="chat-modal-content">
+            <div class="chat-modal-header">
+                <div class="chat-modal-title" id="chatModalTitle">Desbloquear conteúdo</div>
+                <button class="chat-modal-close" onclick="closeChatCheckout()">&times;</button>
+            </div>
+
+            <div class="chat-modal-product">
+                <img id="chatModalAvatar" src="" alt="">
+                <div class="chat-modal-product-info">
+                    <div class="chat-modal-product-name" id="chatModalLabel">—</div>
+                    <div class="chat-modal-product-sub" id="chatModalCreator">—</div>
+                </div>
+                <div class="chat-modal-price" id="chatModalPrice">R$ 0,00</div>
+            </div>
+
+            <button class="chat-modal-pay-btn" id="chatModalPayBtn" onclick="chatProcessPix()">
+                GERAR PIX AGORA
+            </button>
+
+            <div class="chat-modal-pix-area" id="chatModalPixArea">
+                <div style="color:var(--gold); font-weight:700; margin-bottom:8px;">Escaneie o QR Code</div>
+                <img id="chatModalPixImg" src="" alt="QR Code PIX">
+                <div style="color:#aaa; font-size:0.78rem; margin-top:10px;">Ou copia o código:</div>
+                <div class="chat-modal-pix-code">
+                    <input type="text" id="chatModalPixCode" readonly>
+                    <button onclick="chatCopyPix()">COPIAR</button>
+                </div>
+                <div style="color:#666; font-size:0.7rem; margin-top:10px;">🔒 Pagamento processado pela Wiinpay</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Load model data (creatorsData) -->
+    <script src="app.js?v=7"></script>
+    <!-- Funnel engine -->
+    <script src="funnels/engine.js?v=3"></script>
+
+    <script>
+        // Boot: read ?id, init engine
+        document.addEventListener('DOMContentLoaded', () => {
+            const params = new URLSearchParams(window.location.search);
+            const idStr = params.get('id');
+            const modelId = idStr !== null ? parseInt(idStr) : NaN;
+
+            if (isNaN(modelId) || !creatorsData[modelId]) {
+                window.location.href = 'index.html';
+                return;
+            }
+
+            ChatEngine.start(modelId);
+        });
+
+        function chatGoBack() {
+            const params = new URLSearchParams(window.location.search);
+            const id = params.get('id');
+            if (id !== null) {
+                window.location.href = 'model-profile.html?id=' + id;
+            } else {
+                window.location.href = 'index.html';
+            }
+        }
+    </script>
+</body>
+
+</html>
