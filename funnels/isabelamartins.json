@@ -1,0 +1,694 @@
+{
+  "modelId": 0,
+  "modelName": "Isabela Martins",
+  "funnelVersion": 1,
+  "entryNode": "n_initial_wait",
+
+  "nodes": {
+
+    "n_initial_wait": {
+      "type": "wait_user",
+      "inputPlaceholder": "Manda uma mensagem pra Isabela...",
+      "transitions": {
+        "rude":      "n_deflect_rude_intro",
+        "despedida": "n_end_cold_early",
+        "default":   "n_hook_1"
+      }
+    },
+
+    "n_deflect_rude_intro": {
+      "type": "model_message",
+      "text": "Eita 😅 calma aí, gato, vamo conversar bonitinho",
+      "delayMs": 1500,
+      "next": "n_hook_1"
+    },
+
+    "n_end_cold_early": {
+      "type": "model_message",
+      "text": "Já vai? 🥺 tá bom, volta quando tiver com tempo de me conhecer 💋",
+      "delayMs": 1500,
+      "next": null
+    },
+
+    "n_hook_1": {
+      "type": "model_message",
+      "text": "Oiii 😘",
+      "delayMs": 1200,
+      "next": "n_hook_2"
+    },
+
+    "n_hook_2": {
+      "type": "model_message",
+      "text": "Que bom que mandou aqui, amor. Tava aqui no meu cantinho meio entediada esperando alguém legal aparecer 🤫",
+      "delayMs": 2800,
+      "next": "n_ask_name"
+    },
+
+    "n_ask_name": {
+      "type": "model_message",
+      "text": "Antes de eu te mostrar meu mundo secreto, me conta... como tu chama? 🥰",
+      "delayMs": 2200,
+      "next": "n_wait_name"
+    },
+
+    "n_wait_name": {
+      "type": "wait_user",
+      "captureAs": "userName",
+      "transitions": {
+        "rude":      "n_deflect_rude_intro",
+        "despedida": "n_end_cold_early",
+        "default":   "n_react_name"
+      }
+    },
+
+    "n_react_name": {
+      "type": "model_message",
+      "text": "Prazer, {{userName}} 💋 que nome lindo... combina com a vibe",
+      "delayMs": 2000,
+      "next": "n_discovery_1"
+    },
+
+    "n_discovery_1": {
+      "type": "model_message",
+      "text": "E aí, {{userName}}, primeira vez aqui no perfil ou já tava me espiando faz um tempo? 👀",
+      "delayMs": 2500,
+      "next": "n_wait_discovery_1"
+    },
+
+    "n_wait_discovery_1": {
+      "type": "wait_user",
+      "transitions": {
+        "tarado":     "n_react_discovery_horny",
+        "interessado":"n_react_discovery_pos",
+        "cetico":     "n_reassure_discovery",
+        "rude":       "n_deflect_rude_intro",
+        "despedida":  "n_end_cold_early",
+        "default":    "n_react_discovery_pos"
+      }
+    },
+
+    "n_react_discovery_horny": {
+      "type": "model_message",
+      "text": "Hmmm tu já chegou com a temperatura alta né 😏🔥",
+      "delayMs": 2000,
+      "next": "n_tease_1"
+    },
+
+    "n_react_discovery_pos": {
+      "type": "model_message",
+      "text": "Adorei. Aqui a gente conversa sério, mas também não tem censura nenhuma 😈",
+      "delayMs": 2400,
+      "next": "n_tease_1"
+    },
+
+    "n_reassure_discovery": {
+      "type": "model_message",
+      "text": "Relaxa, {{userName}}, aqui é tudo na minha. Sou eu mesma, sem firula 😘",
+      "delayMs": 2200,
+      "next": "n_tease_1"
+    },
+
+    "n_tease_1": {
+      "type": "model_message",
+      "text": "Olha... vou ser sincera contigo 🤫",
+      "delayMs": 2000,
+      "next": "n_tease_2"
+    },
+
+    "n_tease_2": {
+      "type": "model_message",
+      "text": "Acabei de tirar uma foto agora pouco que tá BEM ousada. Tipo, ninguém viu ainda. Tu quer ver? 👀",
+      "delayMs": 3000,
+      "next": "n_wait_tease"
+    },
+
+    "n_wait_tease": {
+      "type": "wait_user",
+      "transitions": {
+        "pronto_pagar":    "n_offer_foto",
+        "interessado":     "n_offer_foto",
+        "tarado":          "n_offer_foto",
+        "cetico":          "n_reassure_before_foto",
+        "perguntou_preco": "n_offer_foto_with_price",
+        "pechinchando":    "n_offer_foto",
+        "vai_pensar":      "n_pressure_tease",
+        "frio":            "n_retention_early",
+        "rude":            "n_deflect_rude_intro",
+        "despedida":       "n_retention_early",
+        "default":         "n_offer_foto"
+      }
+    },
+
+    "n_reassure_before_foto": {
+      "type": "model_message",
+      "text": "Juro que vale a pena. Sou verificada, tudo discreto, PIX direto. Olha 😏",
+      "delayMs": 2200,
+      "next": "n_offer_foto"
+    },
+
+    "n_offer_foto_with_price": {
+      "type": "model_message",
+      "text": "É baratinho, amor — quase nada. Olha:",
+      "delayMs": 1800,
+      "next": "n_offer_foto"
+    },
+
+    "n_pressure_tease": {
+      "type": "model_message",
+      "text": "Tu vai querer ou não, {{userName}}? 🥺 já tô com a tela aberta aqui pra te mandar",
+      "delayMs": 2200,
+      "next": "n_offer_foto"
+    },
+
+    "n_offer_foto": {
+      "type": "model_offer",
+      "text": "Olha o que separei só pra ti, {{userName}} 👇",
+      "offer": {
+        "sku": "isa_foto_exclusiva",
+        "label": "Foto Exclusiva",
+        "price": 9.90,
+        "thumbnailUrl": "assets/Previas Modelos/previas isabelamartins/Captura de tela 2026-01-20 141726.png",
+        "description": "Foto que ninguém viu ainda. Sem censura."
+      },
+      "delayMs": 2500,
+      "next": "n_wait_offer_foto"
+    },
+
+    "n_wait_offer_foto": {
+      "type": "wait_user",
+      "transitions": {
+        "pechinchando":    "n_downsell_foto",
+        "vai_pensar":      "n_resgate_foto",
+        "perguntou_preco": "n_reassure_foto_price",
+        "cetico":          "n_reassure_foto_safety",
+        "frio":            "n_retention_foto",
+        "tarado":          "n_revisit_foto_horny",
+        "despedida":       "n_retention_foto",
+        "rude":            "n_deflect_rude_intro",
+        "default":         "n_revisit_foto_default"
+      },
+      "onPaymentGenerated": "n_delivery_foto"
+    },
+
+    "n_downsell_foto": {
+      "type": "model_message",
+      "text": "Ai amor, tá... só pra ti vou fazer R$ 7,90. É menos que um lanche e tu vai pirar 🤫 mas não conta pra ninguém",
+      "delayMs": 2500,
+      "next": "n_offer_foto_disc"
+    },
+
+    "n_offer_foto_disc": {
+      "type": "model_offer",
+      "text": "Tá aqui a oferta com desconto, {{userName}}:",
+      "offer": {
+        "sku": "isa_foto_exclusiva_disc",
+        "label": "Foto Exclusiva (desconto)",
+        "price": 7.90,
+        "thumbnailUrl": "assets/Previas Modelos/previas isabelamartins/Captura de tela 2026-01-20 141726.png",
+        "description": "Última cartada, oferta única."
+      },
+      "delayMs": 2000,
+      "next": "n_wait_offer_foto_disc"
+    },
+
+    "n_wait_offer_foto_disc": {
+      "type": "wait_user",
+      "transitions": {
+        "frio":      "n_retention_foto",
+        "despedida": "n_retention_foto",
+        "rude":      "n_deflect_rude_intro",
+        "default":   "n_revisit_foto_default"
+      },
+      "onPaymentGenerated": "n_delivery_foto"
+    },
+
+    "n_resgate_foto": {
+      "type": "model_message",
+      "text": "Pensa rápido viu, {{userName}}... vou ficar online só mais um pouquinho 🥺 aproveita",
+      "delayMs": 2200,
+      "next": "n_wait_offer_foto"
+    },
+
+    "n_reassure_foto_price": {
+      "type": "model_message",
+      "text": "É só R$ 9,90, amor. Menos que uma pizza fatia 🍕 e tu fica com a foto pra sempre.",
+      "delayMs": 2200,
+      "next": "n_wait_offer_foto"
+    },
+
+    "n_reassure_foto_safety": {
+      "type": "model_message",
+      "text": "Pagamento PIX na hora, processado pela Wiinpay. Nem aparece no extrato o que é, fica como 'OnlyModels' só 🔒",
+      "delayMs": 2500,
+      "next": "n_wait_offer_foto"
+    },
+
+    "n_revisit_foto_default": {
+      "type": "model_message",
+      "text": "Vai amor, libera ali em cima 👆 tu não vai se arrepender 🔥",
+      "delayMs": 2200,
+      "next": "n_wait_offer_foto"
+    },
+
+    "n_revisit_foto_horny": {
+      "type": "model_message",
+      "text": "Tá vendo o que tu me faz? 😈 libera ali a foto, vai...",
+      "delayMs": 2200,
+      "next": "n_wait_offer_foto"
+    },
+
+    "n_retention_foto": {
+      "type": "model_message",
+      "text": "Sem problema, {{userName}} 💋 fico online por aqui. Se mudar de ideia, é só voltar.",
+      "delayMs": 2200,
+      "next": "n_end_cold"
+    },
+
+    "n_delivery_foto": {
+      "type": "model_media",
+      "text": "Toma aqui, gato 😈 só tu viu",
+      "mediaUrl": "assets/Previas Modelos/previas isabelamartins/Captura de tela 2026-01-21 144326.png",
+      "delayMs": 3000,
+      "next": "n_after_foto_1"
+    },
+
+    "n_after_foto_1": {
+      "type": "model_message",
+      "text": "E aí, {{userName}}? Gostou? 😏",
+      "delayMs": 2500,
+      "next": "n_wait_after_foto"
+    },
+
+    "n_wait_after_foto": {
+      "type": "wait_user",
+      "transitions": {
+        "tarado":      "n_after_foto_horny",
+        "interessado": "n_after_foto_pos",
+        "frio":        "n_retention_post_foto",
+        "despedida":   "n_retention_post_foto",
+        "rude":        "n_deflect_rude_intro",
+        "default":     "n_after_foto_pos"
+      }
+    },
+
+    "n_after_foto_horny": {
+      "type": "model_message",
+      "text": "Hmmm acho que tu vai gostar do próximo então 🔥",
+      "delayMs": 2200,
+      "next": "n_tease_video"
+    },
+
+    "n_after_foto_pos": {
+      "type": "model_message",
+      "text": "Que bom, amor 😘 e olha, tenho mais uma coisa que separei só pra quem gostou da primeira...",
+      "delayMs": 2400,
+      "next": "n_tease_video"
+    },
+
+    "n_tease_video": {
+      "type": "model_message",
+      "text": "Gravei um videozinho ontem à noite na cama, sozinha pensando em quem ia ver 🤫 dura pouco mas é forte. Quer?",
+      "delayMs": 3000,
+      "next": "n_wait_tease_video"
+    },
+
+    "n_wait_tease_video": {
+      "type": "wait_user",
+      "transitions": {
+        "pronto_pagar":    "n_offer_video",
+        "interessado":     "n_offer_video",
+        "tarado":          "n_offer_video",
+        "perguntou_preco": "n_offer_video",
+        "cetico":          "n_reassure_before_video",
+        "pechinchando":    "n_offer_video",
+        "vai_pensar":      "n_pressure_video",
+        "frio":            "n_skip_to_premium",
+        "rude":            "n_deflect_rude_intro",
+        "despedida":       "n_retention_post_foto",
+        "default":         "n_offer_video"
+      }
+    },
+
+    "n_reassure_before_video": {
+      "type": "model_message",
+      "text": "Confia, vida. Tu já viu uma prévia minha agora, sabe que é verdade. Esse aqui é o pacote completo 😏",
+      "delayMs": 2500,
+      "next": "n_offer_video"
+    },
+
+    "n_pressure_video": {
+      "type": "model_message",
+      "text": "Pensa rápido, {{userName}}... olha a oferta 👇",
+      "delayMs": 2000,
+      "next": "n_offer_video"
+    },
+
+    "n_offer_video": {
+      "type": "model_offer",
+      "text": "Vou te enviar o vídeo:",
+      "offer": {
+        "sku": "isa_video_curto",
+        "label": "Vídeo Exclusivo",
+        "price": 19.90,
+        "thumbnailUrl": "assets/Previas Modelos/previas isabelamartins/Captura de tela 2026-01-21 152422.png",
+        "description": "Vídeo sem cortes, sem censura. Direto pra ti."
+      },
+      "delayMs": 2500,
+      "next": "n_wait_offer_video"
+    },
+
+    "n_wait_offer_video": {
+      "type": "wait_user",
+      "transitions": {
+        "pechinchando":    "n_downsell_video",
+        "vai_pensar":      "n_resgate_video",
+        "perguntou_preco": "n_reassure_video_price",
+        "cetico":          "n_reassure_video_safety",
+        "frio":            "n_skip_to_premium",
+        "tarado":          "n_revisit_video_horny",
+        "despedida":       "n_retention_post_foto",
+        "rude":            "n_deflect_rude_intro",
+        "default":         "n_revisit_video_default"
+      },
+      "onPaymentGenerated": "n_delivery_video"
+    },
+
+    "n_downsell_video": {
+      "type": "model_message",
+      "text": "Sabe que eu gostei de ti? Vou fazer R$ 14,90 — preço que eu nunca faço. Mas é só agora 🤫",
+      "delayMs": 2500,
+      "next": "n_offer_video_disc"
+    },
+
+    "n_offer_video_disc": {
+      "type": "model_offer",
+      "text": "Tá aqui, {{userName}}. Oferta única, não conta pra ninguém:",
+      "offer": {
+        "sku": "isa_video_curto_disc",
+        "label": "Vídeo Exclusivo (desconto)",
+        "price": 14.90,
+        "thumbnailUrl": "assets/Previas Modelos/previas isabelamartins/Captura de tela 2026-01-21 152422.png",
+        "description": "Última chance com esse preço."
+      },
+      "delayMs": 2000,
+      "next": "n_wait_offer_video_disc"
+    },
+
+    "n_wait_offer_video_disc": {
+      "type": "wait_user",
+      "transitions": {
+        "frio":      "n_skip_to_premium",
+        "despedida": "n_retention_post_foto",
+        "rude":      "n_deflect_rude_intro",
+        "default":   "n_revisit_video_default"
+      },
+      "onPaymentGenerated": "n_delivery_video"
+    },
+
+    "n_resgate_video": {
+      "type": "model_message",
+      "text": "Decide aí, vida 🥺 tô esperando teu PIX...",
+      "delayMs": 2200,
+      "next": "n_wait_offer_video"
+    },
+
+    "n_reassure_video_price": {
+      "type": "model_message",
+      "text": "R$ 19,90 pelo vídeo completo. Tu não acha nem um vídeo desse de graça por aí, juro 😘",
+      "delayMs": 2200,
+      "next": "n_wait_offer_video"
+    },
+
+    "n_reassure_video_safety": {
+      "type": "model_message",
+      "text": "PIX direto, processado pela Wiinpay. Pagou, eu envio aqui na hora. Discretíssimo 🔒",
+      "delayMs": 2400,
+      "next": "n_wait_offer_video"
+    },
+
+    "n_revisit_video_default": {
+      "type": "model_message",
+      "text": "Vai, libera ali 👆 quero te mandar 🔥",
+      "delayMs": 2000,
+      "next": "n_wait_offer_video"
+    },
+
+    "n_revisit_video_horny": {
+      "type": "model_message",
+      "text": "Ai tu me deixa louca 😈 desbloqueia o vídeo, vai...",
+      "delayMs": 2200,
+      "next": "n_wait_offer_video"
+    },
+
+    "n_retention_post_foto": {
+      "type": "model_message",
+      "text": "Beleza, {{userName}}. Foi bom te conhecer 😘 volta quando quiser mais.",
+      "delayMs": 2000,
+      "next": "n_end_warm"
+    },
+
+    "n_delivery_video": {
+      "type": "model_media",
+      "text": "Toma, gato 😈 espero que cumpra tudo que prometi",
+      "mediaUrl": "assets/Previas Modelos/previas isabelamartins/photo_3_2026-02-01_03-23-26.jpg",
+      "delayMs": 3000,
+      "next": "n_after_video_1"
+    },
+
+    "n_after_video_1": {
+      "type": "model_message",
+      "text": "Curtiu mesmo, {{userName}}? 🔥",
+      "delayMs": 2500,
+      "next": "n_pitch_premium_1"
+    },
+
+    "n_pitch_premium_1": {
+      "type": "model_message",
+      "text": "Olha, sinceramente... tu vai gostar de saber disso 🤫",
+      "delayMs": 2000,
+      "next": "n_pitch_premium_2"
+    },
+
+    "n_pitch_premium_2": {
+      "type": "model_message",
+      "text": "Eu tenho um Feed VIP fechado, onde posto conteúdo TODO DIA. Foto, vídeo, áudio safadinho. Tudo lá. Mensal.",
+      "delayMs": 3000,
+      "next": "n_pitch_premium_3"
+    },
+
+    "n_pitch_premium_3": {
+      "type": "model_message",
+      "text": "Por R$ 39,90 (menos que duas pizzas no mês) tu fica comigo todo dia. E o chat libera mais, viu? 😈",
+      "delayMs": 3000,
+      "next": "n_offer_premium"
+    },
+
+    "n_skip_to_premium": {
+      "type": "model_message",
+      "text": "Sem problema, {{userName}}. Mas deixa eu te falar do Feed VIP antes de tu sumir 😏",
+      "delayMs": 2200,
+      "next": "n_pitch_premium_2"
+    },
+
+    "n_offer_premium": {
+      "type": "model_offer",
+      "text": "Olha o plano, vida:",
+      "offer": {
+        "sku": "isa_premium_mes",
+        "label": "Premium Mensal",
+        "price": 39.90,
+        "thumbnailUrl": "assets/Previas Modelos/previas isabelamartins/Captura de tela 2026-01-20 141726.png",
+        "description": "Feed VIP diário + chat liberado + acesso completo por 30 dias"
+      },
+      "delayMs": 2500,
+      "next": "n_wait_offer_premium"
+    },
+
+    "n_wait_offer_premium": {
+      "type": "wait_user",
+      "transitions": {
+        "pechinchando":    "n_premium_value_speech",
+        "vai_pensar":      "n_premium_urgency",
+        "perguntou_preco": "n_premium_value_speech",
+        "cetico":          "n_premium_reassure",
+        "frio":            "n_skip_to_vip",
+        "tarado":          "n_revisit_premium",
+        "despedida":       "n_retention_premium",
+        "rude":            "n_deflect_rude_intro",
+        "default":         "n_revisit_premium"
+      },
+      "onPaymentGenerated": "n_delivery_premium"
+    },
+
+    "n_premium_value_speech": {
+      "type": "model_message",
+      "text": "{{userName}}, é um real e trinta por dia. E tu fica comigo TODO DIA. Compensa demais. Não dá pra fazer mais barato sem desvalorizar.",
+      "delayMs": 3000,
+      "next": "n_wait_offer_premium"
+    },
+
+    "n_premium_urgency": {
+      "type": "model_message",
+      "text": "Só queria avisar, tô com promoção essa semana. Mês que vem volta pra R$ 49 🥺 se já tá interessado, fecha logo",
+      "delayMs": 2800,
+      "next": "n_wait_offer_premium"
+    },
+
+    "n_premium_reassure": {
+      "type": "model_message",
+      "text": "Cancela quando quiser, sem fidelidade. Se não gostar, sai, sem stress 😘 mas eu sei que tu não vai querer sair...",
+      "delayMs": 2800,
+      "next": "n_wait_offer_premium"
+    },
+
+    "n_revisit_premium": {
+      "type": "model_message",
+      "text": "Decide, vida 🔥 R$ 39,90 e tu tá dentro pelos próximos 30 dias",
+      "delayMs": 2200,
+      "next": "n_wait_offer_premium"
+    },
+
+    "n_retention_premium": {
+      "type": "model_message",
+      "text": "Beleza, {{userName}} 💋 valeu por hoje. Quando quiser, volta",
+      "delayMs": 2000,
+      "next": "n_end_warm"
+    },
+
+    "n_delivery_premium": {
+      "type": "model_media",
+      "text": "Bem vindo ao Feed VIP, {{userName}} 😈 amanhã já tem post novo",
+      "mediaUrl": "assets/Previas Modelos/previas isabelamartins/photo_3_2026-02-01_03-23-26.jpg",
+      "delayMs": 3000,
+      "next": "n_post_premium_1"
+    },
+
+    "n_post_premium_1": {
+      "type": "model_message",
+      "text": "Agora que tu é meu Premium... posso te oferecer uma coisa que NINGUÉM ainda viu? 🤫",
+      "delayMs": 3000,
+      "next": "n_pitch_vip_1"
+    },
+
+    "n_skip_to_vip": {
+      "type": "model_message",
+      "text": "Sem problema. Mas tu sabe que eu tenho uma coisa especial, né? 😏",
+      "delayMs": 2200,
+      "next": "n_pitch_vip_1"
+    },
+
+    "n_pitch_vip_1": {
+      "type": "model_message",
+      "text": "Toda sexta eu faço uma Live privada só pros meus VIPs. Limitada — entram tipo 20 pessoas por vez 🔥",
+      "delayMs": 3000,
+      "next": "n_pitch_vip_2"
+    },
+
+    "n_pitch_vip_2": {
+      "type": "model_message",
+      "text": "Lá eu interajo direto, atendo pedido, tudo. É outro nível, {{userName}}.",
+      "delayMs": 2500,
+      "next": "n_offer_vip"
+    },
+
+    "n_offer_vip": {
+      "type": "model_offer",
+      "text": "Vagas limitadas — Sextou com a Isa:",
+      "offer": {
+        "sku": "isa_vip_sextou",
+        "label": "VIP - Sextou ao Vivo",
+        "price": 99.90,
+        "thumbnailUrl": "assets/Previas Modelos/previas isabelamartins/Captura de tela 2026-01-21 152422.png",
+        "description": "Live privada toda sexta + tudo do Premium + vídeos exclusivos"
+      },
+      "delayMs": 2800,
+      "next": "n_wait_offer_vip"
+    },
+
+    "n_wait_offer_vip": {
+      "type": "wait_user",
+      "transitions": {
+        "pechinchando":    "n_vip_value_speech",
+        "vai_pensar":      "n_vip_scarcity",
+        "perguntou_preco": "n_vip_value_speech",
+        "cetico":          "n_vip_reassure",
+        "frio":            "n_retention_final",
+        "tarado":          "n_revisit_vip",
+        "despedida":       "n_retention_final",
+        "rude":            "n_deflect_rude_intro",
+        "default":         "n_revisit_vip"
+      },
+      "onPaymentGenerated": "n_delivery_vip"
+    },
+
+    "n_vip_value_speech": {
+      "type": "model_message",
+      "text": "{{userName}}, R$ 99,90 pra tu entrar no meu mundo de verdade. Olha quem tá lá comigo todo Sextou: lista pequena, gente que importa. Tu se encaixa.",
+      "delayMs": 3200,
+      "next": "n_wait_offer_vip"
+    },
+
+    "n_vip_scarcity": {
+      "type": "model_message",
+      "text": "Só tem 3 vagas abertas pra essa semana. Se decidir, fecha agora 🥺 senão entra na lista de espera",
+      "delayMs": 2800,
+      "next": "n_wait_offer_vip"
+    },
+
+    "n_vip_reassure": {
+      "type": "model_message",
+      "text": "Cancela quando quiser. Pagamento PIX, na hora, processado pela Wiinpay. Aparece como OnlyModels no extrato, super discreto.",
+      "delayMs": 3000,
+      "next": "n_wait_offer_vip"
+    },
+
+    "n_revisit_vip": {
+      "type": "model_message",
+      "text": "Tu sabe que tu quer, {{userName}} 😈 libera ali",
+      "delayMs": 2000,
+      "next": "n_wait_offer_vip"
+    },
+
+    "n_delivery_vip": {
+      "type": "model_message",
+      "text": "Bem vindo ao meu mundo VIP, {{userName}} 😘 sexta agora tu já participa. Te mando o link no chat antes.",
+      "delayMs": 3000,
+      "next": "n_end_warm_vip"
+    },
+
+    "n_retention_final": {
+      "type": "model_message",
+      "text": "Sem problema, {{userName}}. Tu já viu mais do que muita gente vê 😏 volta quando quiser",
+      "delayMs": 2200,
+      "next": "n_end_warm"
+    },
+
+    "n_end_warm_vip": {
+      "type": "model_message",
+      "text": "Adorei te conhecer, vida. Te falo amanhã 💋",
+      "delayMs": 2000,
+      "next": null
+    },
+
+    "n_end_warm": {
+      "type": "model_message",
+      "text": "Foi bom te conhecer, {{userName}}. Volta amanhã que tenho mais coisa pra ti 💋",
+      "delayMs": 2000,
+      "next": null
+    },
+
+    "n_end_cold": {
+      "type": "model_message",
+      "text": "Tchau 😘",
+      "delayMs": 1200,
+      "next": null
+    },
+
+    "n_retention_early": {
+      "type": "model_message",
+      "text": "Tudo bem, {{userName}}. Vou ficar online por aqui. Se mudar de ideia, volta 💋",
+      "delayMs": 2000,
+      "next": "n_end_cold"
+    }
+  }
+}

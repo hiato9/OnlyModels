@@ -1,0 +1,694 @@
+{
+  "modelId": 1,
+  "modelName": "Helena Rocha",
+  "funnelVersion": 1,
+  "entryNode": "n_initial_wait",
+
+  "nodes": {
+
+    "n_initial_wait": {
+      "type": "wait_user",
+      "inputPlaceholder": "Manda uma mensagem pra Helena...",
+      "transitions": {
+        "rude":      "n_deflect_rude_intro",
+        "despedida": "n_end_cold_early",
+        "default":   "n_hook_1"
+      }
+    },
+
+    "n_deflect_rude_intro": {
+      "type": "model_message",
+      "text": "Calma aí mermão 😅 vamo conversar bonitinho",
+      "delayMs": 1500,
+      "next": "n_hook_1"
+    },
+
+    "n_end_cold_early": {
+      "type": "model_message",
+      "text": "Já tá saindo? 🥲 maré vai voltar, fica tranquilo, volta quando quiser 🌊",
+      "delayMs": 1500,
+      "next": null
+    },
+
+    "n_hook_1": {
+      "type": "model_message",
+      "text": "Eaí 😎",
+      "delayMs": 1200,
+      "next": "n_hook_2"
+    },
+
+    "n_hook_2": {
+      "type": "model_message",
+      "text": "Tava aqui de boa, sol entrando pela janela, e tu apareceu 🌊 mó coisa de carioca essa sincronia, vida",
+      "delayMs": 2800,
+      "next": "n_ask_name"
+    },
+
+    "n_ask_name": {
+      "type": "model_message",
+      "text": "Antes da gente entrar no clima, como tu chama, gato? 🤙",
+      "delayMs": 2200,
+      "next": "n_wait_name"
+    },
+
+    "n_wait_name": {
+      "type": "wait_user",
+      "captureAs": "userName",
+      "transitions": {
+        "rude":      "n_deflect_rude_intro",
+        "despedida": "n_end_cold_early",
+        "default":   "n_react_name"
+      }
+    },
+
+    "n_react_name": {
+      "type": "model_message",
+      "text": "Show, {{userName}} 😘 prazer. Eu sou Helena, mas pode me chamar de Hê",
+      "delayMs": 2200,
+      "next": "n_discovery_1"
+    },
+
+    "n_discovery_1": {
+      "type": "model_message",
+      "text": "E aí, tu é daqui do Rio ou só veio ver a carioca de longe mesmo? 🤣",
+      "delayMs": 2500,
+      "next": "n_wait_discovery_1"
+    },
+
+    "n_wait_discovery_1": {
+      "type": "wait_user",
+      "transitions": {
+        "tarado":     "n_react_discovery_horny",
+        "interessado":"n_react_discovery_pos",
+        "cetico":     "n_reassure_discovery",
+        "rude":       "n_deflect_rude_intro",
+        "despedida":  "n_end_cold_early",
+        "default":    "n_react_discovery_pos"
+      }
+    },
+
+    "n_react_discovery_horny": {
+      "type": "model_message",
+      "text": "Eita 😏🔥 já chegou avançado né mermão. Vou gostar de ti",
+      "delayMs": 2000,
+      "next": "n_tease_1"
+    },
+
+    "n_react_discovery_pos": {
+      "type": "model_message",
+      "text": "Curti tua vibe. Aqui é tudo na real, sem pose 😎",
+      "delayMs": 2400,
+      "next": "n_tease_1"
+    },
+
+    "n_reassure_discovery": {
+      "type": "model_message",
+      "text": "Relaxa {{userName}}, é tudo de boa por aqui. Sou eu mesma, sem filtro 🌊",
+      "delayMs": 2200,
+      "next": "n_tease_1"
+    },
+
+    "n_tease_1": {
+      "type": "model_message",
+      "text": "Mermão, vou te falar uma coisa 😏",
+      "delayMs": 2000,
+      "next": "n_tease_2"
+    },
+
+    "n_tease_2": {
+      "type": "model_message",
+      "text": "Ontem fui pra praia. Tirei umas fotos lá que não posto em lugar nenhum, sabe? Só pra quem tá aqui no chat. Quer ver? 👀",
+      "delayMs": 3000,
+      "next": "n_wait_tease"
+    },
+
+    "n_wait_tease": {
+      "type": "wait_user",
+      "transitions": {
+        "pronto_pagar":    "n_offer_foto",
+        "interessado":     "n_offer_foto",
+        "tarado":          "n_offer_foto",
+        "cetico":          "n_reassure_before_foto",
+        "perguntou_preco": "n_offer_foto_with_price",
+        "pechinchando":    "n_offer_foto",
+        "vai_pensar":      "n_pressure_tease",
+        "frio":            "n_retention_early",
+        "rude":            "n_deflect_rude_intro",
+        "despedida":       "n_retention_early",
+        "default":         "n_offer_foto"
+      }
+    },
+
+    "n_reassure_before_foto": {
+      "type": "model_message",
+      "text": "Pode confiar, sou verificada, tudo via PIX. Não é golpe não, mermão 🤙",
+      "delayMs": 2200,
+      "next": "n_offer_foto"
+    },
+
+    "n_offer_foto_with_price": {
+      "type": "model_message",
+      "text": "É barata, vida. Quase preço de açaí na praia. Olha:",
+      "delayMs": 1800,
+      "next": "n_offer_foto"
+    },
+
+    "n_pressure_tease": {
+      "type": "model_message",
+      "text": "Vai querer ou não, {{userName}}? 🥺 já separei aqui, é só dar o ok",
+      "delayMs": 2200,
+      "next": "n_offer_foto"
+    },
+
+    "n_offer_foto": {
+      "type": "model_offer",
+      "text": "Olha o que separei só pra ti, {{userName}} 👇",
+      "offer": {
+        "sku": "helena_foto_praia",
+        "label": "Foto da Praia",
+        "price": 9.90,
+        "thumbnailUrl": "assets/models/novas/helenarocha/kcu0d8mn.jpg",
+        "description": "Foto de ontem na praia. Sem censura, só pra ti."
+      },
+      "delayMs": 2500,
+      "next": "n_wait_offer_foto"
+    },
+
+    "n_wait_offer_foto": {
+      "type": "wait_user",
+      "transitions": {
+        "pechinchando":    "n_downsell_foto",
+        "vai_pensar":      "n_resgate_foto",
+        "perguntou_preco": "n_reassure_foto_price",
+        "cetico":          "n_reassure_foto_safety",
+        "frio":            "n_retention_foto",
+        "tarado":          "n_revisit_foto_horny",
+        "despedida":       "n_retention_foto",
+        "rude":            "n_deflect_rude_intro",
+        "default":         "n_revisit_foto_default"
+      },
+      "onPaymentGenerated": "n_delivery_foto"
+    },
+
+    "n_downsell_foto": {
+      "type": "model_message",
+      "text": "Aí mermão, só pra ti R$ 7,90. Tá mais barato que cerveja na praia 🍺 vai 🤙",
+      "delayMs": 2500,
+      "next": "n_offer_foto_disc"
+    },
+
+    "n_offer_foto_disc": {
+      "type": "model_offer",
+      "text": "Promo única, {{userName}}:",
+      "offer": {
+        "sku": "helena_foto_praia_disc",
+        "label": "Foto da Praia (desconto)",
+        "price": 7.90,
+        "thumbnailUrl": "assets/models/novas/helenarocha/kcu0d8mn.jpg",
+        "description": "Última cartada com esse preço."
+      },
+      "delayMs": 2000,
+      "next": "n_wait_offer_foto_disc"
+    },
+
+    "n_wait_offer_foto_disc": {
+      "type": "wait_user",
+      "transitions": {
+        "frio":      "n_retention_foto",
+        "despedida": "n_retention_foto",
+        "rude":      "n_deflect_rude_intro",
+        "default":   "n_revisit_foto_default"
+      },
+      "onPaymentGenerated": "n_delivery_foto"
+    },
+
+    "n_resgate_foto": {
+      "type": "model_message",
+      "text": "Decide aí {{userName}}, vou sair pra praia daqui pouco 🌊 aproveita enquanto tô aqui",
+      "delayMs": 2200,
+      "next": "n_wait_offer_foto"
+    },
+
+    "n_reassure_foto_price": {
+      "type": "model_message",
+      "text": "R$ 9,90, mermão. Tu não compra nem um açaí com isso na orla 🤣",
+      "delayMs": 2200,
+      "next": "n_wait_offer_foto"
+    },
+
+    "n_reassure_foto_safety": {
+      "type": "model_message",
+      "text": "PIX direto, processado pela Wiinpay. No extrato aparece 'OnlyModels', super discreto 🔒",
+      "delayMs": 2500,
+      "next": "n_wait_offer_foto"
+    },
+
+    "n_revisit_foto_default": {
+      "type": "model_message",
+      "text": "Vai mermão, libera ali em cima 👆 não vai se arrepender 🔥",
+      "delayMs": 2200,
+      "next": "n_wait_offer_foto"
+    },
+
+    "n_revisit_foto_horny": {
+      "type": "model_message",
+      "text": "Tu tá me deixando com vontade de tirar mais foto 😏 libera ali",
+      "delayMs": 2200,
+      "next": "n_wait_offer_foto"
+    },
+
+    "n_retention_foto": {
+      "type": "model_message",
+      "text": "Tranquilo, {{userName}} 🤙 fico aqui, qualquer hora volta",
+      "delayMs": 2200,
+      "next": "n_end_cold"
+    },
+
+    "n_delivery_foto": {
+      "type": "model_media",
+      "text": "Toma, vida 😎 fresquinha do areião",
+      "mediaUrl": "assets/models/novas/helenarocha/O9PaXpjo.jpg",
+      "delayMs": 3000,
+      "next": "n_after_foto_1"
+    },
+
+    "n_after_foto_1": {
+      "type": "model_message",
+      "text": "E aí, {{userName}}? Curtiu? 😏",
+      "delayMs": 2500,
+      "next": "n_wait_after_foto"
+    },
+
+    "n_wait_after_foto": {
+      "type": "wait_user",
+      "transitions": {
+        "tarado":      "n_after_foto_horny",
+        "interessado": "n_after_foto_pos",
+        "frio":        "n_retention_post_foto",
+        "despedida":   "n_retention_post_foto",
+        "rude":        "n_deflect_rude_intro",
+        "default":     "n_after_foto_pos"
+      }
+    },
+
+    "n_after_foto_horny": {
+      "type": "model_message",
+      "text": "Pô mermão, vc vai gostar do próximo então 🔥",
+      "delayMs": 2200,
+      "next": "n_tease_video"
+    },
+
+    "n_after_foto_pos": {
+      "type": "model_message",
+      "text": "Maneiro 😘 e olha, gravei um vídeo ontem que combina com essa vibe...",
+      "delayMs": 2400,
+      "next": "n_tease_video"
+    },
+
+    "n_tease_video": {
+      "type": "model_message",
+      "text": "Saí da água ontem e fui pro quarto. Liguei a câmera 😏 dura pouco mas é forte. Quer?",
+      "delayMs": 3000,
+      "next": "n_wait_tease_video"
+    },
+
+    "n_wait_tease_video": {
+      "type": "wait_user",
+      "transitions": {
+        "pronto_pagar":    "n_offer_video",
+        "interessado":     "n_offer_video",
+        "tarado":          "n_offer_video",
+        "perguntou_preco": "n_offer_video",
+        "cetico":          "n_reassure_before_video",
+        "pechinchando":    "n_offer_video",
+        "vai_pensar":      "n_pressure_video",
+        "frio":            "n_skip_to_premium",
+        "rude":            "n_deflect_rude_intro",
+        "despedida":       "n_retention_post_foto",
+        "default":         "n_offer_video"
+      }
+    },
+
+    "n_reassure_before_video": {
+      "type": "model_message",
+      "text": "Mermão, tu já viu uma prévia, sabe que é eu mesma. Esse aqui é o pacote completo 😏",
+      "delayMs": 2500,
+      "next": "n_offer_video"
+    },
+
+    "n_pressure_video": {
+      "type": "model_message",
+      "text": "Decide rápido, {{userName}}... 👇",
+      "delayMs": 2000,
+      "next": "n_offer_video"
+    },
+
+    "n_offer_video": {
+      "type": "model_offer",
+      "text": "Vou te mandar:",
+      "offer": {
+        "sku": "helena_video_quarto",
+        "label": "Vídeo Quarto",
+        "price": 19.90,
+        "thumbnailUrl": "assets/models/novas/helenarocha/PnnPQvqS.jpg",
+        "description": "Vídeo sem cortes. Saí da praia direto pro quarto."
+      },
+      "delayMs": 2500,
+      "next": "n_wait_offer_video"
+    },
+
+    "n_wait_offer_video": {
+      "type": "wait_user",
+      "transitions": {
+        "pechinchando":    "n_downsell_video",
+        "vai_pensar":      "n_resgate_video",
+        "perguntou_preco": "n_reassure_video_price",
+        "cetico":          "n_reassure_video_safety",
+        "frio":            "n_skip_to_premium",
+        "tarado":          "n_revisit_video_horny",
+        "despedida":       "n_retention_post_foto",
+        "rude":            "n_deflect_rude_intro",
+        "default":         "n_revisit_video_default"
+      },
+      "onPaymentGenerated": "n_delivery_video"
+    },
+
+    "n_downsell_video": {
+      "type": "model_message",
+      "text": "Tá vida, vou fazer R$ 14,90 — preço de amigo 🤙 mas é só agora",
+      "delayMs": 2500,
+      "next": "n_offer_video_disc"
+    },
+
+    "n_offer_video_disc": {
+      "type": "model_offer",
+      "text": "Promo única {{userName}}, não perde:",
+      "offer": {
+        "sku": "helena_video_quarto_disc",
+        "label": "Vídeo Quarto (desconto)",
+        "price": 14.90,
+        "thumbnailUrl": "assets/models/novas/helenarocha/PnnPQvqS.jpg",
+        "description": "Última chance com esse preço."
+      },
+      "delayMs": 2000,
+      "next": "n_wait_offer_video_disc"
+    },
+
+    "n_wait_offer_video_disc": {
+      "type": "wait_user",
+      "transitions": {
+        "frio":      "n_skip_to_premium",
+        "despedida": "n_retention_post_foto",
+        "rude":      "n_deflect_rude_intro",
+        "default":   "n_revisit_video_default"
+      },
+      "onPaymentGenerated": "n_delivery_video"
+    },
+
+    "n_resgate_video": {
+      "type": "model_message",
+      "text": "Tô esperando teu PIX, vida 🥺",
+      "delayMs": 2200,
+      "next": "n_wait_offer_video"
+    },
+
+    "n_reassure_video_price": {
+      "type": "model_message",
+      "text": "R$ 19,90 pelo vídeo completo. Mermão, isso é menos que uma cervejinha gelada no quiosque 🍻",
+      "delayMs": 2200,
+      "next": "n_wait_offer_video"
+    },
+
+    "n_reassure_video_safety": {
+      "type": "model_message",
+      "text": "PIX na hora, Wiinpay processa, aparece 'OnlyModels' no extrato. Tudo discreto 🔒",
+      "delayMs": 2400,
+      "next": "n_wait_offer_video"
+    },
+
+    "n_revisit_video_default": {
+      "type": "model_message",
+      "text": "Vai mermão, libera 👆 quero te mostrar 🔥",
+      "delayMs": 2000,
+      "next": "n_wait_offer_video"
+    },
+
+    "n_revisit_video_horny": {
+      "type": "model_message",
+      "text": "Ai vc tá me deixando com vontade 😈 libera o vídeo, vai...",
+      "delayMs": 2200,
+      "next": "n_wait_offer_video"
+    },
+
+    "n_retention_post_foto": {
+      "type": "model_message",
+      "text": "Tranquilo, {{userName}}. Foi bom te conhecer 🤙 volta quando quiser",
+      "delayMs": 2000,
+      "next": "n_end_warm"
+    },
+
+    "n_delivery_video": {
+      "type": "model_media",
+      "text": "Aí tá, gato 😈 do jeito que prometi",
+      "mediaUrl": "assets/models/novas/helenarocha/YjUK6tYw.jpg",
+      "delayMs": 3000,
+      "next": "n_after_video_1"
+    },
+
+    "n_after_video_1": {
+      "type": "model_message",
+      "text": "E aí, {{userName}}? Valeu cada centavo né 🔥",
+      "delayMs": 2500,
+      "next": "n_pitch_premium_1"
+    },
+
+    "n_pitch_premium_1": {
+      "type": "model_message",
+      "text": "Olha, mermão, deixa eu te falar uma coisa 🤫",
+      "delayMs": 2000,
+      "next": "n_pitch_premium_2"
+    },
+
+    "n_pitch_premium_2": {
+      "type": "model_message",
+      "text": "Eu tenho um feed VIP — Praia Sem Censura. Posto semanal lá, conteúdo direto da areia, da água, do quarto. Tudo na real.",
+      "delayMs": 3000,
+      "next": "n_pitch_premium_3"
+    },
+
+    "n_pitch_premium_3": {
+      "type": "model_message",
+      "text": "R$ 34,90 no mês — é tipo um almoço na orla. E tu fica comigo todo dia, com chat aberto 😎",
+      "delayMs": 3000,
+      "next": "n_offer_premium"
+    },
+
+    "n_skip_to_premium": {
+      "type": "model_message",
+      "text": "Beleza vida, mas deixa eu te contar do feed VIP antes 😏",
+      "delayMs": 2200,
+      "next": "n_pitch_premium_2"
+    },
+
+    "n_offer_premium": {
+      "type": "model_offer",
+      "text": "O plano:",
+      "offer": {
+        "sku": "helena_premium_mes",
+        "label": "Premium Mensal",
+        "price": 34.90,
+        "thumbnailUrl": "assets/models/novas/helenarocha/kcu0d8mn.jpg",
+        "description": "Praia Sem Censura + chat aberto + conteúdo semanal por 30 dias"
+      },
+      "delayMs": 2500,
+      "next": "n_wait_offer_premium"
+    },
+
+    "n_wait_offer_premium": {
+      "type": "wait_user",
+      "transitions": {
+        "pechinchando":    "n_premium_value_speech",
+        "vai_pensar":      "n_premium_urgency",
+        "perguntou_preco": "n_premium_value_speech",
+        "cetico":          "n_premium_reassure",
+        "frio":            "n_skip_to_vip",
+        "tarado":          "n_revisit_premium",
+        "despedida":       "n_retention_premium",
+        "rude":            "n_deflect_rude_intro",
+        "default":         "n_revisit_premium"
+      },
+      "onPaymentGenerated": "n_delivery_premium"
+    },
+
+    "n_premium_value_speech": {
+      "type": "model_message",
+      "text": "Mermão, é um real e dezesseis por dia. Pelo preço de NADA tu fica comigo o mês inteiro. Não dá pra fazer mais barato 🤙",
+      "delayMs": 3000,
+      "next": "n_wait_offer_premium"
+    },
+
+    "n_premium_urgency": {
+      "type": "model_message",
+      "text": "Tô com promo essa semana, depois volta pra R$ 44 🥺 se quer entrar, é agora vida",
+      "delayMs": 2800,
+      "next": "n_wait_offer_premium"
+    },
+
+    "n_premium_reassure": {
+      "type": "model_message",
+      "text": "Cancela quando quiser, sem fidelidade. Se não curtir, sai numa boa 🌊",
+      "delayMs": 2800,
+      "next": "n_wait_offer_premium"
+    },
+
+    "n_revisit_premium": {
+      "type": "model_message",
+      "text": "Decide, {{userName}} 🔥 R$ 34,90 e tu tá dentro pelos próximos 30 dias",
+      "delayMs": 2200,
+      "next": "n_wait_offer_premium"
+    },
+
+    "n_retention_premium": {
+      "type": "model_message",
+      "text": "Beleza, {{userName}} 🤙 valeu a tarde. Quando quiser, volta",
+      "delayMs": 2000,
+      "next": "n_end_warm"
+    },
+
+    "n_delivery_premium": {
+      "type": "model_media",
+      "text": "Bem vindo ao Praia Sem Censura, {{userName}} 😈 amanhã já tem post novo",
+      "mediaUrl": "assets/models/novas/helenarocha/YjUK6tYw.jpg",
+      "delayMs": 3000,
+      "next": "n_post_premium_1"
+    },
+
+    "n_post_premium_1": {
+      "type": "model_message",
+      "text": "Agora que tu é meu Premium... posso te oferecer uma coisa que ninguém ainda viu? 🤫",
+      "delayMs": 3000,
+      "next": "n_pitch_vip_1"
+    },
+
+    "n_skip_to_vip": {
+      "type": "model_message",
+      "text": "Sem stress. Mas tu sabe que eu tenho uma coisa diferente, né? 😏",
+      "delayMs": 2200,
+      "next": "n_pitch_vip_1"
+    },
+
+    "n_pitch_vip_1": {
+      "type": "model_message",
+      "text": "Eu aceito pedido personalizado — vídeo, áudio, mensagem nominal. Só pra VIP 🔥",
+      "delayMs": 3000,
+      "next": "n_pitch_vip_2"
+    },
+
+    "n_pitch_vip_2": {
+      "type": "model_message",
+      "text": "Outro nível, mermão. Mas tem limite de vaga porque eu gravo um por um.",
+      "delayMs": 2500,
+      "next": "n_offer_vip"
+    },
+
+    "n_offer_vip": {
+      "type": "model_offer",
+      "text": "Vagas limitadas — VIP com pedido personalizado:",
+      "offer": {
+        "sku": "helena_vip_pedido",
+        "label": "VIP + Pedido Personalizado",
+        "price": 84.90,
+        "thumbnailUrl": "assets/models/novas/helenarocha/PnnPQvqS.jpg",
+        "description": "Vídeos exclusivos + pedido personalizado + tudo do Premium"
+      },
+      "delayMs": 2800,
+      "next": "n_wait_offer_vip"
+    },
+
+    "n_wait_offer_vip": {
+      "type": "wait_user",
+      "transitions": {
+        "pechinchando":    "n_vip_value_speech",
+        "vai_pensar":      "n_vip_scarcity",
+        "perguntou_preco": "n_vip_value_speech",
+        "cetico":          "n_vip_reassure",
+        "frio":            "n_retention_final",
+        "tarado":          "n_revisit_vip",
+        "despedida":       "n_retention_final",
+        "rude":            "n_deflect_rude_intro",
+        "default":         "n_revisit_vip"
+      },
+      "onPaymentGenerated": "n_delivery_vip"
+    },
+
+    "n_vip_value_speech": {
+      "type": "model_message",
+      "text": "{{userName}}, R$ 84,90 é o pacote completo. Vídeo exclusivo + pedido + tudo do Premium. Não dá pra dividir, vida 🌊",
+      "delayMs": 3200,
+      "next": "n_wait_offer_vip"
+    },
+
+    "n_vip_scarcity": {
+      "type": "model_message",
+      "text": "Só tô abrindo 3 vagas essa semana — pra gravar um por um. Se quer, é agora 🥺",
+      "delayMs": 2800,
+      "next": "n_wait_offer_vip"
+    },
+
+    "n_vip_reassure": {
+      "type": "model_message",
+      "text": "Cancela quando quiser. PIX, processado pela Wiinpay, discreto, no extrato 'OnlyModels'.",
+      "delayMs": 3000,
+      "next": "n_wait_offer_vip"
+    },
+
+    "n_revisit_vip": {
+      "type": "model_message",
+      "text": "Tu sabe que tu quer, {{userName}} 😈 libera ali em cima",
+      "delayMs": 2000,
+      "next": "n_wait_offer_vip"
+    },
+
+    "n_delivery_vip": {
+      "type": "model_message",
+      "text": "Bem vindo ao VIP, {{userName}} 😘 me manda o que tu quer no pedido e eu gravo",
+      "delayMs": 3000,
+      "next": "n_end_warm_vip"
+    },
+
+    "n_retention_final": {
+      "type": "model_message",
+      "text": "Tranquilo, {{userName}}. Tu já viu mais do que muita gente 🤙 volta quando quiser",
+      "delayMs": 2200,
+      "next": "n_end_warm"
+    },
+
+    "n_end_warm_vip": {
+      "type": "model_message",
+      "text": "Curti te conhecer, vida. Te falo amanhã 🌊",
+      "delayMs": 2000,
+      "next": null
+    },
+
+    "n_end_warm": {
+      "type": "model_message",
+      "text": "Foi bom te conhecer, {{userName}}. Maré sempre volta, fica de boa 💋",
+      "delayMs": 2000,
+      "next": null
+    },
+
+    "n_end_cold": {
+      "type": "model_message",
+      "text": "Tchau 🤙",
+      "delayMs": 1200,
+      "next": null
+    },
+
+    "n_retention_early": {
+      "type": "model_message",
+      "text": "Tranquilo, {{userName}}. Tô aqui se mudar de ideia 🌊",
+      "delayMs": 2000,
+      "next": "n_end_cold"
+    }
+  }
+}

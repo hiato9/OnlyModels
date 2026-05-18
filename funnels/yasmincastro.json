@@ -1,0 +1,694 @@
+{
+  "modelId": 3,
+  "modelName": "Yasmin Castro",
+  "funnelVersion": 1,
+  "entryNode": "n_initial_wait",
+
+  "nodes": {
+
+    "n_initial_wait": {
+      "type": "wait_user",
+      "inputPlaceholder": "Manda uma mensagem pra Yasmin...",
+      "transitions": {
+        "rude":      "n_deflect_rude_intro",
+        "despedida": "n_end_cold_early",
+        "default":   "n_hook_1"
+      }
+    },
+
+    "n_deflect_rude_intro": {
+      "type": "model_message",
+      "text": "Ai, calma 🥺 não precisa ser assim, vamo conversar bonitinho?",
+      "delayMs": 1500,
+      "next": "n_hook_1"
+    },
+
+    "n_end_cold_early": {
+      "type": "model_message",
+      "text": "Já vai? 🥺 ai que pena... volta quando quiser, tô aprendendo aqui 🙈",
+      "delayMs": 1500,
+      "next": null
+    },
+
+    "n_hook_1": {
+      "type": "model_message",
+      "text": "Oi 🙈",
+      "delayMs": 1200,
+      "next": "n_hook_2"
+    },
+
+    "n_hook_2": {
+      "type": "model_message",
+      "text": "Nossa, ainda fico meio nervosa quando alguém manda mensagem... acabei de chegar nessa plataforma faz pouquinho 😳",
+      "delayMs": 3000,
+      "next": "n_ask_name"
+    },
+
+    "n_ask_name": {
+      "type": "model_message",
+      "text": "Antes de eu te mostrar as coisas que tô descobrindo aqui... me conta teu nome? 🥰",
+      "delayMs": 2400,
+      "next": "n_wait_name"
+    },
+
+    "n_wait_name": {
+      "type": "wait_user",
+      "captureAs": "userName",
+      "transitions": {
+        "rude":      "n_deflect_rude_intro",
+        "despedida": "n_end_cold_early",
+        "default":   "n_react_name"
+      }
+    },
+
+    "n_react_name": {
+      "type": "model_message",
+      "text": "Aiii {{userName}} 😘 que nome lindo. Pode me chamar de Yas",
+      "delayMs": 2200,
+      "next": "n_discovery_1"
+    },
+
+    "n_discovery_1": {
+      "type": "model_message",
+      "text": "{{userName}}, posso te confessar uma coisa? 🙈 tô meio insegura aqui, é minha primeira semana mesmo. Tu me ajuda?",
+      "delayMs": 2800,
+      "next": "n_wait_discovery_1"
+    },
+
+    "n_wait_discovery_1": {
+      "type": "wait_user",
+      "transitions": {
+        "tarado":     "n_react_discovery_horny",
+        "interessado":"n_react_discovery_pos",
+        "cetico":     "n_reassure_discovery",
+        "rude":       "n_deflect_rude_intro",
+        "despedida":  "n_end_cold_early",
+        "default":    "n_react_discovery_pos"
+      }
+    },
+
+    "n_react_discovery_horny": {
+      "type": "model_message",
+      "text": "Aiii já chegou intenso assim 😳🔥 ainda bem que tu manda esse tipo de mensagem, me deixa menos tímida",
+      "delayMs": 2400,
+      "next": "n_tease_1"
+    },
+
+    "n_react_discovery_pos": {
+      "type": "model_message",
+      "text": "Aiii brigada por isso 🥺 tu já me deixou mais a vontade",
+      "delayMs": 2400,
+      "next": "n_tease_1"
+    },
+
+    "n_reassure_discovery": {
+      "type": "model_message",
+      "text": "Juro que sou eu mesma, {{userName}} 🙈 só tô aprendendo essa plataforma ainda. Mas tô animadinha",
+      "delayMs": 2400,
+      "next": "n_tease_1"
+    },
+
+    "n_tease_1": {
+      "type": "model_message",
+      "text": "{{userName}}, deixa eu te contar uma coisa 😳",
+      "delayMs": 2000,
+      "next": "n_tease_2"
+    },
+
+    "n_tease_2": {
+      "type": "model_message",
+      "text": "Acabei de tirar uma foto que eu NUNCA tinha tirado antes. Tipo, foi a primeira vez que me soltei. Tu quer ver? 🙈",
+      "delayMs": 3200,
+      "next": "n_wait_tease"
+    },
+
+    "n_wait_tease": {
+      "type": "wait_user",
+      "transitions": {
+        "pronto_pagar":    "n_offer_foto",
+        "interessado":     "n_offer_foto",
+        "tarado":          "n_offer_foto",
+        "cetico":          "n_reassure_before_foto",
+        "perguntou_preco": "n_offer_foto_with_price",
+        "pechinchando":    "n_offer_foto",
+        "vai_pensar":      "n_pressure_tease",
+        "frio":            "n_retention_early",
+        "rude":            "n_deflect_rude_intro",
+        "despedida":       "n_retention_early",
+        "default":         "n_offer_foto"
+      }
+    },
+
+    "n_reassure_before_foto": {
+      "type": "model_message",
+      "text": "Juro que sou verificada 🥺 olha o selinho no meu perfil. PIX direto, sem enrolação",
+      "delayMs": 2400,
+      "next": "n_offer_foto"
+    },
+
+    "n_offer_foto_with_price": {
+      "type": "model_message",
+      "text": "Coloquei baratinho, lindo 🙈 olha:",
+      "delayMs": 1800,
+      "next": "n_offer_foto"
+    },
+
+    "n_pressure_tease": {
+      "type": "model_message",
+      "text": "{{userName}} 🥺 vai querer ou não? Tu nem viu a foto ainda e já tá me deixando ansiosa",
+      "delayMs": 2200,
+      "next": "n_offer_foto"
+    },
+
+    "n_offer_foto": {
+      "type": "model_offer",
+      "text": "Vai, separei só pra ti, {{userName}} 👇",
+      "offer": {
+        "sku": "yasmin_foto_primeira",
+        "label": "Minha Primeira Foto Ousada",
+        "price": 7.90,
+        "thumbnailUrl": "assets/models/novas/yasmincastro/eSRFLpGZ.jpeg",
+        "description": "Primeira foto sem censura que tirei. Ninguém viu ainda."
+      },
+      "delayMs": 2500,
+      "next": "n_wait_offer_foto"
+    },
+
+    "n_wait_offer_foto": {
+      "type": "wait_user",
+      "transitions": {
+        "pechinchando":    "n_downsell_foto",
+        "vai_pensar":      "n_resgate_foto",
+        "perguntou_preco": "n_reassure_foto_price",
+        "cetico":          "n_reassure_foto_safety",
+        "frio":            "n_retention_foto",
+        "tarado":          "n_revisit_foto_horny",
+        "despedida":       "n_retention_foto",
+        "rude":            "n_deflect_rude_intro",
+        "default":         "n_revisit_foto_default"
+      },
+      "onPaymentGenerated": "n_delivery_foto"
+    },
+
+    "n_downsell_foto": {
+      "type": "model_message",
+      "text": "Aiii {{userName}} 🥺 tá... só pra ti R$ 5,90. Tu é o primeiro que recebe esse preço, juro 🙈",
+      "delayMs": 2500,
+      "next": "n_offer_foto_disc"
+    },
+
+    "n_offer_foto_disc": {
+      "type": "model_offer",
+      "text": "Promo única só pra ti, fofinho:",
+      "offer": {
+        "sku": "yasmin_foto_primeira_disc",
+        "label": "Foto Ousada (preço de amigo)",
+        "price": 5.90,
+        "thumbnailUrl": "assets/models/novas/yasmincastro/eSRFLpGZ.jpeg",
+        "description": "Última chance — preço de amigo."
+      },
+      "delayMs": 2000,
+      "next": "n_wait_offer_foto_disc"
+    },
+
+    "n_wait_offer_foto_disc": {
+      "type": "wait_user",
+      "transitions": {
+        "frio":      "n_retention_foto",
+        "despedida": "n_retention_foto",
+        "rude":      "n_deflect_rude_intro",
+        "default":   "n_revisit_foto_default"
+      },
+      "onPaymentGenerated": "n_delivery_foto"
+    },
+
+    "n_resgate_foto": {
+      "type": "model_message",
+      "text": "{{userName}} 🥺 fica comigo... tô esperando teu PIX, prometo que vai gostar",
+      "delayMs": 2200,
+      "next": "n_wait_offer_foto"
+    },
+
+    "n_reassure_foto_price": {
+      "type": "model_message",
+      "text": "É só R$ 7,90, amorzinho 🥺 preço de um pão de queijo na padaria",
+      "delayMs": 2200,
+      "next": "n_wait_offer_foto"
+    },
+
+    "n_reassure_foto_safety": {
+      "type": "model_message",
+      "text": "Pagamento PIX na hora, processado pela Wiinpay. No extrato aparece só 'OnlyModels' 🔒 super discreto",
+      "delayMs": 2500,
+      "next": "n_wait_offer_foto"
+    },
+
+    "n_revisit_foto_default": {
+      "type": "model_message",
+      "text": "Vai, libera ali em cima 🥺 tu não vai se arrepender",
+      "delayMs": 2200,
+      "next": "n_wait_offer_foto"
+    },
+
+    "n_revisit_foto_horny": {
+      "type": "model_message",
+      "text": "Ai, tu vê o que tu fala comigo 😳 libera a foto, vai...",
+      "delayMs": 2200,
+      "next": "n_wait_offer_foto"
+    },
+
+    "n_retention_foto": {
+      "type": "model_message",
+      "text": "Tudo bem, {{userName}} 🥺 vou ficar online por aqui, qualquer coisa volta",
+      "delayMs": 2200,
+      "next": "n_end_cold"
+    },
+
+    "n_delivery_foto": {
+      "type": "model_media",
+      "text": "Pronto 🙈 fui a primeira vez que mostrei isso pra alguém",
+      "mediaUrl": "assets/models/novas/yasmincastro/np48l3s8.jpeg",
+      "delayMs": 3000,
+      "next": "n_after_foto_1"
+    },
+
+    "n_after_foto_1": {
+      "type": "model_message",
+      "text": "E aí, {{userName}}? Gostou de mim? 😳",
+      "delayMs": 2500,
+      "next": "n_wait_after_foto"
+    },
+
+    "n_wait_after_foto": {
+      "type": "wait_user",
+      "transitions": {
+        "tarado":      "n_after_foto_horny",
+        "interessado": "n_after_foto_pos",
+        "frio":        "n_retention_post_foto",
+        "despedida":   "n_retention_post_foto",
+        "rude":        "n_deflect_rude_intro",
+        "default":     "n_after_foto_pos"
+      }
+    },
+
+    "n_after_foto_horny": {
+      "type": "model_message",
+      "text": "Ai, tu tá me deixando confiante 😳🔥 deixa eu te mostrar mais...",
+      "delayMs": 2200,
+      "next": "n_tease_video"
+    },
+
+    "n_after_foto_pos": {
+      "type": "model_message",
+      "text": "Aiii fico feliz que gostou 🥺 olha, gravei uma coisa que eu nunca tinha gravado antes...",
+      "delayMs": 2600,
+      "next": "n_tease_video"
+    },
+
+    "n_tease_video": {
+      "type": "model_message",
+      "text": "{{userName}}, gravei um videozinho ontem antes de dormir. Foi a primeira vez que liguei a câmera assim. Tu quer ver? 🙈",
+      "delayMs": 3000,
+      "next": "n_wait_tease_video"
+    },
+
+    "n_wait_tease_video": {
+      "type": "wait_user",
+      "transitions": {
+        "pronto_pagar":    "n_offer_video",
+        "interessado":     "n_offer_video",
+        "tarado":          "n_offer_video",
+        "perguntou_preco": "n_offer_video",
+        "cetico":          "n_reassure_before_video",
+        "pechinchando":    "n_offer_video",
+        "vai_pensar":      "n_pressure_video",
+        "frio":            "n_skip_to_premium",
+        "rude":            "n_deflect_rude_intro",
+        "despedida":       "n_retention_post_foto",
+        "default":         "n_offer_video"
+      }
+    },
+
+    "n_reassure_before_video": {
+      "type": "model_message",
+      "text": "Tu já viu minha foto, sabe que sou eu mesma 🥺 o vídeo é minha primeira gravação, juro",
+      "delayMs": 2500,
+      "next": "n_offer_video"
+    },
+
+    "n_pressure_video": {
+      "type": "model_message",
+      "text": "{{userName}}, decide rápido 🥺...",
+      "delayMs": 2000,
+      "next": "n_offer_video"
+    },
+
+    "n_offer_video": {
+      "type": "model_offer",
+      "text": "Olha aqui, lindo:",
+      "offer": {
+        "sku": "yasmin_video_primeiro",
+        "label": "Meu Primeiro Vídeo",
+        "price": 14.90,
+        "thumbnailUrl": "assets/models/novas/yasmincastro/pzxnYBhZ.jpeg",
+        "description": "Primeira gravação que fiz. Sem censura."
+      },
+      "delayMs": 2500,
+      "next": "n_wait_offer_video"
+    },
+
+    "n_wait_offer_video": {
+      "type": "wait_user",
+      "transitions": {
+        "pechinchando":    "n_downsell_video",
+        "vai_pensar":      "n_resgate_video",
+        "perguntou_preco": "n_reassure_video_price",
+        "cetico":          "n_reassure_video_safety",
+        "frio":            "n_skip_to_premium",
+        "tarado":          "n_revisit_video_horny",
+        "despedida":       "n_retention_post_foto",
+        "rude":            "n_deflect_rude_intro",
+        "default":         "n_revisit_video_default"
+      },
+      "onPaymentGenerated": "n_delivery_video"
+    },
+
+    "n_downsell_video": {
+      "type": "model_message",
+      "text": "Ai, amorzinho 🥺 só pra ti R$ 9,90 — eu nunca faço isso, juro. Mas só agora",
+      "delayMs": 2500,
+      "next": "n_offer_video_disc"
+    },
+
+    "n_offer_video_disc": {
+      "type": "model_offer",
+      "text": "Promo só pra ti, {{userName}}:",
+      "offer": {
+        "sku": "yasmin_video_primeiro_disc",
+        "label": "Vídeo (preço de amigo)",
+        "price": 9.90,
+        "thumbnailUrl": "assets/models/novas/yasmincastro/pzxnYBhZ.jpeg",
+        "description": "Última oportunidade com esse preço."
+      },
+      "delayMs": 2000,
+      "next": "n_wait_offer_video_disc"
+    },
+
+    "n_wait_offer_video_disc": {
+      "type": "wait_user",
+      "transitions": {
+        "frio":      "n_skip_to_premium",
+        "despedida": "n_retention_post_foto",
+        "rude":      "n_deflect_rude_intro",
+        "default":   "n_revisit_video_default"
+      },
+      "onPaymentGenerated": "n_delivery_video"
+    },
+
+    "n_resgate_video": {
+      "type": "model_message",
+      "text": "Aii {{userName}} 🥺 não me deixa esperando, libera ali",
+      "delayMs": 2200,
+      "next": "n_wait_offer_video"
+    },
+
+    "n_reassure_video_price": {
+      "type": "model_message",
+      "text": "R$ 14,90 pelo vídeo completo, fofinho. É menos que um lanche 🥺",
+      "delayMs": 2200,
+      "next": "n_wait_offer_video"
+    },
+
+    "n_reassure_video_safety": {
+      "type": "model_message",
+      "text": "PIX direto, Wiinpay processa na hora, no extrato fica 'OnlyModels' — tudo discreto 🔒",
+      "delayMs": 2400,
+      "next": "n_wait_offer_video"
+    },
+
+    "n_revisit_video_default": {
+      "type": "model_message",
+      "text": "Vai, lindo 🙈 libera ali em cima",
+      "delayMs": 2000,
+      "next": "n_wait_offer_video"
+    },
+
+    "n_revisit_video_horny": {
+      "type": "model_message",
+      "text": "Aiii tu me deixa nervosa de novo 😳 libera o vídeo, eu prometo que tu vai amar",
+      "delayMs": 2200,
+      "next": "n_wait_offer_video"
+    },
+
+    "n_retention_post_foto": {
+      "type": "model_message",
+      "text": "Tudo bem, {{userName}} 🥺 foi bom te conhecer. Volta quando quiser",
+      "delayMs": 2000,
+      "next": "n_end_warm"
+    },
+
+    "n_delivery_video": {
+      "type": "model_media",
+      "text": "Pronto, {{userName}} 😳 nem sei se tô fazendo certo, mas espero que goste",
+      "mediaUrl": "assets/models/novas/yasmincastro/T6Omwm5l.jpeg",
+      "delayMs": 3000,
+      "next": "n_after_video_1"
+    },
+
+    "n_after_video_1": {
+      "type": "model_message",
+      "text": "Curtiu, {{userName}}? 🥺 me deixa saber",
+      "delayMs": 2500,
+      "next": "n_pitch_premium_1"
+    },
+
+    "n_pitch_premium_1": {
+      "type": "model_message",
+      "text": "{{userName}}, posso te oferecer uma coisa? 🙈",
+      "delayMs": 2000,
+      "next": "n_pitch_premium_2"
+    },
+
+    "n_pitch_premium_2": {
+      "type": "model_message",
+      "text": "Tenho um plano de assinatura — bem baratinho, porque eu tô começando — onde posto foto inédita, abro o chat direto contigo, mando coisa que ninguém mais vê 😳",
+      "delayMs": 3200,
+      "next": "n_pitch_premium_3"
+    },
+
+    "n_pitch_premium_3": {
+      "type": "model_message",
+      "text": "Só R$ 19,90 no mês. Sério, é o preço que eu botei pra ter clientes desde o começo. Tu me ajuda nesse comecinho? 🥺",
+      "delayMs": 3000,
+      "next": "n_offer_premium"
+    },
+
+    "n_skip_to_premium": {
+      "type": "model_message",
+      "text": "Sem problema, lindo 🥺 mas deixa eu te falar do meu plano antes de tu sumir",
+      "delayMs": 2200,
+      "next": "n_pitch_premium_2"
+    },
+
+    "n_offer_premium": {
+      "type": "model_offer",
+      "text": "Olha o plano, {{userName}}:",
+      "offer": {
+        "sku": "yasmin_premium_mes",
+        "label": "Premium Mensal",
+        "price": 19.90,
+        "thumbnailUrl": "assets/models/novas/yasmincastro/eSRFLpGZ.jpeg",
+        "description": "Conteúdo exclusivo + chat comigo + fotos inéditas por 30 dias"
+      },
+      "delayMs": 2500,
+      "next": "n_wait_offer_premium"
+    },
+
+    "n_wait_offer_premium": {
+      "type": "wait_user",
+      "transitions": {
+        "pechinchando":    "n_premium_value_speech",
+        "vai_pensar":      "n_premium_urgency",
+        "perguntou_preco": "n_premium_value_speech",
+        "cetico":          "n_premium_reassure",
+        "frio":            "n_skip_to_vip",
+        "tarado":          "n_revisit_premium",
+        "despedida":       "n_retention_premium",
+        "rude":            "n_deflect_rude_intro",
+        "default":         "n_revisit_premium"
+      },
+      "onPaymentGenerated": "n_delivery_premium"
+    },
+
+    "n_premium_value_speech": {
+      "type": "model_message",
+      "text": "{{userName}}, são 66 centavos por dia 🥺 menos que uma bala. E tu fica todo dia comigo. Por favor, lindo",
+      "delayMs": 3000,
+      "next": "n_wait_offer_premium"
+    },
+
+    "n_premium_urgency": {
+      "type": "model_message",
+      "text": "Esse preço é só pra quem entrar agora no comecinho 🥺 quando eu crescer aqui vai subir, juro",
+      "delayMs": 2800,
+      "next": "n_wait_offer_premium"
+    },
+
+    "n_premium_reassure": {
+      "type": "model_message",
+      "text": "Pode cancelar quando quiser. Se eu não te agradar, sai sem stress 🙈 mas eu quero MUITO te ter por aqui",
+      "delayMs": 2800,
+      "next": "n_wait_offer_premium"
+    },
+
+    "n_revisit_premium": {
+      "type": "model_message",
+      "text": "Vai, {{userName}} 🥺 R$ 19,90 e tu tá comigo o mês inteiro",
+      "delayMs": 2200,
+      "next": "n_wait_offer_premium"
+    },
+
+    "n_retention_premium": {
+      "type": "model_message",
+      "text": "Beleza, {{userName}} 🥺 obrigada pela conversa, foi importante pra mim",
+      "delayMs": 2000,
+      "next": "n_end_warm"
+    },
+
+    "n_delivery_premium": {
+      "type": "model_media",
+      "text": "Bem vindo, {{userName}} 😘 te prometo conteúdo todo dia. Amanhã já tem coisa nova!",
+      "mediaUrl": "assets/models/novas/yasmincastro/T6Omwm5l.jpeg",
+      "delayMs": 3000,
+      "next": "n_post_premium_1"
+    },
+
+    "n_post_premium_1": {
+      "type": "model_message",
+      "text": "Aí... agora que tu é meu Premium, posso te oferecer uma última coisa? 🙈",
+      "delayMs": 3000,
+      "next": "n_pitch_vip_1"
+    },
+
+    "n_skip_to_vip": {
+      "type": "model_message",
+      "text": "Tá bom 🥺 mas tu sabe que eu tenho uma coisa especial né?",
+      "delayMs": 2200,
+      "next": "n_pitch_vip_1"
+    },
+
+    "n_pitch_vip_1": {
+      "type": "model_message",
+      "text": "No VIP eu aceito PEDIDOS personalizados — qualquer coisa que tu quiser que eu faça (no limite, claro 🙈), eu gravo só pra ti",
+      "delayMs": 3200,
+      "next": "n_pitch_vip_2"
+    },
+
+    "n_pitch_vip_2": {
+      "type": "model_message",
+      "text": "Vídeos +18 inéditos, áudios picantes... tudo no VIP. Tu manda, eu faço 😳",
+      "delayMs": 2800,
+      "next": "n_offer_vip"
+    },
+
+    "n_offer_vip": {
+      "type": "model_offer",
+      "text": "VIP — pedidos liberados:",
+      "offer": {
+        "sku": "yasmin_vip_pedidos",
+        "label": "VIP + Pedidos Liberados",
+        "price": 54.90,
+        "thumbnailUrl": "assets/models/novas/yasmincastro/pzxnYBhZ.jpeg",
+        "description": "Vídeos +18 + áudios picantes + pedidos personalizados"
+      },
+      "delayMs": 2800,
+      "next": "n_wait_offer_vip"
+    },
+
+    "n_wait_offer_vip": {
+      "type": "wait_user",
+      "transitions": {
+        "pechinchando":    "n_vip_value_speech",
+        "vai_pensar":      "n_vip_scarcity",
+        "perguntou_preco": "n_vip_value_speech",
+        "cetico":          "n_vip_reassure",
+        "frio":            "n_retention_final",
+        "tarado":          "n_revisit_vip",
+        "despedida":       "n_retention_final",
+        "rude":            "n_deflect_rude_intro",
+        "default":         "n_revisit_vip"
+      },
+      "onPaymentGenerated": "n_delivery_vip"
+    },
+
+    "n_vip_value_speech": {
+      "type": "model_message",
+      "text": "{{userName}}, R$ 54,90 é o pacote completo. Tu pode pedir qualquer coisa e eu gravo. Não dá pra dividir, lindo 🥺",
+      "delayMs": 3200,
+      "next": "n_wait_offer_vip"
+    },
+
+    "n_vip_scarcity": {
+      "type": "model_message",
+      "text": "Eu tô atendendo poucas pessoas porque gravo um por um 🥺 se quer entrar, é agora",
+      "delayMs": 2800,
+      "next": "n_wait_offer_vip"
+    },
+
+    "n_vip_reassure": {
+      "type": "model_message",
+      "text": "Cancela quando quiser, PIX direto, Wiinpay processa, aparece como 'OnlyModels' no extrato 🔒",
+      "delayMs": 3000,
+      "next": "n_wait_offer_vip"
+    },
+
+    "n_revisit_vip": {
+      "type": "model_message",
+      "text": "Tu sabe que tu quer, {{userName}} 😳 libera ali",
+      "delayMs": 2000,
+      "next": "n_wait_offer_vip"
+    },
+
+    "n_delivery_vip": {
+      "type": "model_message",
+      "text": "Bem vindo ao meu VIP, {{userName}} 😘 manda o que tu quer no pedido e eu gravo já",
+      "delayMs": 3000,
+      "next": "n_end_warm_vip"
+    },
+
+    "n_retention_final": {
+      "type": "model_message",
+      "text": "Tudo bem, {{userName}} 🥺 obrigada por hoje. Volta sempre",
+      "delayMs": 2200,
+      "next": "n_end_warm"
+    },
+
+    "n_end_warm_vip": {
+      "type": "model_message",
+      "text": "Aiii brigada {{userName}} 😘 te falo amanhã, ansiosa pelo teu pedido",
+      "delayMs": 2000,
+      "next": null
+    },
+
+    "n_end_warm": {
+      "type": "model_message",
+      "text": "Foi bom te conhecer, {{userName}} 🥺 volta quando quiser, vou tá aqui",
+      "delayMs": 2000,
+      "next": null
+    },
+
+    "n_end_cold": {
+      "type": "model_message",
+      "text": "Tchau 🥺",
+      "delayMs": 1200,
+      "next": null
+    },
+
+    "n_retention_early": {
+      "type": "model_message",
+      "text": "Tudo bem, {{userName}} 🥺 fico aqui online. Se mudar de ideia volta",
+      "delayMs": 2000,
+      "next": "n_end_cold"
+    }
+  }
+}
