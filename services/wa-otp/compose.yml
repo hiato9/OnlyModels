@@ -1,0 +1,42 @@
+# services/wa-otp/compose.yml
+# Subir na VM Oracle 1GB:
+#   1. Criar .env com WA_OTP_SERVICE_SECRET=<token aleatório forte>
+#   2. docker compose up -d
+#   3. docker compose logs -f wa-otp   # vai imprimir o QR code
+#   4. Escanear QR no WhatsApp do chip pré-pago (Aparelhos conectados > Conectar)
+#   5. Testar: curl -X POST http://localhost:3000/send-otp \
+#              -H "X-API-Secret: $WA_OTP_SERVICE_SECRET" \
+#              -H "Content-Type: application/json" \
+#              -d '{"phone":"+5511999999999","code":"123456"}'
+#
+# TLS: este compose expõe HTTP puro. Em produção, terminar TLS via:
+#  - Cloudflare Tunnel (cloudflared) — recomendado, evita abrir porta no Oracle
+#  - Nginx/Caddy reverse proxy com Let's Encrypt + domínio
+
+services:
+  wa-otp:
+    build: .
+    container_name: wa-otp
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:3000:3000"  # bind localhost — exposição via tunnel/reverse-proxy
+    environment:
+      WA_OTP_SERVICE_SECRET: ${WA_OTP_SERVICE_SECRET}
+      AUTH_DIR: /data/auth
+      PORT: "3000"
+      LOG_LEVEL: warn
+    volumes:
+      - wa-auth:/data/auth
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:3000/healthz"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
+    deploy:
+      resources:
+        limits:
+          memory: 400M
+
+volumes:
+  wa-auth:
