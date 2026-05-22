@@ -5,6 +5,31 @@
 
 ---
 
+### [2026-05-22] — "Fix de segurança: trancar RPC `increment_paid_credits` de roles públicos"
+**Impacto:** Crítico | **Módulos Afetados:** `supabase/migrations/0001_credits_schema.sql`, Supabase prod (RPC `public.increment_paid_credits`)
+- **O que foi feito:** Aplicado `REVOKE EXECUTE ON FUNCTION increment_paid_credits(UUID, INTEGER) FROM PUBLIC, anon, authenticated` + `GRANT EXECUTE ... TO service_role` direto no Supabase de produção (`nrvjblecjgjtqyauhnav`) via MCP. A mesma sequência foi adicionada ao arquivo da migration pra que próximas reaplicações (clone do projeto, ambiente novo) já saiam trancadas.
+- **Por que foi feito:** Advisor de segurança do Supabase apontou (WARN `0028`/`0029`): a função estava marcada `SECURITY DEFINER` mas com `EXECUTE` aberto pros roles `anon`/`authenticated`. Como a anon key é pública no frontend, qualquer um poderia bater `POST /rest/v1/rpc/increment_paid_credits` com um `p_user_id` e `p_delta` e creditar saldo arbitrário de OnlyCoins — vetor direto de fraude no sistema de pagamento, ainda antes do launch. Backend continua chamando via `service_role` (que ignora o REVOKE), comportamento legítimo intacto.
+- **Riscos / Pontos de Quebra Resolvidos:** Confirmado pós-fix com `get_advisors` — os 2 WARNs sumiram. Restaram só 4 INFOs (`rls_enabled_no_policy` nas 4 tabelas) — design intencional (backend usa service_role, cliente nunca toca direto).
+- **Diff Físico:**
+  - [MODIFY] `supabase/migrations/0001_credits_schema.sql` (REVOKE + GRANT logo após a definição da RPC)
+  - [SUPABASE PROD] REVOKE + GRANT aplicados via MCP `execute_sql`
+
+---
+
+### [2026-05-22] — "Bloco A/1 do OnlyCoins — Supabase de produção configurado"
+**Impacto:** Crítico | **Módulos Afetados:** Vercel env vars (Production + Development), Supabase prod
+- **O que foi feito:** Provisionamento operacional do Supabase pro OnlyCoins.
+  - Projeto `onlymodels` (ref `nrvjblecjgjtqyauhnav`, região `sa-east-1`) criado pelo dono no painel Supabase.
+  - Migration `0001_credits_schema.sql` aplicada manualmente via SQL Editor (4 tabelas + RPC + RLS confirmados via `list_tables`).
+  - Env vars `SUPABASE_URL` e `SUPABASE_SERVICE_ROLE_KEY` setadas no Vercel (Production + Development) via CLI.
+- **Por que foi feito:** Sem o backend conectado ao Postgres, nenhum dos endpoints novos (`otp-request`, `otp-verify`, `credits-balance`, `credit-pack`, `wiinpay-webhook`) consegue rodar. Esse é o primeiro item operacional do Bloco A — os demais (chip pré-pago, VM Oracle, tunnel HTTPS, webhook Wiinpay) seguem em sequência.
+- **Riscos / Pontos de Quebra Resolvidos:** Service_role key não é puxável via MCP (segurança); coletada manualmente no painel pelo dono e colada no chat. Vars setadas em Production + Development pra manter paridade com o resto da stack já configurada.
+- **Diff Físico:**
+  - [VERCEL ENV] +`SUPABASE_URL`, +`SUPABASE_SERVICE_ROLE_KEY` (Production + Development)
+  - [SUPABASE PROD] `nrvjblecjgjtqyauhnav` ativo em `sa-east-1`, migration aplicada
+
+---
+
 ### [2026-05-20] — "Bloco B do sistema OnlyCoins — backend (Supabase + WhatsApp OTP + endpoints)"
 **Impacto:** Crítico | **Módulos Afetados:** `supabase/migrations/`, `services/wa-otp/`, `api/_lib/`, `api/{otp-request,otp-verify,credits-balance,credit-pack,wiinpay-webhook}.js`, `api/create-pix.js` (refactor), `package.json` (raiz), Vercel env vars
 - **O que foi feito:** Build inteiro do backend do sistema de créditos (OnlyCoins) — mecânica free diário + pago persistente, com identidade ancorada em WhatsApp OTP.
