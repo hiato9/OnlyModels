@@ -5,6 +5,100 @@
 
 ---
 
+### [2026-05-20] — "Bloco B do sistema OnlyCoins — backend (Supabase + WhatsApp OTP + endpoints)"
+**Impacto:** Crítico | **Módulos Afetados:** `supabase/migrations/`, `services/wa-otp/`, `api/_lib/`, `api/{otp-request,otp-verify,credits-balance,credit-pack,wiinpay-webhook}.js`, `api/create-pix.js` (refactor), `package.json` (raiz), Vercel env vars
+- **O que foi feito:** Build inteiro do backend do sistema de créditos (OnlyCoins) — mecânica free diário + pago persistente, com identidade ancorada em WhatsApp OTP.
+  - **Schema Supabase (`0001_credits_schema.sql`):** 4 tabelas (`users`, `otp_codes`, `credit_transactions`, `pending_credit_purchases`) + função RPC atômica `increment_paid_credits` (evita race no webhook) + RLS habilitado em todas. Backend usa `service_role` pra bypassar RLS; nenhum cliente acessa as tabelas direto.
+  - **Microserviço WhatsApp (`services/wa-otp/`):** ~140 LoC de Node + Express + `@whiskeysockets/baileys` (não Evolution — Evolution v2 estoura 1GB de RAM). Endpoint único `POST /send-otp` autenticado por header `X-API-Secret`. Container Docker com healthcheck, volume persistente pra auth state, memory limit 400M. Reconexão com backoff exponencial. Acompanha `setup.sh` que automatiza instalação do Docker + .env + up do compose.
+  - **Helpers compartilhados (`api/_lib/`):** `cors.js` (extraído do create-pix antigo), `supabase.js` (admin client), `phone.js` (normalização BR → E.164), `jwt.js` (jose HS256, 1h TTL), `otp.js` (bcrypt+pepper, 6 dígitos, 5min, max 5 tentativas), `wiinpay.js` (extraído do create-pix com auto-recovery de api_key).
+  - **Endpoints novos:** `otp-request` (rate limit 1/min e 5/h, invalida códigos anteriores, chama Baileys), `otp-verify` (confere código, upsert do user, devolve JWT), `credits-balance` (GET autenticado, retorna paid_balance), `credit-pack` (JWT obrigatório, packs hard-coded server-side, grava pending_credit_purchases), `wiinpay-webhook` (idempotente via UPDATE WHERE status='pending', credita via RPC + insere no ledger).
+  - **Refactor `api/create-pix.js`:** de ~160 → 30 linhas. Agora usa `_lib/wiinpay.js` (DRY com o novo `credit-pack.js`).
+  - **`package.json` raiz:** adicionado `@supabase/supabase-js`, `bcryptjs`, `jose` + `"type": "module"`.
+  - **Vercel env vars setadas via CLI:** `JWT_SECRET`, `OTP_PEPPER`, `WIINPAY_WEBHOOK_SECRET` (Production + Development; Preview pulada — CLI wrapper resistiu, usuário adiciona manualmente se precisar de preview deploys).
+- **Por que foi feito:** Sacada do dono — sistema de créditos diários (free + pago via WhatsApp OTP) muda a unit economics do produto. Mecânica de "energia" (Tinder Boost / gacha) cria hábito de retorno via sunk-cost diário + impulso de compra quando zera. Bloco B fecha o backend completo; Bloco C (frontend) vem depois que o Bloco A (provisionamento operacional — Supabase rodado, chip+VM+webhook configurados) estiver pronto.
+- **Decisões arquiteturais (documentadas em memória do projeto):**
+  - Baileys self-hosted (não Evolution) — 1GB AMD aguenta com folga, Evolution v2 estouraria.
+  - Identidade só em paying users — free credits ficam device-bound em localStorage; paid credits viram identity-bound no Supabase quando o lead verifica WhatsApp.
+  - Multi-day context = caminho barato (extensão do funil JSON atual via `dayCount` + nó `n_returning_lead`), NÃO LLM-driven.
+  - Schema usa `paid_credits_balance` (neutro); UI vai usar a label "OnlyCoins" (decoupling brand ↔ schema).
+- **Riscos / Pontos de Quebra Resolvidos:**
+  - Atomicidade do webhook — `UPDATE WHERE status='pending'` é o guard idempotente; múltiplas entregas do mesmo evento creditam só uma vez.
+  - Race em `users.paid_credits_balance` — RPC `increment_paid_credits` faz o `balance = balance + delta` no Postgres direto (não round-trip select+update).
+  - Reuso de OTP velho — `otp-request` invalida códigos anteriores não-usados antes de inserir novo.
+  - Rate limit — 1 OTP/min e 5/hora por número (queries em `otp_codes` com filtro temporal).
+  - Webhook Wiinpay — auth via header secret estático + nome do header configurável (pode ser `X-Webhook-Secret` ou `X-Wiinpay-Signature`); ajustar quando o painel da Wiinpay for configurado.
+  - CORS — todos os endpoints novos usam o helper `_lib/cors.js` (whitelist + preview vercel.app).
+- **Validação:** `node --check` passou em todos os 13 arquivos JS novos. **Não testado end-to-end** — depende do Bloco A (Supabase migrado ✓, chip + VM + tunnel + webhook Wiinpay) estar de pé.
+- **Diff Físico:**
+  - [NEW] `supabase/migrations/0001_credits_schema.sql`
+  - [NEW] `services/wa-otp/{index.js, package.json, Dockerfile, compose.yml, .dockerignore, setup.sh}`
+  - [NEW] `api/_lib/{cors, supabase, phone, jwt, otp, wiinpay}.js`
+  - [NEW] `api/{otp-request, otp-verify, credits-balance, credit-pack, wiinpay-webhook}.js`
+  - [REWRITE] `api/create-pix.js` (160 → 30 linhas, usa `_lib/wiinpay.js`)
+  - [MODIFY] `package.json` (raiz; adicionado deps + `type: module`)
+  - [VERCEL ENV] +`JWT_SECRET`, +`OTP_PEPPER`, +`WIINPAY_WEBHOOK_SECRET` (Production + Development)
+
+---
+
+### [2026-05-18] — "Instrumentação do funil de chat (analytics provider-agnostic)"
+**Impacto:** Médio | **Módulos Afetados:** `funnels/analytics.js` (novo), `funnels/engine.js`, `chat.html`
+- **O que foi feito:** Criado `funnels/analytics.js` — wrapper fino `window.ChatAnalytics.track(eventName, props)` que (1) loga no console, (2) empilha em buffer circular de 100 eventos em `localStorage` (`omchat:events`) pra debug offline, (3) repassa pra `window.posthog.capture` e/ou `window.gtag` se carregados. Engine dispara 7 eventos nos gargalos de conversão: `chat_opened` (com `resumed`), `chat_first_message_sent`, `funnel_node_reached`, `intent_classified`, `offer_shown`, `offer_clicked`, `pix_generated`, `chat_session_ended` (em `pagehide`/`visibilitychange`, com duração e contagens). `modelId`/`modelName` são injetados automaticamente pelo helper `fire()`.
+- **Por que foi feito:** Antes da instrumentação, não dava pra responder "onde o lead cai?". Agora dá pra montar heatmap de drop-off por nó, tunar a regex do classificador com dados reais e medir conversão por SKU. Decisão de vendor (PostHog vs GA4) ficou desacoplada — basta colar o snippet no `<head>` do `chat.html` depois.
+- **Validação:** Manual em DevTools — `[track]` aparece no console em cada evento; `localStorage.getItem('omchat:events')` retorna o histórico; nenhum erro com `posthog`/`gtag` ausentes.
+- **Diff Físico:**
+  - [NEW] `funnels/analytics.js`
+  - [MODIFY] `funnels/engine.js` (helper `fire()` + 7 pontos de tracking)
+  - [MODIFY] `chat.html` (script `analytics.js` carrega antes do `engine.js`; bump `engine.js?v=4`)
+
+---
+
+### [2026-05-18] — "Funis roteirizados para Isabela, Helena e Yasmin"
+**Impacto:** Médio | **Módulos Afetados:** `funnels/isabelamartins.json` (novo), `funnels/helenarocha.json` (novo), `funnels/yasmincastro.json` (novo)
+- **O que foi feito:** 3 funis reais (~80 nós cada) seguindo a topologia universal `hook → discovery → tease → 4 ofertas (foto/video/premium/vip)` com branches de `downsell/reassure/resgate` em cada `wait_user`. Voz de cada modelo derivada do bio + tier:
+  - **Isabela Martins (platinum)** — carinhosa-malandra, "mundo secreto". `foto R$ 9,90 / video R$ 19,90 / premium R$ 39,90 / vip R$ 99,90`.
+  - **Helena Rocha (gold)** — carioca descolada, praia/verão, tom "mermão". `foto R$ 9,90 / video R$ 19,90 / premium R$ 34,90 / vip R$ 84,90`.
+  - **Yasmin Castro (silver)** — novinha curiosa-tímida "primeira vez", menor fricção de entrada. `foto R$ 7,90 / video R$ 14,90 / premium R$ 19,90 / vip R$ 54,90`.
+  - Preços de premium/vip casam com `creator.subscriptionTiers` existente. Foto/video são PPV novos, dimensionados pelo tier.
+- **Por que foi feito:** Sair do funil de demo (`_schema.example.json`) pra teste em campo com 3 perfis representativos da grade — um por tier (platinum/gold/silver) — antes de roteirizar as outras 13 modelos.
+- **Riscos / Pontos de Quebra Resolvidos:** Match de slug do engine é `funnels/<lowercase-name-no-spaces>.json`. As 13 modelos restantes seguem usando `_schema.example.json` como fallback até serem roteirizadas — sem erro 404 no chat.
+- **Diff Físico:**
+  - [NEW] `funnels/isabelamartins.json` (~694 linhas)
+  - [NEW] `funnels/helenarocha.json` (~694 linhas)
+  - [NEW] `funnels/yasmincastro.json` (~694 linhas)
+
+---
+
+### [2026-05-18] — "Refactor: botão 'Conversar' agora abre chat direto (fim da taxa de mensagem)"
+**Impacto:** Baixo | **Módulos Afetados:** `app.js`, `index.html`, `pagina-2.html`, `model-profile.html`
+- **O que foi feito:** O botão "Conversar com X" no perfil completo (`renderFullProfilePage`) abria o modal de checkout PIX cobrando `R$ 19,90` de "taxa de mensagem". Como o chat por trás dessa taxa nunca foi construído, o botão virou âncora `<a href="chat.html?id=N">`. O branch `planType === 'chat'` foi removido de `openCheckoutModal` (estava morto — nenhum chamador restante usava). Cache buster de `app.js` subiu `v=6 → v=7` em `index.html`, `pagina-2.html`, `model-profile.html` e `chat.html` pra clientes velhos pegarem o novo link.
+- **Por que foi feito:** O funil de chat agora vende PPV/Premium/VIP inline via offer cards — taxa de entrada virou redundante e atrito desnecessário.
+- **Validação:** Manual — clicar em "Conversar com {Nome}" em qualquer perfil completo abre `chat.html?id=N` com a modelo correta carregada.
+- **Diff Físico:**
+  - [MODIFY] `app.js` (botão `<a>`, branch `chat` removido em `openCheckoutModal`)
+  - [MODIFY] `index.html`, `pagina-2.html`, `model-profile.html` (bump `app.js?v=7`)
+
+---
+
+### [2026-05-18] — "Feature: chat dirigido por funil + classificador de intenção por regex"
+**Impacto:** Crítico | **Módulos Afetados:** `chat.html` (nova), `funnels/engine.js` (novo), `funnels/_schema.example.json` (novo)
+- **O que foi feito:** Nova página `chat.html` (UI mobile-first full-screen, estilo messenger) + state machine `funnels/engine.js` que lê o JSON do funil da modelo e dirige a conversa. Destaques do engine:
+  - **4 tipos de nó:** `model_message`, `model_media`, `model_offer`, `wait_user`.
+  - **Classificador de intenção:** regex sobre 10 categorias (`pronto_pagar`, `pechinchando`, `vai_pensar`, `cetico`, `tarado`, `frio`, `despedida`, `rude`, etc.) com ordem de prioridade pra evitar ambiguidade.
+  - **`inputPlaceholder` por funil** — lead vê CTA customizado no campo de input.
+  - **`captureAs` em `wait_user`** — armazena resposta do usuário em variável de sessão pra interpolação (`{{userName}}` etc.).
+  - **Persistência:** sessão em `localStorage` por `modelId`; bump de `funnelVersion` invalida sessões velhas automaticamente.
+  - **Offer cards inline:** thumbnail blurada + preço + CTA "LIBERAR PIX" → handoff pro endpoint Wiinpay existente (`/api/create-pix`).
+  - **Pós-PIX:** transição `onPaymentGenerated` avança o funil pra nó de delivery (mock media) e marca o SKU como comprado no client.
+  - **Hint vazio:** "X está online, manda uma mensagem 👋" porque a modelo não cumprimenta primeiro.
+- **Por que foi feito:** Sair de modal estático "assinar plano" pra um funil persuasivo que simula conversa real — captura objeção (`pechinchando`/`cetico`) e oferece downsell/reassure antes de perder o lead, replicando o que já funciona em outras operações.
+- **Riscos / Pontos de Quebra Resolvidos:** Schema documentado em `funnels/_schema.example.json` (24 nós cobrindo todos os tipos) — engine usa esse fallback quando o JSON da modelo não existe, evitando erro em modelos não-roteirizadas.
+- **Diff Físico:**
+  - [NEW] `chat.html` (~580 linhas)
+  - [NEW] `funnels/engine.js` (~578 linhas)
+  - [NEW] `funnels/_schema.example.json` (~287 linhas)
+
+---
+
 ### [2026-05-12] — "Fix: model-profile.html ainda pedia dados do comprador"
 **Impacto:** Médio | **Módulos Afetados:** `model-profile.html`
 - **O que foi feito:** Removido o bloco "Dados Pessoais" (3 inputs: nome completo, email, CPF) do modal de checkout em `model-profile.html`. Texto do botão atualizado de "PAGAR E DESBLOQUEAR SEGREDO" → "GERAR PIX AGORA" pra alinhar com o `index.html`.
