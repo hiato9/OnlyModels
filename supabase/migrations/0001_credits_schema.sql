@@ -97,6 +97,14 @@ AS $$
      WHERE id = p_user_id;
 $$;
 
+-- Sem o REVOKE abaixo, qualquer cliente com a anon key (que é pública)
+-- conseguiria chamar /rest/v1/rpc/increment_paid_credits e creditar o
+-- próprio saldo. SECURITY DEFINER + EXECUTE público = vetor de fraude.
+REVOKE EXECUTE ON FUNCTION increment_paid_credits(UUID, INTEGER)
+    FROM PUBLIC, anon, authenticated;
+GRANT EXECUTE ON FUNCTION increment_paid_credits(UUID, INTEGER)
+    TO service_role;
+
 -- ============================================================
 -- RLS: tranca tudo. O backend usa SERVICE_ROLE_KEY que bypassa
 -- RLS. Nenhum cliente (anon/authenticated) acessa essas tabelas
