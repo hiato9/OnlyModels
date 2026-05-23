@@ -5,6 +5,26 @@
 
 ---
 
+### [2026-05-23] — "Bloco C / sub-fase 1 do OnlyCoins — módulo client + HUD + consumo de mensagem"
+**Impacto:** Crítico | **Módulos Afetados:** `funnels/credits.js` (novo), `funnels/engine.js`, `chat.html`
+- **O que foi feito:** Primeiro pedaço do frontend do sistema de créditos. Foco: ligar a UI ao bucket free e ao consumo por mensagem. OTP e pack picker ficam pras sub-fases C.2 e C.3.
+  - **`funnels/credits.js` (novo, ~190 LoC):** Módulo `window.OnlyCoins` com API `getBalance/canAfford/spend/refreshFromServer/setSession/clearSession/onChange`. Free bucket em `localStorage` (`omcoins:free`, `{balance, dateUTC}`) com reset diário UTC e inicial de `FREE_DAILY=10`. Paid balance em cache local (`omcoins:session`), sincroniza com `GET /api/credits-balance` quando há token (`omcoins:token`). `spend()` consome free primeiro e paid depois, emite evento e dispara `credits_spent` no `ChatAnalytics`. 401 do servidor → `clearSession('token_expired')` automático.
+  - **HUD no header do chat (`chat.html`):** chip dourado clicável `🪙 N` reflete `free + paid`. Vira vermelho quando saldo ≤ 2 (`.is-low`). Click hoje só dispara `coins_hud_clicked` no analytics — modal de paywall + pack picker chegam na C.2/C.3.
+  - **Consumo no engine (`funnels/engine.js`):** `handleUserSubmit` cobra 1 crédito antes de processar. Se `canAfford(1)` falha, chama `openOutOfCreditsPaywall()` (stub com `alert` + `out_of_credits` no analytics — placeholder até C.2). Cache busters: `engine.js?v=4 → v=5`.
+- **Por que foi feito:** Backend (Bloco B) já expõe os endpoints, mas nenhuma tela usa OnlyCoins ainda. Sub-fase 1 entrega o esqueleto end-to-end visível: lead abre o chat, vê 10 créditos, cada mensagem decrementa, ao zerar bate em paywall (mesmo que ainda seja um `alert`). Quebrando o Bloco C em 3 sub-fases pra cada uma ser deployável e testável no funil real.
+- **Decisões de produto tomadas nesta sub-fase (não estavam fechadas na memória do design):**
+  - **Cota free diária = 10 créditos.** Suficiente pra abrir e tocar alguns nós do funil; zera no meio = trigger natural pra OTP.
+  - **Custo = 1 crédito por mensagem do usuário.** Mídia da modelo e offer cards continuam grátis (são parte do flow, não ação do user).
+  - **Reset diário em UTC**, não horário local — evita gaming trocando timezone do device.
+- **Riscos / Pontos de Quebra Resolvidos:** Free bucket é device-bound puro (esperado pelo design — anônimo não tem identidade); paid bucket só existe após OTP (sub-fase C.2). `OnlyCoins.spend` é idempotente em falha (não decrementa se `canAfford` falhar). HUD se mantém em sync via `onChange`. Carregamento: `credits.js` carrega antes de `engine.js` (engine consome `window.OnlyCoins` — ordem importa).
+- **Validação:** `node --check` em `credits.js` e `engine.js`. **Não testado em browser** — recomendado abrir `chat.html?id=0` localmente e (1) confirmar HUD começa em 10, (2) enviar mensagens e ver HUD decrementar, (3) zerar e ver paywall stub disparar.
+- **Diff Físico:**
+  - [NEW] `funnels/credits.js`
+  - [MODIFY] `funnels/engine.js` (stub `openOutOfCreditsPaywall` + gate em `handleUserSubmit`)
+  - [MODIFY] `chat.html` (CSS `.coins-hud`, markup do HUD no header, script `credits.js?v=1`, boot do HUD + auto-refresh quando há sessão; bump `engine.js?v=5`)
+
+---
+
 ### [2026-05-22] — "Fix de segurança: trancar RPC `increment_paid_credits` de roles públicos"
 **Impacto:** Crítico | **Módulos Afetados:** `supabase/migrations/0001_credits_schema.sql`, Supabase prod (RPC `public.increment_paid_credits`)
 - **O que foi feito:** Aplicado `REVOKE EXECUTE ON FUNCTION increment_paid_credits(UUID, INTEGER) FROM PUBLIC, anon, authenticated` + `GRANT EXECUTE ... TO service_role` direto no Supabase de produção (`nrvjblecjgjtqyauhnav`) via MCP. A mesma sequência foi adicionada ao arquivo da migration pra que próximas reaplicações (clone do projeto, ambiente novo) já saiam trancadas.

@@ -343,9 +343,28 @@
         }
     }
 
+    // Stub do paywall — substituído pelo modal real na sub-fase C.2/C.3.
+    function openOutOfCreditsPaywall() {
+        fire('out_of_credits', window.OnlyCoins ? OnlyCoins.getBalance() : {});
+        alert('Suas OnlyCoins acabaram. Confirme seu WhatsApp pra recarregar (em breve).');
+    }
+
     async function handleUserSubmit(text) {
         const trimmed = (text || '').trim();
         if (!trimmed) return;
+
+        // Custo: 1 crédito por mensagem do usuário. Free primeiro, paid depois.
+        if (window.OnlyCoins) {
+            if (!OnlyCoins.canAfford(1)) {
+                openOutOfCreditsPaywall();
+                return;
+            }
+            const spent = OnlyCoins.spend(1);
+            if (!spent.ok) {
+                openOutOfCreditsPaywall();
+                return;
+            }
+        }
 
         disableInput();
         $('chatInput').value = '';
