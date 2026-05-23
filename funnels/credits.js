@@ -198,6 +198,57 @@
         }
     }
 
+    // ---------- OTP flow ----------
+    async function requestOtp(phone) {
+        try {
+            const res = await fetch(`${API_BASE}/otp-request`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ phone })
+            });
+            const data = await res.json().catch(() => ({}));
+            if (!res.ok) {
+                return {
+                    ok: false,
+                    status: res.status,
+                    error: data.error || 'Falha ao enviar código',
+                    retry_after_seconds: data.retry_after_seconds
+                };
+            }
+            return { ok: true, data };
+        } catch (e) {
+            return { ok: false, error: 'Erro de conexão. Tenta de novo.' };
+        }
+    }
+
+    async function verifyOtp(phone, code) {
+        try {
+            const res = await fetch(`${API_BASE}/otp-verify`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ phone, code })
+            });
+            const data = await res.json().catch(() => ({}));
+            if (!res.ok) {
+                return {
+                    ok: false,
+                    status: res.status,
+                    error: data.error || 'Código incorreto',
+                    attempts_remaining: data.attempts_remaining
+                };
+            }
+            setSession({
+                token: data.token,
+                paid_balance: data.paid_balance,
+                user_id: data.user_id,
+                whatsapp: data.whatsapp
+            });
+            return { ok: true, data };
+        } catch (e) {
+            return { ok: false, error: 'Erro de conexão. Tenta de novo.' };
+        }
+    }
+
     // ---------- Listeners ----------
     function onChange(cb) {
         listeners.add(cb);
@@ -217,6 +268,8 @@
         setSession,
         clearSession,
         onChange,
+        requestOtp,
+        verifyOtp,
         FREE_DAILY
     };
 })();

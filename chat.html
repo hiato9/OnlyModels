@@ -484,6 +484,112 @@
             cursor: pointer;
         }
 
+        /* ---------- COINS PAYWALL MODAL ---------- */
+        .coins-paywall-hero {
+            text-align: center;
+            margin-bottom: 18px;
+        }
+        .coins-paywall-hero .hero-icon {
+            font-size: 2.4rem;
+            line-height: 1;
+            margin-bottom: 6px;
+        }
+        .coins-paywall-hero .hero-title {
+            color: #fff;
+            font-size: 1.05rem;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+        .coins-paywall-hero .hero-sub {
+            color: #aaa;
+            font-size: 0.82rem;
+            line-height: 1.4;
+        }
+        .coins-step { display: none; }
+        .coins-step.active { display: block; }
+        .coins-field {
+            margin-bottom: 14px;
+        }
+        .coins-field label {
+            display: block;
+            color: #ccc;
+            font-size: 0.78rem;
+            margin-bottom: 6px;
+            font-weight: 500;
+        }
+        .coins-field input {
+            width: 100%;
+            padding: 12px 14px;
+            background: rgba(0,0,0,0.6);
+            border: 1px solid rgba(255,215,0,0.25);
+            border-radius: 10px;
+            color: #fff;
+            font-family: inherit;
+            font-size: 1rem;
+            outline: none;
+            box-sizing: border-box;
+        }
+        .coins-field input:focus { border-color: var(--gold); }
+        .coins-field input.is-error { border-color: #ff5a5a; }
+        .coins-field input.code-input {
+            text-align: center;
+            font-size: 1.6rem;
+            font-weight: 700;
+            letter-spacing: 0.5em;
+            font-family: monospace;
+            padding-left: 0.5em;
+        }
+        .coins-error {
+            color: #ff7a7a;
+            font-size: 0.78rem;
+            margin-top: 6px;
+            min-height: 1em;
+        }
+        .coins-cta {
+            width: 100%;
+            background: linear-gradient(135deg, #FFD700, #FFC700);
+            color: #000;
+            border: none;
+            padding: 14px;
+            border-radius: 10px;
+            font-weight: 800;
+            font-size: 0.95rem;
+            letter-spacing: 0.5px;
+            cursor: pointer;
+        }
+        .coins-cta:disabled { opacity: 0.6; cursor: wait; }
+        .coins-resend {
+            display: block;
+            margin: 12px auto 0;
+            background: transparent;
+            border: none;
+            color: var(--gold);
+            font-size: 0.82rem;
+            text-decoration: underline;
+            cursor: pointer;
+        }
+        .coins-resend:disabled {
+            color: #555;
+            text-decoration: none;
+            cursor: not-allowed;
+        }
+        .coins-back {
+            background: transparent;
+            border: none;
+            color: #888;
+            font-size: 0.82rem;
+            cursor: pointer;
+            margin-top: 8px;
+            text-decoration: underline;
+        }
+        .coins-success {
+            text-align: center;
+            color: #6ee07a;
+            font-size: 0.95rem;
+            padding: 14px 0;
+            font-weight: 600;
+        }
+
         /* Disclaimer footer */
         .chat-disclaimer {
             font-size: 0.65rem;
@@ -575,14 +681,68 @@
         </div>
     </div>
 
+    <!-- OnlyCoins Paywall Modal -->
+    <div class="chat-modal" id="coinsPaywallModal">
+        <div class="chat-modal-content">
+            <div class="chat-modal-header">
+                <div class="chat-modal-title">OnlyCoins</div>
+                <button class="chat-modal-close" onclick="CoinsPaywall.close()">&times;</button>
+            </div>
+
+            <!-- STEP 1: phone -->
+            <div class="coins-step active" id="coinsStepPhone">
+                <div class="coins-paywall-hero">
+                    <div class="hero-icon">🪙</div>
+                    <div class="hero-title" id="coinsPhoneTitle">Suas OnlyCoins acabaram</div>
+                    <div class="hero-sub">Confirme seu WhatsApp pra continuar conversando. Mandamos um código no zap em segundos.</div>
+                </div>
+                <div class="coins-field">
+                    <label for="coinsPhoneInput">Seu WhatsApp</label>
+                    <input type="tel" id="coinsPhoneInput" inputmode="numeric" placeholder="(11) 99999-9999" autocomplete="tel-national" maxlength="16">
+                    <div class="coins-error" id="coinsPhoneError"></div>
+                </div>
+                <button class="coins-cta" id="coinsPhoneSubmit">ENVIAR CÓDIGO</button>
+            </div>
+
+            <!-- STEP 2: code -->
+            <div class="coins-step" id="coinsStepCode">
+                <div class="coins-paywall-hero">
+                    <div class="hero-icon">💬</div>
+                    <div class="hero-title">Digite o código</div>
+                    <div class="hero-sub">Mandamos um código de 6 dígitos pra <span id="coinsPhoneEcho" style="color:var(--gold);font-weight:600;"></span>. Vale por 5 minutos.</div>
+                </div>
+                <div class="coins-field">
+                    <label for="coinsCodeInput">Código de 6 dígitos</label>
+                    <input type="tel" id="coinsCodeInput" class="code-input" inputmode="numeric" placeholder="000000" maxlength="6" autocomplete="one-time-code">
+                    <div class="coins-error" id="coinsCodeError"></div>
+                </div>
+                <button class="coins-cta" id="coinsCodeSubmit">VERIFICAR</button>
+                <button class="coins-resend" id="coinsResendBtn">Reenviar código</button>
+                <div style="text-align:center;">
+                    <button class="coins-back" onclick="CoinsPaywall.goToPhoneStep()">← usar outro número</button>
+                </div>
+            </div>
+
+            <!-- STEP 3: success (bridge para C.3 / pack picker) -->
+            <div class="coins-step" id="coinsStepSuccess">
+                <div class="coins-paywall-hero">
+                    <div class="hero-icon">✅</div>
+                    <div class="hero-title">WhatsApp confirmado!</div>
+                    <div class="hero-sub">Você tem <strong style="color:var(--gold);" id="coinsPaidEcho">0</strong> OnlyCoins na conta. Compre um pack pra continuar — packs chegam aqui em breve.</div>
+                </div>
+                <button class="coins-cta" onclick="CoinsPaywall.close()">VOLTAR AO CHAT</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Load model data (creatorsData) -->
     <script src="app.js?v=7"></script>
     <!-- Analytics wrapper (must load before engine) -->
     <script src="funnels/analytics.js?v=1"></script>
     <!-- OnlyCoins client (must load before engine — engine consumes credits) -->
-    <script src="funnels/credits.js?v=1"></script>
+    <script src="funnels/credits.js?v=2"></script>
     <!-- Funnel engine -->
-    <script src="funnels/engine.js?v=5"></script>
+    <script src="funnels/engine.js?v=6"></script>
 
     <script>
         // ----- OnlyCoins HUD wiring -----
@@ -597,17 +757,197 @@
             renderCoinsHud(OnlyCoins.getBalance());
             OnlyCoins.onChange(renderCoinsHud);
             document.getElementById('coinsHud').addEventListener('click', () => {
-                // Paywall + pack picker chegam na sub-fase C.2/C.3.
-                // Por enquanto só dispara evento de telemetria pra medir intenção.
                 if (window.ChatAnalytics) {
                     ChatAnalytics.track('coins_hud_clicked', OnlyCoins.getBalance());
                 }
+                CoinsPaywall.open('hud_click');
             });
             // Se já existe sessão (JWT), busca paid balance fresco do servidor.
             if (OnlyCoins.hasSession()) {
                 OnlyCoins.refreshFromServer();
             }
         }
+
+        // ----- OnlyCoins Paywall (modal) -----
+        const CoinsPaywall = (function () {
+            const RESEND_COOLDOWN_S = 60;
+            let lastPhone = '';      // E.164-ish normalizado para reenvio
+            let resendTimer = null;
+
+            function $(id) { return document.getElementById(id); }
+            function setStep(id) {
+                ['coinsStepPhone', 'coinsStepCode', 'coinsStepSuccess']
+                    .forEach(s => $(s).classList.toggle('active', s === id));
+            }
+            function showError(elId, msg) { $(elId).textContent = msg || ''; }
+            function setLoading(btn, loading, label) {
+                btn.disabled = !!loading;
+                btn.textContent = loading ? 'Enviando...' : label;
+            }
+
+            function maskPhone(raw) {
+                const d = String(raw || '').replace(/\D/g, '').slice(0, 11);
+                if (d.length <= 2) return d.length ? '(' + d : '';
+                if (d.length <= 7) return '(' + d.slice(0, 2) + ') ' + d.slice(2);
+                return '(' + d.slice(0, 2) + ') ' + d.slice(2, 7) + '-' + d.slice(7);
+            }
+
+            function open(reason) {
+                if (window.ChatAnalytics) {
+                    ChatAnalytics.track('paywall_opened', { reason: reason || 'unknown', ...OnlyCoins.getBalance() });
+                }
+                // Reseta UI
+                showError('coinsPhoneError', '');
+                showError('coinsCodeError', '');
+                $('coinsCodeInput').value = '';
+                if (OnlyCoins.hasSession()) {
+                    // Sessão ativa → já cai no success (vai virar pack picker em C.3)
+                    $('coinsPaidEcho').textContent = String(OnlyCoins.getBalance().paid);
+                    setStep('coinsStepSuccess');
+                } else {
+                    setStep('coinsStepPhone');
+                    setTimeout(() => $('coinsPhoneInput').focus(), 80);
+                }
+                $('coinsPaywallModal').classList.add('active');
+            }
+
+            function close() {
+                $('coinsPaywallModal').classList.remove('active');
+                clearResendTimer();
+            }
+
+            function goToPhoneStep() {
+                setStep('coinsStepPhone');
+                showError('coinsPhoneError', '');
+                setTimeout(() => $('coinsPhoneInput').focus(), 80);
+            }
+
+            function goToCodeStep() {
+                setStep('coinsStepCode');
+                $('coinsPhoneEcho').textContent = maskPhone(lastPhone);
+                showError('coinsCodeError', '');
+                $('coinsCodeInput').value = '';
+                startResendCooldown(RESEND_COOLDOWN_S);
+                setTimeout(() => $('coinsCodeInput').focus(), 80);
+            }
+
+            function clearResendTimer() {
+                if (resendTimer) { clearInterval(resendTimer); resendTimer = null; }
+                const btn = $('coinsResendBtn');
+                if (btn) { btn.disabled = false; btn.textContent = 'Reenviar código'; }
+            }
+
+            function startResendCooldown(seconds) {
+                clearResendTimer();
+                const btn = $('coinsResendBtn');
+                let remaining = seconds;
+                btn.disabled = true;
+                btn.textContent = `Reenviar em ${remaining}s`;
+                resendTimer = setInterval(() => {
+                    remaining -= 1;
+                    if (remaining <= 0) { clearResendTimer(); return; }
+                    btn.textContent = `Reenviar em ${remaining}s`;
+                }, 1000);
+            }
+
+            async function submitPhone() {
+                const raw = $('coinsPhoneInput').value;
+                const digits = raw.replace(/\D/g, '');
+                if (digits.length < 10 || digits.length > 11) {
+                    showError('coinsPhoneError', 'Número incompleto (DDD + 8 ou 9 dígitos).');
+                    $('coinsPhoneInput').classList.add('is-error');
+                    return;
+                }
+                $('coinsPhoneInput').classList.remove('is-error');
+                showError('coinsPhoneError', '');
+
+                const btn = $('coinsPhoneSubmit');
+                setLoading(btn, true, 'ENVIAR CÓDIGO');
+                const result = await OnlyCoins.requestOtp(digits);
+                setLoading(btn, false, 'ENVIAR CÓDIGO');
+
+                if (!result.ok) {
+                    const msg = result.retry_after_seconds
+                        ? `${result.error} (aguarda ${result.retry_after_seconds}s)`
+                        : result.error;
+                    showError('coinsPhoneError', msg);
+                    return;
+                }
+                lastPhone = digits;
+                goToCodeStep();
+            }
+
+            async function submitCode() {
+                const code = $('coinsCodeInput').value.replace(/\D/g, '');
+                if (code.length !== 6) {
+                    showError('coinsCodeError', 'Digite os 6 dígitos.');
+                    $('coinsCodeInput').classList.add('is-error');
+                    return;
+                }
+                $('coinsCodeInput').classList.remove('is-error');
+                showError('coinsCodeError', '');
+
+                const btn = $('coinsCodeSubmit');
+                setLoading(btn, true, 'VERIFICAR');
+                const result = await OnlyCoins.verifyOtp(lastPhone, code);
+                setLoading(btn, false, 'VERIFICAR');
+
+                if (!result.ok) {
+                    let msg = result.error || 'Código incorreto';
+                    if (typeof result.attempts_remaining === 'number') {
+                        msg += ` (${result.attempts_remaining} tentativa(s) restante(s))`;
+                    }
+                    showError('coinsCodeError', msg);
+                    $('coinsCodeInput').classList.add('is-error');
+                    return;
+                }
+                // Sucesso — sessão criada pelo OnlyCoins.verifyOtp via setSession.
+                $('coinsPaidEcho').textContent = String(OnlyCoins.getBalance().paid);
+                setStep('coinsStepSuccess');
+                clearResendTimer();
+            }
+
+            async function resendCode() {
+                if (!lastPhone) { goToPhoneStep(); return; }
+                showError('coinsCodeError', '');
+                const result = await OnlyCoins.requestOtp(lastPhone);
+                if (!result.ok) {
+                    const msg = result.retry_after_seconds
+                        ? `${result.error} (aguarda ${result.retry_after_seconds}s)`
+                        : result.error;
+                    showError('coinsCodeError', msg);
+                    return;
+                }
+                startResendCooldown(RESEND_COOLDOWN_S);
+            }
+
+            // Wire DOM events (uma vez)
+            document.addEventListener('DOMContentLoaded', () => {
+                const phoneInput = $('coinsPhoneInput');
+                phoneInput.addEventListener('input', (e) => {
+                    e.target.value = maskPhone(e.target.value);
+                });
+                phoneInput.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter') { e.preventDefault(); submitPhone(); }
+                });
+                $('coinsPhoneSubmit').addEventListener('click', submitPhone);
+
+                const codeInput = $('coinsCodeInput');
+                codeInput.addEventListener('input', (e) => {
+                    const d = e.target.value.replace(/\D/g, '').slice(0, 6);
+                    e.target.value = d;
+                    if (d.length === 6) submitCode();
+                });
+                codeInput.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter') { e.preventDefault(); submitCode(); }
+                });
+                $('coinsCodeSubmit').addEventListener('click', submitCode);
+                $('coinsResendBtn').addEventListener('click', resendCode);
+            });
+
+            return { open, close, goToPhoneStep, goToCodeStep, submitPhone, submitCode };
+        })();
+        window.CoinsPaywall = CoinsPaywall;
 
         // Boot: read ?id, init engine
         document.addEventListener('DOMContentLoaded', () => {

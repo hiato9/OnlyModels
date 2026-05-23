@@ -5,6 +5,31 @@
 
 ---
 
+### [2026-05-23] — "Bloco C / sub-fase 2 do OnlyCoins — Paywall + OTP UI"
+**Impacto:** Crítico | **Módulos Afetados:** `chat.html`, `funnels/credits.js`, `funnels/engine.js`
+- **O que foi feito:** Substituído o stub `alert` da sub-fase C.1 pelo modal real de paywall com fluxo de OTP via WhatsApp.
+  - **Modal `#coinsPaywallModal` (`chat.html`):** 3 steps em containers sobrepostos (`.coins-step`): (1) input de WhatsApp com máscara BR `(NN) NNNNN-NNNN` + botão ENVIAR CÓDIGO; (2) input de 6 dígitos com auto-submit ao completar + link "Reenviar código" (cooldown 60s) + voltar pra trocar número; (3) tela de sucesso ("WhatsApp confirmado, X OnlyCoins na conta — packs em breve") como bridge pra C.3.
+  - **`window.CoinsPaywall` (script inline no chat.html):** API `open(reason) / close() / goToPhoneStep() / goToCodeStep() / submitPhone() / submitCode()`. Lida com loading nos botões, mensagens de erro inline, máscara em tempo real, autofocus, atalho Enter, auto-submit do código ao completar 6 dígitos. Cooldown do reenviar persiste no `setInterval` interno. Se já há sessão JWT ativa, abre direto no step de sucesso.
+  - **`OnlyCoins.requestOtp(phone) / verifyOtp(phone, code)` (`funnels/credits.js`):** Wrappers HTTP sobre `/api/otp-request` e `/api/otp-verify`. Em sucesso de verify, chama `setSession()` automaticamente (token + paid_balance + user_id + whatsapp). Em erro, devolve `{ok:false, error, status, retry_after_seconds?, attempts_remaining?}` pra UI traduzir.
+  - **HUD agora abre o modal (`chat.html`):** Click no chip 🪙 chama `CoinsPaywall.open('hud_click')` (antes só logava no analytics).
+  - **Engine wire-up (`funnels/engine.js`):** `openOutOfCreditsPaywall` deixa de ser stub — chama `window.CoinsPaywall.open('out_of_credits')` quando disponível, com fallback pro alert antigo (defensivo, não deve ocorrer em chat.html).
+  - **Cache busters:** `credits.js?v=1 → v=2`, `engine.js?v=5 → v=6`.
+- **Por que foi feito:** A C.1 entregou o HUD funcional mas o paywall era só um `alert`. Sub-fase C.2 fecha a ponte entre "anônimo com free credits" e "lead identificado com paid balance", que é o pré-requisito pra C.3 vender pack. Sem OTP funcionando, não dá pra associar compra de pack a uma identidade — daí ser o próximo passo natural depois da C.1.
+- **Decisões de UX desta sub-fase:**
+  - **Máscara BR client-side** (`(11) 99999-9999`) — backend normaliza pra E.164 (`+55119...`).
+  - **Auto-submit do código** ao digitar 6 dígitos — comportamento esperado em apps de OTP, reduz fricção.
+  - **Step de sucesso intermediário** (em vez de fechar direto após verify) — prepara o terreno pro pack picker da C.3 sem precisar reabrir o modal.
+  - **Cooldown 60s no resend** — espelha o rate limit do backend (1/min) pra dar feedback antes do erro do servidor.
+  - **Reabertura via HUD** — se a sessão já existe, modal abre direto no step "sucesso" mostrando o saldo. Vira atalho de compra na C.3.
+- **Riscos / Pontos de Quebra Resolvidos:** Token JWT expira em 1h (`_lib/jwt.js`); quando o `refreshFromServer` recebe 401, dispara `clearSession('token_expired')` — próximo gasto cai no paywall normalmente. Máscara aceita só dígitos (regex `\D` strip) — `paste` de "+55 11 99999-9999" é normalizado. `OnlyCoins.requestOtp` envia o número como dígitos puros — backend `_lib/phone.js` é quem aplica E.164. Não testado end-to-end ainda — depende do Bloco A operacional (chip + VM + Baileys) pra OTP chegar de fato no zap.
+- **Validação:** `node --check` em `credits.js` e `engine.js`. **Não testado em browser** — recomendado abrir `chat.html?id=0`, esgotar os 10 free credits, ver o modal abrir, e (sem Bloco A pronto) confirmar que UI lida bem com erro do `/api/otp-request` (provavelmente 5xx até o microserviço Baileys subir).
+- **Diff Físico:**
+  - [MODIFY] `chat.html` (CSS `.coins-*`, markup do modal, módulo `CoinsPaywall` no script; bump `credits.js?v=2` e `engine.js?v=6`)
+  - [MODIFY] `funnels/credits.js` (+ `requestOtp/verifyOtp` no objeto público)
+  - [MODIFY] `funnels/engine.js` (`openOutOfCreditsPaywall` chama `CoinsPaywall.open`)
+
+---
+
 ### [2026-05-23] — "Bloco C / sub-fase 1 do OnlyCoins — módulo client + HUD + consumo de mensagem"
 **Impacto:** Crítico | **Módulos Afetados:** `funnels/credits.js` (novo), `funnels/engine.js`, `chat.html`
 - **O que foi feito:** Primeiro pedaço do frontend do sistema de créditos. Foco: ligar a UI ao bucket free e ao consumo por mensagem. OTP e pack picker ficam pras sub-fases C.2 e C.3.

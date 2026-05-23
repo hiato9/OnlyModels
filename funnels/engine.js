@@ -343,10 +343,13 @@
         }
     }
 
-    // Stub do paywall — substituído pelo modal real na sub-fase C.2/C.3.
     function openOutOfCreditsPaywall() {
         fire('out_of_credits', window.OnlyCoins ? OnlyCoins.getBalance() : {});
-        alert('Suas OnlyCoins acabaram. Confirme seu WhatsApp pra recarregar (em breve).');
+        if (window.CoinsPaywall && typeof window.CoinsPaywall.open === 'function') {
+            window.CoinsPaywall.open('out_of_credits');
+        } else {
+            alert('Suas OnlyCoins acabaram. Recarregue pra continuar.');
+        }
     }
 
     async function handleUserSubmit(text) {
