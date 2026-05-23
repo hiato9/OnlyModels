@@ -681,34 +681,34 @@
         </div>
     </div>
 
-    <!-- OnlyCoins Paywall Modal -->
+    <!-- OnlyCoins Paywall / Account Modal -->
     <div class="chat-modal" id="coinsPaywallModal">
         <div class="chat-modal-content">
             <div class="chat-modal-header">
-                <div class="chat-modal-title">OnlyCoins</div>
+                <div class="chat-modal-title" id="coinsModalTitle">Sua conta</div>
                 <button class="chat-modal-close" onclick="CoinsPaywall.close()">&times;</button>
             </div>
 
             <!-- STEP 1: phone -->
             <div class="coins-step active" id="coinsStepPhone">
                 <div class="coins-paywall-hero">
-                    <div class="hero-icon">🪙</div>
-                    <div class="hero-title" id="coinsPhoneTitle">Suas OnlyCoins acabaram</div>
-                    <div class="hero-sub">Confirme seu WhatsApp pra continuar conversando. Mandamos um código no zap em segundos.</div>
+                    <div class="hero-icon" id="coinsPhoneIcon">👤</div>
+                    <div class="hero-title" id="coinsPhoneTitle">Crie sua conta pra continuar</div>
+                    <div class="hero-sub" id="coinsPhoneSub">Sua conta vai guardar seus OnlyCoins e seu histórico — em qualquer dispositivo, é só confirmar seu WhatsApp e tu volta de onde parou. Sem senha. Só um código no zap.</div>
                 </div>
                 <div class="coins-field">
                     <label for="coinsPhoneInput">Seu WhatsApp</label>
                     <input type="tel" id="coinsPhoneInput" inputmode="numeric" placeholder="(11) 99999-9999" autocomplete="tel-national" maxlength="16">
                     <div class="coins-error" id="coinsPhoneError"></div>
                 </div>
-                <button class="coins-cta" id="coinsPhoneSubmit">ENVIAR CÓDIGO</button>
+                <button class="coins-cta" id="coinsPhoneSubmit">CRIAR CONTA</button>
             </div>
 
             <!-- STEP 2: code -->
             <div class="coins-step" id="coinsStepCode">
                 <div class="coins-paywall-hero">
                     <div class="hero-icon">💬</div>
-                    <div class="hero-title">Digite o código</div>
+                    <div class="hero-title">Confirme seu número</div>
                     <div class="hero-sub">Mandamos um código de 6 dígitos pra <span id="coinsPhoneEcho" style="color:var(--gold);font-weight:600;"></span>. Vale por 5 minutos.</div>
                 </div>
                 <div class="coins-field">
@@ -716,19 +716,29 @@
                     <input type="tel" id="coinsCodeInput" class="code-input" inputmode="numeric" placeholder="000000" maxlength="6" autocomplete="one-time-code">
                     <div class="coins-error" id="coinsCodeError"></div>
                 </div>
-                <button class="coins-cta" id="coinsCodeSubmit">VERIFICAR</button>
+                <button class="coins-cta" id="coinsCodeSubmit">CONFIRMAR</button>
                 <button class="coins-resend" id="coinsResendBtn">Reenviar código</button>
                 <div style="text-align:center;">
                     <button class="coins-back" onclick="CoinsPaywall.goToPhoneStep()">← usar outro número</button>
                 </div>
             </div>
 
-            <!-- STEP 3: success (bridge para C.3 / pack picker) -->
+            <!-- STEP 3: success (sessão criada / ativa) -->
             <div class="coins-step" id="coinsStepSuccess">
                 <div class="coins-paywall-hero">
-                    <div class="hero-icon">✅</div>
-                    <div class="hero-title">WhatsApp confirmado!</div>
-                    <div class="hero-sub">Você tem <strong style="color:var(--gold);" id="coinsPaidEcho">0</strong> OnlyCoins na conta. Compre um pack pra continuar — packs chegam aqui em breve.</div>
+                    <div class="hero-icon" id="coinsSuccessIcon">🎉</div>
+                    <div class="hero-title" id="coinsSuccessTitle">Conta criada!</div>
+                    <div class="hero-sub" id="coinsSuccessSub"></div>
+                </div>
+                <div style="background:rgba(0,0,0,0.4); border:1px solid rgba(255,215,0,0.15); border-radius:10px; padding:12px 14px; margin-bottom:16px;">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+                        <span style="color:#aaa; font-size:0.78rem;">Conta vinculada a</span>
+                        <span id="coinsAccountPhone" style="color:#fff; font-weight:600; font-size:0.88rem; font-family:monospace;"></span>
+                    </div>
+                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                        <span style="color:#aaa; font-size:0.78rem;">Saldo de OnlyCoins</span>
+                        <span style="color:var(--gold); font-weight:700; font-size:1rem;">🪙 <span id="coinsPaidEcho">0</span></span>
+                    </div>
                 </div>
                 <button class="coins-cta" onclick="CoinsPaywall.close()">VOLTAR AO CHAT</button>
             </div>
@@ -743,6 +753,8 @@
     <script src="funnels/credits.js?v=2"></script>
     <!-- Funnel engine -->
     <script src="funnels/engine.js?v=6"></script>
+    <!-- chat.html v=7 — paywall reframe -->
+    <meta name="x-chat-build" content="v7-account-reframe">
 
     <script>
         // ----- OnlyCoins HUD wiring -----
@@ -792,6 +804,54 @@
                 return '(' + d.slice(0, 2) + ') ' + d.slice(2, 7) + '-' + d.slice(7);
             }
 
+            function formatPhonePretty(digits) {
+                const d = String(digits || '').replace(/\D/g, '');
+                if (d.length === 13 && d.startsWith('55')) {
+                    // 55 11 99999 9999
+                    return '+55 (' + d.slice(2, 4) + ') ' + d.slice(4, 9) + '-' + d.slice(9);
+                }
+                if (d.length === 11) return '(' + d.slice(0, 2) + ') ' + d.slice(2, 7) + '-' + d.slice(7);
+                if (d.length === 10) return '(' + d.slice(0, 2) + ') ' + d.slice(2, 6) + '-' + d.slice(6);
+                return d;
+            }
+
+            function applyEntryCopy(reason) {
+                const phoneTitle = $('coinsPhoneTitle');
+                const phoneSub = $('coinsPhoneSub');
+                const phoneIcon = $('coinsPhoneIcon');
+                const modalTitle = $('coinsModalTitle');
+                if (reason === 'out_of_credits') {
+                    modalTitle.textContent = 'Continue conversando';
+                    phoneIcon.textContent = '🚪';
+                    phoneTitle.textContent = 'Crie sua conta pra continuar';
+                    phoneSub.innerHTML = 'Seus créditos diários acabaram. <strong style="color:#fff;">Cria sua conta com WhatsApp</strong> e desbloqueia o restante da conversa. Sem senha — só um código no zap.';
+                } else {
+                    modalTitle.textContent = 'Sua conta';
+                    phoneIcon.textContent = '👤';
+                    phoneTitle.textContent = 'Crie sua conta OnlyModels';
+                    phoneSub.innerHTML = 'Sua conta guarda seus OnlyCoins e seu histórico — em qualquer dispositivo, é só confirmar seu WhatsApp e tu volta de onde parou. <strong style="color:#fff;">Sem senha.</strong> Só um código no zap.';
+                }
+            }
+
+            function applySessionCopy(session) {
+                const phone = session && session.whatsapp ? session.whatsapp : '';
+                $('coinsAccountPhone').textContent = formatPhonePretty(phone);
+                $('coinsPaidEcho').textContent = String(OnlyCoins.getBalance().paid);
+                $('coinsModalTitle').textContent = 'Sua conta';
+                $('coinsSuccessIcon').textContent = '👤';
+                $('coinsSuccessTitle').textContent = 'Você está conectado';
+                $('coinsSuccessSub').textContent = 'Essa é sua conta individual. Em qualquer dispositivo, é só confirmar esse número que tu volta pra ela.';
+            }
+
+            function applyJustCreatedCopy(whatsappDigits) {
+                $('coinsAccountPhone').textContent = formatPhonePretty(whatsappDigits);
+                $('coinsPaidEcho').textContent = String(OnlyCoins.getBalance().paid);
+                $('coinsModalTitle').textContent = 'Conta criada';
+                $('coinsSuccessIcon').textContent = '🎉';
+                $('coinsSuccessTitle').textContent = 'Conta criada!';
+                $('coinsSuccessSub').textContent = 'Sua conta tá pronta. Em qualquer dispositivo, é só confirmar esse número que tu volta pra ela.';
+            }
+
             function open(reason) {
                 if (window.ChatAnalytics) {
                     ChatAnalytics.track('paywall_opened', { reason: reason || 'unknown', ...OnlyCoins.getBalance() });
@@ -801,10 +861,15 @@
                 showError('coinsCodeError', '');
                 $('coinsCodeInput').value = '';
                 if (OnlyCoins.hasSession()) {
-                    // Sessão ativa → já cai no success (vai virar pack picker em C.3)
-                    $('coinsPaidEcho').textContent = String(OnlyCoins.getBalance().paid);
+                    // Sessão ativa → vai pro card da conta (com saldo + número)
+                    const session = (function () {
+                        try { return JSON.parse(localStorage.getItem('omcoins:session') || 'null'); }
+                        catch (e) { return null; }
+                    })();
+                    applySessionCopy(session);
                     setStep('coinsStepSuccess');
                 } else {
+                    applyEntryCopy(reason);
                     setStep('coinsStepPhone');
                     setTimeout(() => $('coinsPhoneInput').focus(), 80);
                 }
@@ -902,7 +967,7 @@
                     return;
                 }
                 // Sucesso — sessão criada pelo OnlyCoins.verifyOtp via setSession.
-                $('coinsPaidEcho').textContent = String(OnlyCoins.getBalance().paid);
+                applyJustCreatedCopy(lastPhone);
                 setStep('coinsStepSuccess');
                 clearResendTimer();
             }

@@ -5,6 +5,50 @@
 
 ---
 
+### [2026-05-23] — "Bloco A operacional do OnlyCoins — VM Oracle + Baileys + ngrok + Vercel env vars"
+**Impacto:** Crítico | **Módulos Afetados:** Oracle VM 137.131.176.81, `services/wa-otp/{index.js,package.json}`, Vercel env vars
+- **O que foi feito:** Provisionamento do canal de OTP via WhatsApp do começo ao fim — o último bloco operacional faltando pra UI do Bloco C funcionar de verdade.
+  - **VM Oracle Cloud Free Tier:** Ubuntu 24.04 LTS, 2 cores AMD, 954Mi RAM, 45GB. Criada 1G de swap (`/swapfile`, persistido em `/etc/fstab`) — Baileys consome ~150MB e a folga era estreita.
+  - **Docker 29.5.2 + Compose v5.1.4:** instalado via `get.docker.com`, habilitado no boot.
+  - **Microserviço `wa-otp` (`services/wa-otp/`):** SCP-ado pra `~/wa-otp` na VM, `.env` com `WA_OTP_SERVICE_SECRET` (32 bytes hex randômicos) criado com `chmod 600`. Container subiu via `docker compose up -d --build`. Volume `wa-otp_wa-auth` persiste o auth-state do WhatsApp entre restarts.
+  - **Patches no Baileys (necessários pra v7.x rodar):** (a) `printQRInTerminal: true` foi deprecado — agora usa `qrcode-terminal` no listener de `connection.update` pra renderizar o QR no stdout do container; (b) `fetchLatestBaileysVersion()` é chamado no boot pra resolver a versão do WA Web atual (resolveu o `code=405` que travava o pareamento) + `Browsers.ubuntu('Chrome')` como user-agent.
+  - **Pareamento WhatsApp:** QR escaneado no chip dedicado +55 19 98250-2053 (Aparelhos Conectados). `[wa-otp] WhatsApp conectado.` confirmado no log + `/healthz` retorna `wa_connected: true`.
+  - **Tunnel HTTPS via ngrok:** Cloudflare Named Tunnel descartado por falta de domínio na CF; ngrok free tier escolhido por dar 1 dev domain estático grátis. URL fixa: `https://kooky-clustered-levitate.ngrok-free.dev`. ngrok rodando via systemd unit `ngrok-wa-otp.service` (`Restart=always`, `User=ubuntu`, executa `ngrok http --url=... 3000`).
+  - **Vercel env vars (Production + Development):** `WA_OTP_SERVICE_URL=https://kooky-clustered-levitate.ngrok-free.dev` + `WA_OTP_SERVICE_SECRET=<mesmo da VM>`. Redeploy `dpl_...` em produção.
+  - **Smoke test end-to-end:** OTP gerado pelo Vercel chegou no WhatsApp pessoal do dono em ~3-5s. Pipeline frontend → API → Supabase → Baileys → zap → verify → JWT → setSession validado.
+- **Por que foi feito:** Bloco B (backend) e sub-fase C.1/C.2 (frontend) já estavam prontos mas o `/api/otp-request` simplesmente falhava porque não havia microserviço atrás dele. Esse bloco fecha a infra mínima viável: o lead consegue criar conta de verdade.
+- **Decisões operacionais tomadas nessa sessão:**
+  - **ngrok > Cloudflare Tunnel** pra MVP (sem domínio na CF). Trade: ngrok free tem 4 req/s limit + dev domain `.ngrok-free.dev` (não custom). Suficiente pra OTP (1 envio/usuário/minuto). Migração pra Cloudflare Named Tunnel fica pendente até o dono cadastrar um domínio na CF.
+  - **systemd > nohup** pro ngrok — reconecta automaticamente em crash/reboot, journal logs centralizados.
+  - **Swap de 1G** mesmo com 1G RAM — barato e remove um failure mode silencioso.
+  - **`Browsers.ubuntu('Chrome')`** no Baileys — fingerprint mais "comum" reduz risco de ban (vs IDs custom esquisitos).
+- **Riscos / Pontos de Quebra Resolvidos:**
+  - `code=405` no Baileys: resolvido pelo `fetchLatestBaileysVersion()`. Se voltar a aparecer no futuro, o Baileys precisa de upgrade (provavelmente WA mudou protocolo).
+  - URL do ngrok é dev domain — se o dono apagar/recriar no painel, troca e quebra. Hoje é o único endpoint contratado na conta.
+  - "Timed Out" / "no name present" nos logs do Baileys são warnings cosméticos de init queries (sync de chats antigos que não usamos). Não afetam `sendMessage`.
+  - Banimento do chip: chip dedicado, descartável (R$10), não é o pessoal do dono. Se cair, troca chip + re-escaneia QR (auth-data ainda fica no volume pra próxima vez).
+- **Diff Físico:**
+  - [MODIFY] `services/wa-otp/index.js` (qrcode-terminal, fetchLatestBaileysVersion, Browsers.ubuntu)
+  - [MODIFY] `services/wa-otp/package.json` (+ `qrcode-terminal`)
+  - [VM] swap 1G, Docker 29.5.2, container `wa-otp` up, ngrok via systemd
+  - [VERCEL ENV] + `WA_OTP_SERVICE_URL`, + `WA_OTP_SERVICE_SECRET` (Production + Development)
+
+---
+
+### [2026-05-23] — "UX: reframe paywall — 'criar conta' em vez de 'recarregar OnlyCoins'"
+**Impacto:** Médio | **Módulos Afetados:** `chat.html`
+- **O que foi feito:** Mudança de copy/UX do modal (lógica e backend inalterados). Antes o modal tratava o paywall como "suas OnlyCoins acabaram, confirme seu zap pra recarregar"; agora é explicitamente "crie sua conta com WhatsApp". O ato de confirmar o número passa a comunicar identidade individual em vez de "destravar grana".
+  - **Título do modal:** "OnlyCoins" → varia por contexto ("Sua conta" / "Continue conversando" / "Conta criada").
+  - **Step 1 (phone):** ícone 🪙 → 👤 (entrada normal) ou 🚪 (out-of-credits). Título "Suas OnlyCoins acabaram" → "Crie sua conta pra continuar"/"Crie sua conta OnlyModels". Sub explica que a conta carrega OnlyCoins+histórico entre devices, sem senha. CTA: "ENVIAR CÓDIGO" → "CRIAR CONTA".
+  - **Step 2 (code):** "Digite o código" → "Confirme seu número". CTA: "VERIFICAR" → "CONFIRMAR".
+  - **Step 3 (sucesso):** card destacado com `Conta vinculada a <número formatado>` + `Saldo de OnlyCoins 🪙 0`. Reassurance: "em qualquer dispositivo é só confirmar esse número que tu volta pra ela". Diferencia visualmente sessão recém-criada (🎉 "Conta criada!") de sessão já ativa abrindo o modal de novo (👤 "Você está conectado").
+- **Por que foi feito:** Insight do dono testando o fluxo — recebeu o código, mas o framing "OnlyCoins acabaram" não comunicava que ele estava criando uma identidade individual no produto. A intenção do sistema é exatamente essa: WhatsApp = chave de conta pessoal, com saldo, histórico e portabilidade. Sem isso explícito, vira só "paywall genérico". Conversão e retenção dependem do lead entender que tem uma conta dele ali.
+- **Riscos / Pontos de Quebra Resolvidos:** Nenhuma mudança de API/contrato — `OnlyCoins.requestOtp/verifyOtp` permanecem iguais. `formatPhonePretty` cobre 3 formatos vindos do backend (E.164 com 13 dígitos / sem prefixo 11 dígitos / fixo 10 dígitos). Re-leitura de `omcoins:session` direto do localStorage no `open()` evita estado stale entre aberturas do modal.
+- **Diff Físico:**
+  - [MODIFY] `chat.html` (markup dos 3 steps + 4 funções novas em `CoinsPaywall`: `formatPhonePretty`, `applyEntryCopy`, `applySessionCopy`, `applyJustCreatedCopy`)
+
+---
+
 ### [2026-05-23] — "Bloco C / sub-fase 2 do OnlyCoins — Paywall + OTP UI"
 **Impacto:** Crítico | **Módulos Afetados:** `chat.html`, `funnels/credits.js`, `funnels/engine.js`
 - **O que foi feito:** Substituído o stub `alert` da sub-fase C.1 pelo modal real de paywall com fluxo de OTP via WhatsApp.

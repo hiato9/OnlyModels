@@ -4,9 +4,10 @@
 // Roda na VM Oracle 1GB. Reconecta sozinho exceto em loggedOut (precisa rescan).
 
 import express from 'express';
-import baileys, { DisconnectReason, useMultiFileAuthState } from '@whiskeysockets/baileys';
+import baileys, { DisconnectReason, useMultiFileAuthState, fetchLatestBaileysVersion, Browsers } from '@whiskeysockets/baileys';
 import { Boom } from '@hapi/boom';
 import pino from 'pino';
+import qrcode from 'qrcode-terminal';
 
 const makeWASocket = baileys.default || baileys;
 
@@ -27,11 +28,13 @@ let connectAttempts = 0;
 
 async function startWA() {
     const { state, saveCreds } = await useMultiFileAuthState(AUTH_DIR);
+    const { version, isLatest } = await fetchLatestBaileysVersion();
+    console.log(`[wa-otp] Usando WA Web v${version.join('.')} (latest=${isLatest})`);
     sock = makeWASocket({
         auth: state,
-        printQRInTerminal: true,
         logger,
-        browser: ['OnlyModels OTP', 'Chrome', '120.0.0'],
+        version,
+        browser: Browsers.ubuntu('Chrome'),
     });
 
     sock.ev.on('creds.update', saveCreds);
@@ -39,7 +42,8 @@ async function startWA() {
     sock.ev.on('connection.update', (update) => {
         const { connection, lastDisconnect, qr } = update;
         if (qr) {
-            console.log('[wa-otp] QR code acima — escaneie com o WhatsApp do número dedicado.');
+            console.log('[wa-otp] QR code — escaneie com o WhatsApp do número dedicado:');
+            qrcode.generate(qr, { small: true });
         }
         if (connection === 'open') {
             isConnected = true;
