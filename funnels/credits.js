@@ -221,6 +221,32 @@
         }
     }
 
+    async function buyPack(packKey) {
+        const token = getToken();
+        if (!token) return { ok: false, error: 'Sessão não iniciada', needAuth: true };
+        try {
+            const res = await fetch(`${API_BASE}/credit-pack`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + token
+                },
+                body: JSON.stringify({ pack_key: packKey })
+            });
+            const data = await res.json().catch(() => ({}));
+            if (res.status === 401) {
+                clearSession('token_expired');
+                return { ok: false, status: 401, needAuth: true, error: 'Sua sessão expirou. Confirme o WhatsApp de novo.' };
+            }
+            if (!res.ok) {
+                return { ok: false, status: res.status, error: data.error || 'Falha ao gerar PIX' };
+            }
+            return { ok: true, data };
+        } catch (e) {
+            return { ok: false, error: 'Erro de conexão. Tenta de novo.' };
+        }
+    }
+
     async function verifyOtp(phone, code) {
         try {
             const res = await fetch(`${API_BASE}/otp-verify`, {
@@ -270,6 +296,7 @@
         onChange,
         requestOtp,
         verifyOtp,
+        buyPack,
         FREE_DAILY
     };
 })();

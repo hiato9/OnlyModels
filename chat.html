@@ -590,6 +590,199 @@
             font-weight: 600;
         }
 
+        /* ---------- SHOP STEP ---------- */
+        .coins-account-banner {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            background: linear-gradient(135deg, rgba(255,215,0,0.10), rgba(0,0,0,0.4));
+            border: 1px solid rgba(255,215,0,0.20);
+            border-radius: 12px;
+            padding: 10px 14px;
+            margin-bottom: 16px;
+        }
+        .coins-account-banner .account-left {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            min-width: 0;
+        }
+        .coins-account-banner .account-icon {
+            font-size: 1.3rem;
+            line-height: 1;
+        }
+        .coins-account-banner .account-label {
+            font-size: 0.72rem;
+            color: #aaa;
+            line-height: 1.1;
+        }
+        .coins-account-banner .account-phone {
+            font-size: 0.85rem;
+            color: #fff;
+            font-weight: 600;
+            font-family: monospace;
+            line-height: 1.2;
+        }
+        .coins-account-banner .account-balance {
+            text-align: right;
+            flex-shrink: 0;
+        }
+        .coins-account-banner .balance-label {
+            font-size: 0.7rem;
+            color: #aaa;
+            line-height: 1.1;
+        }
+        .coins-account-banner .balance-value {
+            font-size: 1rem;
+            color: var(--gold);
+            font-weight: 700;
+            line-height: 1.2;
+            font-variant-numeric: tabular-nums;
+        }
+        .shop-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #fff;
+            text-align: center;
+            margin-bottom: 4px;
+        }
+        .shop-subtitle {
+            font-size: 0.82rem;
+            color: #aaa;
+            text-align: center;
+            margin-bottom: 16px;
+        }
+        .pack-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 14px;
+        }
+        .pack-card {
+            position: relative;
+            background: #181818;
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 12px;
+            padding: 14px 12px 12px;
+            text-align: center;
+            cursor: pointer;
+            color: #fff;
+            transition: transform 0.12s ease, border-color 0.12s ease;
+            font-family: inherit;
+        }
+        .pack-card:active { transform: scale(0.97); }
+        .pack-card:hover { border-color: rgba(255,215,0,0.35); }
+        .pack-card--featured {
+            border-color: var(--gold);
+            background: linear-gradient(180deg, #1a1500, #181818);
+        }
+        .pack-card .pack-badge {
+            position: absolute;
+            top: -9px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--gold);
+            color: #000;
+            font-size: 0.65rem;
+            font-weight: 800;
+            letter-spacing: 0.5px;
+            padding: 3px 10px;
+            border-radius: 999px;
+            white-space: nowrap;
+        }
+        .pack-card .pack-credits {
+            font-size: 1.4rem;
+            font-weight: 800;
+            color: var(--gold);
+            line-height: 1;
+            margin-bottom: 2px;
+        }
+        .pack-card .pack-credits-label {
+            font-size: 0.7rem;
+            color: #aaa;
+            margin-bottom: 10px;
+            letter-spacing: 0.3px;
+        }
+        .pack-card .pack-price {
+            font-size: 1rem;
+            font-weight: 700;
+            color: #fff;
+            margin-top: 4px;
+        }
+        .pack-card .pack-bonus {
+            font-size: 0.7rem;
+            color: #6ee07a;
+            margin-top: 4px;
+            font-weight: 600;
+        }
+        .pack-card:disabled {
+            opacity: 0.5;
+            cursor: wait;
+        }
+        .shop-error {
+            color: #ff7a7a;
+            font-size: 0.78rem;
+            text-align: center;
+            margin-bottom: 8px;
+            min-height: 1em;
+        }
+
+        /* ---------- PIX STEP (within paywall modal) ---------- */
+        .coins-pix-summary {
+            text-align: center;
+            margin-bottom: 16px;
+            font-size: 0.88rem;
+            color: #ddd;
+        }
+        .coins-pix-summary strong { color: var(--gold); }
+        .coins-pix-area {
+            text-align: center;
+            padding: 14px;
+            background: rgba(0,0,0,0.5);
+            border-radius: 10px;
+            border: 1px dashed var(--gold);
+            margin-bottom: 14px;
+        }
+        .coins-pix-area img {
+            width: 180px;
+            height: 180px;
+            margin: 0 auto;
+            display: block;
+            border-radius: 8px;
+            background: #fff;
+        }
+        .coins-pix-code-row {
+            display: flex;
+            gap: 8px;
+            margin-top: 12px;
+        }
+        .coins-pix-code-row input {
+            flex: 1;
+            padding: 9px;
+            background: rgba(0,0,0,0.6);
+            border: 1px solid rgba(255,215,0,0.3);
+            border-radius: 6px;
+            color: #fff;
+            font-size: 0.72rem;
+            font-family: monospace;
+        }
+        .coins-pix-code-row button {
+            background: var(--gold);
+            color: #000;
+            padding: 0 14px;
+            border: none;
+            border-radius: 6px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+        .coins-pix-tip {
+            font-size: 0.72rem;
+            color: #888;
+            text-align: center;
+            margin: 8px 0 14px;
+        }
+
         /* Disclaimer footer */
         .chat-disclaimer {
             font-size: 0.65rem;
@@ -723,24 +916,73 @@
                 </div>
             </div>
 
-            <!-- STEP 3: success (sessão criada / ativa) -->
-            <div class="coins-step" id="coinsStepSuccess">
+            <!-- STEP 4: shop (pack picker) -->
+            <div class="coins-step" id="coinsStepShop">
+                <div class="coins-account-banner">
+                    <div class="account-left">
+                        <span class="account-icon" id="coinsShopAccountIcon">👤</span>
+                        <div style="min-width:0;">
+                            <div class="account-label" id="coinsShopBannerLabel">Sua conta</div>
+                            <div class="account-phone" id="coinsShopBannerPhone"></div>
+                        </div>
+                    </div>
+                    <div class="account-balance">
+                        <div class="balance-label">Saldo</div>
+                        <div class="balance-value">🪙 <span id="coinsShopBalance">0</span></div>
+                    </div>
+                </div>
+                <div class="shop-title">Escolha seu pack</div>
+                <div class="shop-subtitle">Mais OnlyCoins, mais conversa.</div>
+                <div class="shop-error" id="coinsShopError"></div>
+                <div class="pack-grid">
+                    <button type="button" class="pack-card" data-pack="starter">
+                        <div class="pack-credits">50</div>
+                        <div class="pack-credits-label">ONLYCOINS</div>
+                        <div class="pack-price">R$ 4,90</div>
+                    </button>
+                    <button type="button" class="pack-card pack-card--featured" data-pack="pro">
+                        <span class="pack-badge">MAIS ESCOLHIDO</span>
+                        <div class="pack-credits">120</div>
+                        <div class="pack-credits-label">ONLYCOINS</div>
+                        <div class="pack-price">R$ 9,90</div>
+                        <div class="pack-bonus">+15% bônus</div>
+                    </button>
+                    <button type="button" class="pack-card" data-pack="boost">
+                        <div class="pack-credits">280</div>
+                        <div class="pack-credits-label">ONLYCOINS</div>
+                        <div class="pack-price">R$ 19,90</div>
+                        <div class="pack-bonus">+28% bônus</div>
+                    </button>
+                    <button type="button" class="pack-card" data-pack="whale">
+                        <div class="pack-credits">800</div>
+                        <div class="pack-credits-label">ONLYCOINS</div>
+                        <div class="pack-price">R$ 49,90</div>
+                        <div class="pack-bonus">+36% bônus</div>
+                    </button>
+                </div>
+                <div style="text-align:center;">
+                    <button class="coins-back" onclick="CoinsPaywall.close()">Voltar ao chat</button>
+                </div>
+            </div>
+
+            <!-- STEP 5: PIX -->
+            <div class="coins-step" id="coinsStepPix">
                 <div class="coins-paywall-hero">
-                    <div class="hero-icon" id="coinsSuccessIcon">🎉</div>
-                    <div class="hero-title" id="coinsSuccessTitle">Conta criada!</div>
-                    <div class="hero-sub" id="coinsSuccessSub"></div>
+                    <div class="hero-icon">💰</div>
+                    <div class="hero-title">PIX gerado</div>
                 </div>
-                <div style="background:rgba(0,0,0,0.4); border:1px solid rgba(255,215,0,0.15); border-radius:10px; padding:12px 14px; margin-bottom:16px;">
-                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
-                        <span style="color:#aaa; font-size:0.78rem;">Conta vinculada a</span>
-                        <span id="coinsAccountPhone" style="color:#fff; font-weight:600; font-size:0.88rem; font-family:monospace;"></span>
-                    </div>
-                    <div style="display:flex; justify-content:space-between; align-items:center;">
-                        <span style="color:#aaa; font-size:0.78rem;">Saldo de OnlyCoins</span>
-                        <span style="color:var(--gold); font-weight:700; font-size:1rem;">🪙 <span id="coinsPaidEcho">0</span></span>
+                <div class="coins-pix-summary" id="coinsPixSummary"></div>
+                <div class="coins-pix-area">
+                    <div style="color:var(--gold); font-weight:700; margin-bottom:8px;">Escaneie o QR Code</div>
+                    <img id="coinsPixImg" src="" alt="QR Code PIX">
+                    <div style="color:#aaa; font-size:0.72rem; margin-top:10px;">Ou copia o código:</div>
+                    <div class="coins-pix-code-row">
+                        <input type="text" id="coinsPixCode" readonly>
+                        <button type="button" id="coinsPixCopyBtn">COPIAR</button>
                     </div>
                 </div>
-                <button class="coins-cta" onclick="CoinsPaywall.close()">VOLTAR AO CHAT</button>
+                <div class="coins-pix-tip">🔒 Pagamento processado pela Wiinpay · crédito cai automaticamente (até 1 min após pagar)</div>
+                <button class="coins-cta" type="button" id="coinsPixBackBtn">VOLTAR PRA LOJA</button>
             </div>
         </div>
     </div>
@@ -750,11 +992,11 @@
     <!-- Analytics wrapper (must load before engine) -->
     <script src="funnels/analytics.js?v=1"></script>
     <!-- OnlyCoins client (must load before engine — engine consumes credits) -->
-    <script src="funnels/credits.js?v=2"></script>
+    <script src="funnels/credits.js?v=3"></script>
     <!-- Funnel engine -->
     <script src="funnels/engine.js?v=6"></script>
-    <!-- chat.html v=7 — paywall reframe -->
-    <meta name="x-chat-build" content="v7-account-reframe">
+    <!-- chat.html v=8 — onlycoins shop -->
+    <meta name="x-chat-build" content="v8-onlycoins-shop">
 
     <script>
         // ----- OnlyCoins HUD wiring -----
@@ -788,7 +1030,7 @@
 
             function $(id) { return document.getElementById(id); }
             function setStep(id) {
-                ['coinsStepPhone', 'coinsStepCode', 'coinsStepSuccess']
+                ['coinsStepPhone', 'coinsStepCode', 'coinsStepShop', 'coinsStepPix']
                     .forEach(s => $(s).classList.toggle('active', s === id));
             }
             function showError(elId, msg) { $(elId).textContent = msg || ''; }
@@ -833,23 +1075,23 @@
                 }
             }
 
-            function applySessionCopy(session) {
+            function applyShopBanner(mode) {
+                const session = (function () {
+                    try { return JSON.parse(localStorage.getItem('omcoins:session') || 'null'); }
+                    catch (e) { return null; }
+                })();
                 const phone = session && session.whatsapp ? session.whatsapp : '';
-                $('coinsAccountPhone').textContent = formatPhonePretty(phone);
-                $('coinsPaidEcho').textContent = String(OnlyCoins.getBalance().paid);
-                $('coinsModalTitle').textContent = 'Sua conta';
-                $('coinsSuccessIcon').textContent = '👤';
-                $('coinsSuccessTitle').textContent = 'Você está conectado';
-                $('coinsSuccessSub').textContent = 'Essa é sua conta individual. Em qualquer dispositivo, é só confirmar esse número que tu volta pra ela.';
-            }
-
-            function applyJustCreatedCopy(whatsappDigits) {
-                $('coinsAccountPhone').textContent = formatPhonePretty(whatsappDigits);
-                $('coinsPaidEcho').textContent = String(OnlyCoins.getBalance().paid);
-                $('coinsModalTitle').textContent = 'Conta criada';
-                $('coinsSuccessIcon').textContent = '🎉';
-                $('coinsSuccessTitle').textContent = 'Conta criada!';
-                $('coinsSuccessSub').textContent = 'Sua conta tá pronta. Em qualquer dispositivo, é só confirmar esse número que tu volta pra ela.';
+                $('coinsShopBannerPhone').textContent = formatPhonePretty(phone);
+                $('coinsShopBalance').textContent = String(OnlyCoins.getBalance().paid);
+                if (mode === 'just_created') {
+                    $('coinsModalTitle').textContent = 'Conta criada · OnlyCoins';
+                    $('coinsShopAccountIcon').textContent = '🎉';
+                    $('coinsShopBannerLabel').textContent = 'Conta criada · vinculada a';
+                } else {
+                    $('coinsModalTitle').textContent = 'Loja de OnlyCoins';
+                    $('coinsShopAccountIcon').textContent = '👤';
+                    $('coinsShopBannerLabel').textContent = 'Sua conta';
+                }
             }
 
             function open(reason) {
@@ -859,21 +1101,105 @@
                 // Reseta UI
                 showError('coinsPhoneError', '');
                 showError('coinsCodeError', '');
+                showError('coinsShopError', '');
                 $('coinsCodeInput').value = '';
                 if (OnlyCoins.hasSession()) {
-                    // Sessão ativa → vai pro card da conta (com saldo + número)
-                    const session = (function () {
-                        try { return JSON.parse(localStorage.getItem('omcoins:session') || 'null'); }
-                        catch (e) { return null; }
-                    })();
-                    applySessionCopy(session);
-                    setStep('coinsStepSuccess');
+                    // Sessão ativa → vai direto pra loja (com saldo + número no banner)
+                    goToShopStep('returning');
                 } else {
                     applyEntryCopy(reason);
                     setStep('coinsStepPhone');
                     setTimeout(() => $('coinsPhoneInput').focus(), 80);
                 }
                 $('coinsPaywallModal').classList.add('active');
+            }
+
+            async function goToShopStep(mode) {
+                applyShopBanner(mode === 'just_created' ? 'just_created' : 'returning');
+                setStep('coinsStepShop');
+                showError('coinsShopError', '');
+                // Refresh server-side balance (webhook pode ter creditado entre interações).
+                if (OnlyCoins.hasSession()) {
+                    OnlyCoins.refreshFromServer().then(() => {
+                        $('coinsShopBalance').textContent = String(OnlyCoins.getBalance().paid);
+                    });
+                }
+                if (window.ChatAnalytics) {
+                    ChatAnalytics.track('shop_opened', { mode: mode || 'unknown', paid: OnlyCoins.getBalance().paid });
+                }
+            }
+
+            async function handlePackClick(packKey, btn) {
+                if (!OnlyCoins.hasSession()) {
+                    showError('coinsShopError', 'Sessão expirada — confirme o WhatsApp de novo.');
+                    setTimeout(() => { goToPhoneStep(); }, 800);
+                    return;
+                }
+                showError('coinsShopError', '');
+                // Disable all pack cards while a request is in flight
+                const allCards = document.querySelectorAll('.pack-card');
+                allCards.forEach(c => c.disabled = true);
+                if (btn) btn.style.opacity = '0.6';
+
+                if (window.ChatAnalytics) {
+                    ChatAnalytics.track('pack_selected', { pack_key: packKey });
+                }
+
+                const result = await OnlyCoins.buyPack(packKey);
+                allCards.forEach(c => { c.disabled = false; c.style.opacity = ''; });
+
+                if (!result.ok) {
+                    if (result.needAuth) {
+                        showError('coinsShopError', result.error);
+                        setTimeout(() => { goToPhoneStep(); }, 1200);
+                        return;
+                    }
+                    showError('coinsShopError', result.error || 'Falha ao gerar PIX');
+                    return;
+                }
+                goToPixStep(result.data);
+            }
+
+            function goToPixStep(data) {
+                const pack = data.pack || {};
+                const priceStr = typeof pack.price === 'number'
+                    ? 'R$ ' + pack.price.toFixed(2).replace('.', ',')
+                    : '';
+                $('coinsPixSummary').innerHTML =
+                    `<strong>${pack.credits || ''} OnlyCoins</strong> · ${priceStr}`;
+                $('coinsPixImg').src = data.qr_code_image_url || '';
+                $('coinsPixCode').value = data.qr_code || '';
+                setStep('coinsStepPix');
+                if (window.ChatAnalytics) {
+                    ChatAnalytics.track('pix_generated', {
+                        pack_key: pack.key,
+                        credits: pack.credits,
+                        price: pack.price,
+                        payment_id: data.payment_id || null,
+                        flow: 'onlycoins_pack'
+                    });
+                }
+            }
+
+            function copyPix() {
+                const inp = $('coinsPixCode');
+                if (!inp) return;
+                inp.select();
+                inp.setSelectionRange(0, 99999);
+                try {
+                    navigator.clipboard.writeText(inp.value);
+                    const btn = $('coinsPixCopyBtn');
+                    const orig = btn.textContent;
+                    btn.textContent = 'COPIADO!';
+                    setTimeout(() => { btn.textContent = orig; }, 1500);
+                } catch (e) {
+                    document.execCommand('copy');
+                }
+            }
+
+            function backToShopFromPix() {
+                // Reabre a loja e tenta puxar saldo atualizado (caso o webhook tenha creditado).
+                goToShopStep('returning');
             }
 
             function close() {
@@ -927,9 +1253,9 @@
                 showError('coinsPhoneError', '');
 
                 const btn = $('coinsPhoneSubmit');
-                setLoading(btn, true, 'ENVIAR CÓDIGO');
+                setLoading(btn, true, 'CRIAR CONTA');
                 const result = await OnlyCoins.requestOtp(digits);
-                setLoading(btn, false, 'ENVIAR CÓDIGO');
+                setLoading(btn, false, 'CRIAR CONTA');
 
                 if (!result.ok) {
                     const msg = result.retry_after_seconds
@@ -953,9 +1279,9 @@
                 showError('coinsCodeError', '');
 
                 const btn = $('coinsCodeSubmit');
-                setLoading(btn, true, 'VERIFICAR');
+                setLoading(btn, true, 'CONFIRMAR');
                 const result = await OnlyCoins.verifyOtp(lastPhone, code);
-                setLoading(btn, false, 'VERIFICAR');
+                setLoading(btn, false, 'CONFIRMAR');
 
                 if (!result.ok) {
                     let msg = result.error || 'Código incorreto';
@@ -967,9 +1293,8 @@
                     return;
                 }
                 // Sucesso — sessão criada pelo OnlyCoins.verifyOtp via setSession.
-                applyJustCreatedCopy(lastPhone);
-                setStep('coinsStepSuccess');
                 clearResendTimer();
+                goToShopStep('just_created');
             }
 
             async function resendCode() {
@@ -1008,9 +1333,26 @@
                 });
                 $('coinsCodeSubmit').addEventListener('click', submitCode);
                 $('coinsResendBtn').addEventListener('click', resendCode);
+
+                // Pack cards (loja)
+                document.querySelectorAll('.pack-card').forEach(card => {
+                    card.addEventListener('click', () => {
+                        const key = card.getAttribute('data-pack');
+                        if (key) handlePackClick(key, card);
+                    });
+                });
+
+                // PIX step
+                $('coinsPixCopyBtn').addEventListener('click', copyPix);
+                $('coinsPixBackBtn').addEventListener('click', backToShopFromPix);
             });
 
-            return { open, close, goToPhoneStep, goToCodeStep, submitPhone, submitCode };
+            return {
+                open, close,
+                goToPhoneStep, goToCodeStep, goToShopStep, goToPixStep,
+                submitPhone, submitCode,
+                handlePackClick, copyPix
+            };
         })();
         window.CoinsPaywall = CoinsPaywall;
 

@@ -5,6 +5,32 @@
 
 ---
 
+### [2026-05-23] — "Bloco C / sub-fase 3 do OnlyCoins — loja de packs + checkout PIX"
+**Impacto:** Crítico | **Módulos Afetados:** `chat.html`, `funnels/credits.js`
+- **O que foi feito:** Fechamento do Bloco C. Agora ao confirmar o código de OTP o usuário cai DIRETO na loja de OnlyCoins dentro do mesmo modal — não vê mais um step intermediário "conta criada". A loja exibe os 4 packs e ao escolher um, gera PIX inline (mesmo gateway Wiinpay do checkout existente). HUD da conta também passou a abrir direto na loja (em vez de mostrar "card de sucesso").
+  - **Step 4 (loja, `#coinsStepShop`):** banner do topo com `Sua conta · <número> · Saldo 🪙 N` (ou `Conta criada · vinculada a ...` se acabou de verificar). Grid 2x2 com cards dos packs: `starter 50/R$ 4,90`, `pro 120/R$ 9,90` (com selo dourado **MAIS ESCOLHIDO** + bônus visível), `boost 280/R$ 19,90` (+28% bônus), `whale 800/R$ 49,90` (+36% bônus). Preços/quantidades são apenas display — server ainda é a única fonte de verdade (`api/credit-pack.js` valida pack_key e arbitra valor). Click no card chama `OnlyCoins.buyPack(pack_key)`. Erro fica inline em `.shop-error`. CTA secundário "Voltar ao chat".
+  - **Step 5 (PIX, `#coinsStepPix`):** dentro do mesmo modal. Resumo `<credits> OnlyCoins · R$ x,xx` + QR + código copia-cola (botão **COPIAR** com feedback visual). Aviso "crédito cai automaticamente após pagamento (até 1 min)". CTA principal `VOLTAR PRA LOJA` (refresca `paid_balance` ao voltar — se o webhook já tiver creditado, o saldo do banner reflete).
+  - **`OnlyCoins.buyPack(packKey)` em `funnels/credits.js`:** wrapper de POST `/api/credit-pack` com `Authorization: Bearer <JWT>`. Trata 401 (limpa sessão + `needAuth:true` pra UI voltar pro step phone), 400 (pack inválido), 5xx genérico.
+  - **Re-flow:** `submitCode` ok → `goToShopStep('just_created')`. `open()` com sessão ativa → `goToShopStep('returning')`. Step 3 antigo ("conta criada!" como tela final) foi removido — o framing de "conta" agora vive no banner da loja.
+  - **Cache busters:** `credits.js?v=2 → v=3`, `<meta x-chat-build>` `v7-account-reframe → v8-onlycoins-shop`.
+- **Por que foi feito:** Pedido direto do dono testando: após confirmar OTP queria que o user fosse pra **loja**, não pro chat. Faz sentido de funil — o lead acabou de criar conta motivado por out-of-credits; jogar ele de volta no chat sem oferecer o que destrava é deixar a intenção no peak esfriar. Loja inline + selo "mais escolhido" usa o mesmo padrão de gacha/free-to-play que motivou o sistema todo.
+- **Decisões de UX:**
+  - **"MAIS ESCOLHIDO" no pack de R$ 9,90** — sweet spot psicológico abaixo de R$10 + R$/crédito 15% melhor que o starter. Decoy intencional pra deslocar conversão do starter pro pro.
+  - **Bônus em %** ao invés de "X grátis" — comunica vantagem progressiva e dá ao whale o maior número visível (36% > 28% > 15%).
+  - **PIX no mesmo modal**, não em modal separado — evita "modal soup" e mantém o foco do checkout (Wiinpay 1 click).
+  - **Sem polling de pagamento.** Webhook do Wiinpay credita server-side; o user clica "Voltar pra loja" e o `refreshFromServer()` puxa saldo atualizado. Polling daria carga sem upside.
+  - **Banner unifica número + saldo no topo** da loja — reforça a posse da conta visualmente toda vez que ele vê pra comprar.
+- **Riscos / Pontos de Quebra Resolvidos:**
+  - **Pack price/credits no client são display** — server é SoT. Se um dia mudar preço no backend (`api/credit-pack.js#PACKS`), o display do client diverge até o deploy. Risco aceitável (preço só mostra; valor real é o que o server cobra).
+  - **JWT expira em 1h.** Se `buyPack` recebe 401, UI volta pro step phone com mensagem "sessão expirada". Não tenta refresh silencioso (não temos refresh token).
+  - **Modal grande em viewport pequeno** — `.chat-modal-content` tem `max-height: 90dvh; overflow-y: auto`. Pack grid 2x2 + banner + título + 4 cards cabe em telas a partir de ~600px de altura útil. Em telas muito baixas vira scroll dentro do modal.
+- **Validação:** Sintaxe — `node --check` em `credits.js` ✓ + extração do `<script>` inline e `node --check` no extracted ✓. **Não testado end-to-end com PIX real ainda** — `OnlyCoins.buyPack` chama `/api/credit-pack`, que está deployado e usa o helper `wiinpay.js` já validado pela rota `create-pix`. Smoke test recomendado: criar conta → escolher pack pro → confirmar QR carrega e código copia.
+- **Diff Físico:**
+  - [MODIFY] `chat.html` (CSS `.coins-account-banner`, `.shop-*`, `.pack-card`, `.coins-pix-*`; remoção do step 3 "success"; novos steps 4 e 5; funções `applyShopBanner`, `goToShopStep`, `handlePackClick`, `goToPixStep`, `copyPix`, `backToShopFromPix`; verify→loja e HUD-com-sessão→loja; CTAs renomeados; bump `credits.js?v=3` e build tag `v8`)
+  - [MODIFY] `funnels/credits.js` (+ `buyPack` no objeto público)
+
+---
+
 ### [2026-05-23] — "Bloco A operacional do OnlyCoins — VM Oracle + Baileys + ngrok + Vercel env vars"
 **Impacto:** Crítico | **Módulos Afetados:** Oracle VM 137.131.176.81, `services/wa-otp/{index.js,package.json}`, Vercel env vars
 - **O que foi feito:** Provisionamento do canal de OTP via WhatsApp do começo ao fim — o último bloco operacional faltando pra UI do Bloco C funcionar de verdade.
