@@ -5,6 +5,31 @@
 
 ---
 
+### [2026-05-23] — "Unit economics: 1 msg = 5 OnlyCoins, free diário = 25/dia"
+**Impacto:** Médio | **Módulos Afetados:** `funnels/credits.js`, `funnels/engine.js`, `chat.html`
+- **O que foi feito:** Aumentado o custo por mensagem do usuário de 1c → 5c e a cota free diária de 10c → 25c. Pacotes (preço e saldo) mantidos do commit anterior — só mudou quanto cada mensagem custa, o que comprime o número de mensagens por pack.
+
+  | | Saldo | Msgs (1 msg = 5c) |
+  |---|---|---|
+  | Free diário | 25c | **5 msgs/dia** |
+  | Starter R$ 14,90 | 150c | **30 msgs** |
+  | Pro R$ 29,90 (MAIS ESCOLHIDO) | 350c | **70 msgs** |
+  | Boost R$ 59,90 | 800c | **160 msgs** |
+  | Whale R$ 149,90 | 2500c | **500 msgs** |
+- **Por que foi feito:** Decisão do dono — com msg=1c, ticket mínimo (150c) dava 150 mensagens; pra um lead típico de chat erótico isso é meses de conversa antes da próxima recompra. Frequência baixa demais. Custo de 5c/msg comprime o ciclo pra ~30 msgs no starter (~1-2 sessões longas), mantendo a sensação de "sou ativo" mas chegando ao paywall em prazo de retorno comprável.
+- **Decisões dessa sub-mudança:**
+  - **Custo por msg como constante (`OnlyCoins.MSG_COST=5`)**, não literal — engine lê via API e a gente troca em um lugar quando quiser experimentar com gating (msg=5c, ver oferta=10c, mídia=20c) ou A/B test.
+  - **Free 25/dia (5 msgs)** equilibra: dá pra sentir o produto/voz da modelo (não fica anêmico tipo 1-2 msgs) mas zera rápido o suficiente pra justificar paywall na primeira ou segunda sessão.
+  - **Migração silenciosa do bucket free:** mudei a key do localStorage `omcoins:free → omcoins:free:v2`. Quem já tinha bucket antigo recebe um bucket novo cheio (25c) na próxima abertura, sem cálculo de diff. Limpa também o saldo de quem só consumiu parte do bucket do dia.
+- **Riscos / Pontos de Quebra Resolvidos:** Não toca o backend (pacotes seguem com mesma definição em `api/credit-pack.js`). Engine usa `OnlyCoins.MSG_COST` com fallback pra 1, então versão velha do engine carregada antes do credits.js v4 não quebra (gasta 1c em vez de 5c) — só funciona menos agressivo até o cache atualizar.
+- **Validação:** `node --check` em `credits.js` e `engine.js`. Smoke test recomendado: limpar `omcoins:*` no localStorage, abrir chat, ver HUD em 25, mandar 5 msgs, ver bater paywall na 6ª.
+- **Diff Físico:**
+  - [MODIFY] `funnels/credits.js` (`FREE_DAILY 10→25`, `+MSG_COST=5`, key `omcoins:free` → `omcoins:free:v2`, expõe MSG_COST no objeto público)
+  - [MODIFY] `funnels/engine.js` (consume `OnlyCoins.MSG_COST` em vez de `1`)
+  - [MODIFY] `chat.html` (bump `credits.js?v=4`, `engine.js?v=7`, meta `v10-msg-cost-5`)
+
+---
+
 ### [2026-05-23] — "Recalibração de tickets dos packs OnlyCoins (ticket mínimo R$ 14,90)"
 **Impacto:** Médio | **Módulos Afetados:** `api/credit-pack.js`, `chat.html`
 - **O que foi feito:** Aumentado o ticket mínimo de R$ 4,90 → R$ 14,90. Demais 3 packs recalibrados mantendo a proporção geométrica 1:2:4:10 do desenho original, com bônus crescente pra puxar lead pra ticket maior.

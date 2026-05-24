@@ -356,13 +356,14 @@
         const trimmed = (text || '').trim();
         if (!trimmed) return;
 
-        // Custo: 1 crédito por mensagem do usuário. Free primeiro, paid depois.
+        // Custo por mensagem definido em OnlyCoins.MSG_COST. Free primeiro, paid depois.
         if (window.OnlyCoins) {
-            if (!OnlyCoins.canAfford(1)) {
+            const cost = OnlyCoins.MSG_COST || 1;
+            if (!OnlyCoins.canAfford(cost)) {
                 openOutOfCreditsPaywall();
                 return;
             }
-            const spent = OnlyCoins.spend(1);
+            const spent = OnlyCoins.spend(cost);
             if (!spent.ok) {
                 openOutOfCreditsPaywall();
                 return;

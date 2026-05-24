@@ -26,10 +26,11 @@
     'use strict';
 
     // ---------- Config ----------
-    const FREE_DAILY = 10;
-    const LS_FREE = 'omcoins:free';        // { balance, dateUTC }
-    const LS_TOKEN = 'omcoins:token';      // JWT
-    const LS_SESSION = 'omcoins:session';  // { userId, whatsapp, paidBalance, updatedAt }
+    const FREE_DAILY = 25;                  // 5 msgs/dia @ MSG_COST=5
+    const MSG_COST = 5;                     // créditos por mensagem do usuário
+    const LS_FREE = 'omcoins:free:v2';      // bumped from 'omcoins:free' to migrate users to new daily bucket
+    const LS_TOKEN = 'omcoins:token';       // JWT
+    const LS_SESSION = 'omcoins:session';   // { userId, whatsapp, paidBalance, updatedAt }
 
     const API_BASE = (window.location.hostname.includes('localhost') || window.location.hostname.includes('127.0.0.1'))
         ? 'http://localhost:3000/api'
@@ -297,6 +298,7 @@
         requestOtp,
         verifyOtp,
         buyPack,
-        FREE_DAILY
+        FREE_DAILY,
+        MSG_COST
     };
 })();
