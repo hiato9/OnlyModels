@@ -5,6 +5,25 @@
 
 ---
 
+### [2026-05-23] — "Recalibração de tickets dos packs OnlyCoins (ticket mínimo R$ 14,90)"
+**Impacto:** Médio | **Módulos Afetados:** `api/credit-pack.js`, `chat.html`
+- **O que foi feito:** Aumentado o ticket mínimo de R$ 4,90 → R$ 14,90. Demais 3 packs recalibrados mantendo a proporção geométrica 1:2:4:10 do desenho original, com bônus crescente pra puxar lead pra ticket maior.
+
+  | Pack | Antes | Agora | c/real | Bônus vs base |
+  |---|---|---|---|---|
+  | starter | 50c / R$ 4,90 | **150c / R$ 14,90** | 10,07 | base |
+  | pro (MAIS ESCOLHIDO) | 120c / R$ 9,90 | **350c / R$ 29,90** | 11,71 | +17% |
+  | boost | 280c / R$ 19,90 | **800c / R$ 59,90** | 13,36 | +33% |
+  | whale | 800c / R$ 49,90 | **2500c / R$ 149,90** | 16,78 | +66% |
+- **Por que foi feito:** Decisão do dono — ticket mínimo de R$ 4,90 era baixo demais pro perfil de quem chega no chat por out-of-credits (já consumiu 10 mensagens free). Ticket de R$ 14,90 alinha melhor com perceived value de "destrava o resto da conversa" e melhora unit economics. Mantida a curva original de bônus pra preservar o decoy effect (pro como sweet spot).
+- **Riscos / Pontos de Quebra Resolvidos:** Server (`api/credit-pack.js#PACKS`) e display do client (`chat.html` cards) atualizados juntos no mesmo commit — sem janela de divergência. Wiinpay continua aceitando (mínimo R$ 3,00, todos os novos ticketsmuito acima). Webhook não muda — credita o `credits_amount` salvo em `pending_credit_purchases` na hora do pack create.
+- **Validação:** Visual pela URL pública após deploy.
+- **Diff Físico:**
+  - [MODIFY] `api/credit-pack.js` (objeto PACKS)
+  - [MODIFY] `chat.html` (markup dos 4 `.pack-card` + bump meta `v9-packs-recalibrated`)
+
+---
+
 ### [2026-05-23] — "Bloco C / sub-fase 3 do OnlyCoins — loja de packs + checkout PIX"
 **Impacto:** Crítico | **Módulos Afetados:** `chat.html`, `funnels/credits.js`
 - **O que foi feito:** Fechamento do Bloco C. Agora ao confirmar o código de OTP o usuário cai DIRETO na loja de OnlyCoins dentro do mesmo modal — não vê mais um step intermediário "conta criada". A loja exibe os 4 packs e ao escolher um, gera PIX inline (mesmo gateway Wiinpay do checkout existente). HUD da conta também passou a abrir direto na loja (em vez de mostrar "card de sucesso").

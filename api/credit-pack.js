@@ -10,10 +10,10 @@ import { createWiinpayPix, buildQrImageUrl } from './_lib/wiinpay.js';
 // SKUs hard-coded server-side — cliente NUNCA define preço/quantidade.
 // Valores em reais. Wiinpay exige mínimo R$ 3,00.
 const PACKS = {
-    starter: { credits: 50, price: 4.90 },
-    pro:     { credits: 120, price: 9.90 },
-    boost:   { credits: 280, price: 19.90 },
-    whale:   { credits: 800, price: 49.90 },
+    starter: { credits: 150,  price: 14.90 },
+    pro:     { credits: 350,  price: 29.90 },
+    boost:   { credits: 800,  price: 59.90 },
+    whale:   { credits: 2500, price: 149.90 },
 };
 
 export default async function handler(req, res) {
