@@ -17,12 +17,13 @@ export default async function handler(req, res) {
     try {
         const { data, error } = await supabaseAdmin
             .from('users')
-            .select('paid_credits_balance')
+            .select('paid_credits_balance, paid_media_credits_balance')
             .eq('id', session.userId)
             .single();
         if (error) throw error;
         return res.status(200).json({
             paid_balance: data?.paid_credits_balance ?? 0,
+            paid_media_balance: data?.paid_media_credits_balance ?? 0,
         });
     } catch (err) {
         console.error('[credits-balance]', err);

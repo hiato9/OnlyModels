@@ -99,6 +99,12 @@
         }
 
         /* ---------- COINS HUD ---------- */
+        .hud-row {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            flex-shrink: 0;
+        }
         .coins-hud {
             display: inline-flex;
             align-items: center;
@@ -123,6 +129,115 @@
         }
         .coins-hud-icon { font-size: 1rem; line-height: 1; }
         .coins-hud-count { font-variant-numeric: tabular-nums; }
+
+        /* OnlyMedia HUD pill (roxo) */
+        .media-hud {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            background: linear-gradient(135deg, rgba(155,89,182,0.22), rgba(155,89,182,0.08));
+            border: 1px solid rgba(155,89,182,0.4);
+            border-radius: 999px;
+            color: #c39bd3;
+            font-weight: 700;
+            font-size: 0.85rem;
+            cursor: pointer;
+            user-select: none;
+            flex-shrink: 0;
+            transition: transform 0.12s ease, background 0.12s ease;
+        }
+        .media-hud:active { transform: scale(0.96); }
+        .media-hud.is-low {
+            background: linear-gradient(135deg, rgba(255,90,90,0.18), rgba(255,90,90,0.06));
+            border-color: rgba(255,90,90,0.45);
+            color: #ff8a8a;
+        }
+
+        /* ---------- GALLERY STRIP ---------- */
+        .gallery-strip {
+            flex-shrink: 0;
+            background: #0e0e0e;
+            border-top: 1px solid rgba(155,89,182,0.2);
+            padding: 8px 12px 6px;
+        }
+        .gallery-strip-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 6px;
+        }
+        .gallery-strip-title {
+            font-size: 0.72rem;
+            font-weight: 700;
+            color: #c39bd3;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+        .gallery-free-badge {
+            font-size: 0.65rem;
+            font-weight: 700;
+            color: #0e0e0e;
+            background: #9B59B6;
+            border-radius: 999px;
+            padding: 2px 8px;
+            animation: pulse-badge 2s ease-in-out infinite;
+        }
+        @keyframes pulse-badge {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+        .gallery-scroll {
+            display: flex;
+            gap: 8px;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
+            padding-bottom: 2px;
+        }
+        .gallery-scroll::-webkit-scrollbar { display: none; }
+        .gallery-thumb {
+            position: relative;
+            width: 72px;
+            height: 72px;
+            border-radius: 10px;
+            overflow: hidden;
+            flex-shrink: 0;
+            cursor: pointer;
+            border: 1.5px solid rgba(155,89,182,0.3);
+            transition: transform 0.12s ease;
+        }
+        .gallery-thumb:active { transform: scale(0.95); }
+        .gallery-thumb img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+            transition: filter 0.3s ease;
+        }
+        .gallery-thumb.is-locked img { filter: blur(10px) brightness(0.5); }
+        .gallery-thumb.is-unlocked { border-color: rgba(155,89,182,0.7); }
+        .gallery-thumb-overlay {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 2px;
+            pointer-events: none;
+        }
+        .gallery-thumb.is-unlocked .gallery-thumb-overlay { display: none; }
+        .gallery-thumb-overlay .ov-lock { font-size: 1.1rem; }
+        .gallery-thumb-overlay .ov-cost {
+            font-size: 0.62rem;
+            font-weight: 700;
+            color: #e0c0f0;
+            background: rgba(0,0,0,0.6);
+            border-radius: 999px;
+            padding: 1px 6px;
+            white-space: nowrap;
+        }
 
         /* ---------- MESSAGES AREA ---------- */
         .chat-messages {
@@ -821,15 +936,30 @@
                 Online agora
             </div>
         </div>
-        <button type="button" class="coins-hud" id="coinsHud" aria-label="Saldo de OnlyCoins">
-            <span class="coins-hud-icon">🪙</span>
-            <span class="coins-hud-count" id="coinsHudCount">0</span>
-        </button>
+        <div class="hud-row">
+            <button type="button" class="coins-hud" id="coinsHud" aria-label="Saldo de OnlyCoins">
+                <span class="coins-hud-icon">🪙</span>
+                <span class="coins-hud-count" id="coinsHudCount">0</span>
+            </button>
+            <button type="button" class="media-hud" id="mediaHud" aria-label="Saldo de OnlyMedia">
+                <span class="coins-hud-icon">📸</span>
+                <span class="coins-hud-count" id="mediaHudCount">0</span>
+            </button>
+        </div>
     </header>
 
     <main class="chat-messages" id="chatMessages">
         <div class="chat-loading">Carregando conversa...</div>
     </main>
+
+    <!-- Gallery Strip — fotos com blur, desbloqueadas com OnlyMedia coins -->
+    <div class="gallery-strip" id="galleryStrip" style="display:none;">
+        <div class="gallery-strip-header">
+            <span class="gallery-strip-title">📸 Galeria exclusiva</span>
+            <span class="gallery-free-badge" id="galleryFreeBadge" style="display:none;"></span>
+        </div>
+        <div class="gallery-scroll" id="galleryScroll"></div>
+    </div>
 
     <div class="chat-disclaimer">
         Personagem digital de entretenimento.
@@ -929,6 +1059,7 @@
                     <div class="account-balance">
                         <div class="balance-label">Saldo</div>
                         <div class="balance-value">🪙 <span id="coinsShopBalance">0</span></div>
+                        <div class="balance-value" style="color:#c39bd3; font-size:0.8rem; margin-top:2px;">📸 <span id="mediaShopBalance">0</span></div>
                     </div>
                 </div>
                 <div class="shop-title">Escolha seu pack</div>
@@ -937,25 +1068,29 @@
                 <div class="pack-grid">
                     <button type="button" class="pack-card" data-pack="starter">
                         <div class="pack-credits">150</div>
-                        <div class="pack-credits-label">ONLYCOINS</div>
+                        <div class="pack-credits-label">🪙 ONLYCOINS</div>
+                        <div class="pack-credits-label" style="color:#c39bd3; margin-top:2px;">📸 30 MEDIA</div>
                         <div class="pack-price">R$ 14,90</div>
                     </button>
                     <button type="button" class="pack-card pack-card--featured" data-pack="pro">
                         <span class="pack-badge">MAIS ESCOLHIDO</span>
                         <div class="pack-credits">350</div>
-                        <div class="pack-credits-label">ONLYCOINS</div>
+                        <div class="pack-credits-label">🪙 ONLYCOINS</div>
+                        <div class="pack-credits-label" style="color:#c39bd3; margin-top:2px;">📸 80 MEDIA</div>
                         <div class="pack-price">R$ 29,90</div>
                         <div class="pack-bonus">+17% bônus</div>
                     </button>
                     <button type="button" class="pack-card" data-pack="boost">
                         <div class="pack-credits">800</div>
-                        <div class="pack-credits-label">ONLYCOINS</div>
+                        <div class="pack-credits-label">🪙 ONLYCOINS</div>
+                        <div class="pack-credits-label" style="color:#c39bd3; margin-top:2px;">📸 200 MEDIA</div>
                         <div class="pack-price">R$ 59,90</div>
                         <div class="pack-bonus">+33% bônus</div>
                     </button>
                     <button type="button" class="pack-card" data-pack="whale">
                         <div class="pack-credits">2500</div>
-                        <div class="pack-credits-label">ONLYCOINS</div>
+                        <div class="pack-credits-label">🪙 ONLYCOINS</div>
+                        <div class="pack-credits-label" style="color:#c39bd3; margin-top:2px;">📸 600 MEDIA</div>
                         <div class="pack-price">R$ 149,90</div>
                         <div class="pack-bonus">+66% bônus</div>
                     </button>
@@ -991,12 +1126,12 @@
     <script src="app.js?v=7"></script>
     <!-- Analytics wrapper (must load before engine) -->
     <script src="funnels/analytics.js?v=1"></script>
-    <!-- OnlyCoins client (must load before engine — engine consumes credits) -->
-    <script src="funnels/credits.js?v=4"></script>
+    <!-- OnlyCoins + OnlyMedia client (must load before engine) -->
+    <script src="funnels/credits.js?v=5"></script>
     <!-- Funnel engine -->
     <script src="funnels/engine.js?v=7"></script>
-    <!-- chat.html v=10 — msg=5c, free=25/dia -->
-    <meta name="x-chat-build" content="v10-msg-cost-5">
+    <!-- chat.html v=11 — OnlyMedia: 2 free/dia, 10c/foto -->
+    <meta name="x-chat-build" content="v11-onlymedia">
 
     <script>
         // ----- OnlyCoins HUD wiring -----
@@ -1020,6 +1155,101 @@
             if (OnlyCoins.hasSession()) {
                 OnlyCoins.refreshFromServer();
             }
+        }
+
+        // ----- OnlyMedia HUD wiring -----
+        function renderMediaHud(snap) {
+            const el = document.getElementById('mediaHudCount');
+            const hud = document.getElementById('mediaHud');
+            if (!el || !hud) return;
+            el.textContent = String(snap.total);
+            hud.classList.toggle('is-low', snap.total <= 0);
+        }
+        if (window.OnlyMedia) {
+            renderMediaHud(OnlyMedia.getBalance());
+            OnlyMedia.onChange(renderMediaHud);
+            document.getElementById('mediaHud').addEventListener('click', () => {
+                CoinsPaywall.open('media_hud_click');
+            });
+        }
+
+        // ----- Gallery strip -----
+        // GALLERY_PHOTOS é definido inline no <script> de cada modelo (veja app.js ou inline no HTML).
+        // Formato: [{ id: 'p1', src: '/img/modelo/foto1.jpg' }, ...]
+        // Fallback vazio — strip fica oculto se não houver fotos.
+        if (typeof GALLERY_PHOTOS === 'undefined') { window.GALLERY_PHOTOS = []; }
+
+        function renderGallery() {
+            const photos = window.GALLERY_PHOTOS || [];
+            const strip = document.getElementById('galleryStrip');
+            const scroll = document.getElementById('galleryScroll');
+            const badge = document.getElementById('galleryFreeBadge');
+            if (!strip || !scroll || photos.length === 0) return;
+
+            strip.style.display = '';
+
+            // Badge de free coins disponíveis
+            const mediaBal = window.OnlyMedia ? OnlyMedia.getBalance() : { free: 0 };
+            if (mediaBal.free > 0) {
+                badge.textContent = mediaBal.free + ' 📸 grátis hoje';
+                badge.style.display = '';
+            } else {
+                badge.style.display = 'none';
+            }
+
+            // Renderiza thumbs (só re-renderiza se o DOM estiver vazio)
+            if (scroll.children.length === photos.length) {
+                // Atualiza apenas estado locked/unlocked
+                photos.forEach(p => {
+                    const thumb = document.getElementById('gthumb-' + p.id);
+                    if (!thumb) return;
+                    const unlocked = window.OnlyMedia ? OnlyMedia.isUnlocked(p.id) : false;
+                    thumb.classList.toggle('is-locked', !unlocked);
+                    thumb.classList.toggle('is-unlocked', unlocked);
+                });
+                return;
+            }
+
+            scroll.innerHTML = '';
+            photos.forEach(p => {
+                const thumb = document.createElement('div');
+                thumb.className = 'gallery-thumb is-locked';
+                thumb.id = 'gthumb-' + p.id;
+                const unlocked = window.OnlyMedia ? OnlyMedia.isUnlocked(p.id) : false;
+                if (unlocked) { thumb.classList.remove('is-locked'); thumb.classList.add('is-unlocked'); }
+
+                thumb.innerHTML =
+                    '<img src="' + p.src + '" alt="Foto exclusiva" loading="lazy">' +
+                    '<div class="gallery-thumb-overlay">' +
+                    '  <span class="ov-lock">🔒</span>' +
+                    '  <span class="ov-cost">10 📸</span>' +
+                    '</div>';
+
+                thumb.addEventListener('click', () => onGalleryThumbClick(p.id));
+                scroll.appendChild(thumb);
+            });
+        }
+
+        function onGalleryThumbClick(photoId) {
+            if (window.OnlyMedia && OnlyMedia.isUnlocked(photoId)) return;
+
+            if (!window.OnlyMedia || !OnlyMedia.canAfford()) {
+                // Sem coins de mídia — abre paywall
+                CoinsPaywall.open('gallery_unlock');
+                return;
+            }
+
+            const result = OnlyMedia.unlock(photoId);
+            if (result.ok) {
+                renderGallery();
+            } else {
+                CoinsPaywall.open('gallery_unlock');
+            }
+        }
+
+        // Wiring: re-renderiza galeria quando saldo de mídia muda
+        if (window.OnlyMedia) {
+            OnlyMedia.onChange(() => renderGallery());
         }
 
         // ----- OnlyCoins Paywall (modal) -----
@@ -1083,6 +1313,7 @@
                 const phone = session && session.whatsapp ? session.whatsapp : '';
                 $('coinsShopBannerPhone').textContent = formatPhonePretty(phone);
                 $('coinsShopBalance').textContent = String(OnlyCoins.getBalance().paid);
+                if (window.OnlyMedia) $('mediaShopBalance').textContent = String(OnlyMedia.getBalance().paid);
                 if (mode === 'just_created') {
                     $('coinsModalTitle').textContent = 'Conta criada · OnlyCoins';
                     $('coinsShopAccountIcon').textContent = '🎉';
@@ -1122,6 +1353,7 @@
                 if (OnlyCoins.hasSession()) {
                     OnlyCoins.refreshFromServer().then(() => {
                         $('coinsShopBalance').textContent = String(OnlyCoins.getBalance().paid);
+                        if (window.OnlyMedia) $('mediaShopBalance').textContent = String(OnlyMedia.getBalance().paid);
                     });
                 }
                 if (window.ChatAnalytics) {
@@ -1368,6 +1600,7 @@
             }
 
             ChatEngine.start(modelId);
+            renderGallery();
         });
 
         function chatGoBack() {

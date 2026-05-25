@@ -65,7 +65,7 @@ export default async function handler(req, res) {
                 { whatsapp, last_login_at: nowIso },
                 { onConflict: 'whatsapp' }
             )
-            .select('id, whatsapp, paid_credits_balance')
+            .select('id, whatsapp, paid_credits_balance, paid_media_credits_balance')
             .single();
         if (upsertErr) throw upsertErr;
 
@@ -79,6 +79,7 @@ export default async function handler(req, res) {
             user_id: user.id,
             whatsapp: user.whatsapp,
             paid_balance: user.paid_credits_balance,
+            paid_media_balance: user.paid_media_credits_balance,
         });
     } catch (err) {
         console.error('[otp-verify]', err);

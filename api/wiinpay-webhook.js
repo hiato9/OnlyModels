@@ -64,7 +64,7 @@ export default async function handler(req, res) {
 
         const { data: pending, error: selErr } = await supabaseAdmin
             .from('pending_credit_purchases')
-            .select('id, user_id, pack_key, credits_amount, price_brl, status')
+            .select('id, user_id, pack_key, credits_amount, media_credits_amount, price_brl, status')
             .eq('payment_id', paymentId)
             .maybeSingle();
         if (selErr) throw selErr;
@@ -90,7 +90,7 @@ export default async function handler(req, res) {
             return res.status(200).json({ ok: true, already_credited: true });
         }
 
-        // Credita atomicamente via RPC.
+        // Credita OnlyCoins atomicamente via RPC.
         const { error: rpcErr } = await supabaseAdmin.rpc('increment_paid_credits', {
             p_user_id: pending.user_id,
             p_delta: pending.credits_amount,
@@ -108,7 +108,31 @@ export default async function handler(req, res) {
             },
         });
 
-        return res.status(200).json({ ok: true, credited: pending.credits_amount });
+        // Credita OnlyMedia se o pack incluir media_credits.
+        if (pending.media_credits_amount > 0) {
+            const { error: mediaRpcErr } = await supabaseAdmin.rpc('increment_paid_media_credits', {
+                p_user_id: pending.user_id,
+                p_delta: pending.media_credits_amount,
+            });
+            if (mediaRpcErr) throw mediaRpcErr;
+
+            await supabaseAdmin.from('credit_transactions').insert({
+                user_id: pending.user_id,
+                delta: pending.media_credits_amount,
+                reason: 'pack_purchase_media',
+                metadata: {
+                    pack_key: pending.pack_key,
+                    payment_id: paymentId,
+                    price_brl: pending.price_brl,
+                },
+            });
+        }
+
+        return res.status(200).json({
+            ok: true,
+            credited: pending.credits_amount,
+            media_credited: pending.media_credits_amount,
+        });
     } catch (err) {
         console.error('[webhook]', err);
         return res.status(500).json({ error: 'Webhook processing failed' });

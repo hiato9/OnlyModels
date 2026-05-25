@@ -5,6 +5,19 @@
 
 ---
 
+### [2026-05-25] — "OnlyMedia: segunda moeda para galeria de fotos com blur"
+**Impacto:** Alto | **Módulos Afetados:** `funnels/credits.js`, `chat.html`, `api/credit-pack.js`, `api/wiinpay-webhook.js`, `api/credits-balance.js`, `api/otp-verify.js`, `supabase/migrations/0002_media_credits.sql`
+- **O que foi feito:** Adicionada segunda moeda **OnlyMedia** (roxa, 📸) exclusiva para desbloquear fotos da galeria. Free: 2 coins/dia. Custo: 10 coins/foto. Packs existentes passam a incluir media coins bundled (starter=30, pro=80, boost=200, whale=600). Gallery strip aparece acima do input — fotos blurradas com overlay `🔒 10 📸`; ao clicar, gasta coins e remove blur (persistido em localStorage).
+- **Por que foi feito:** Criar segundo vetor de escassez simultâneo — o lead enfrenta FOMO de mensagens E FOMO visual de fotos desbloqueáveis. O blur na galeria cria desejo físico, diferente da urgência abstrata de créditos acabando.
+- **Decisões:**
+  - Moeda separada (não reutilizar OnlyCoins) para narrativa clara e HUD duplo sem ambiguidade sobre "pra que serve cada moeda".
+  - Bundled nos packs existentes (sem nova loja) para não fragmentar a jornada de compra.
+  - Fotos hardcoded por modelo — `GALLERY_PHOTOS = [{id, src}]` no script do modelo; galeria oculta se array vazio.
+  - `paidMediaBalance` armazenado no mesmo `omcoins:session` do OnlyCoins — zero nova chave de localStorage, sem quebrar sessões existentes.
+  - Schema: `ALTER TABLE users ADD COLUMN paid_media_credits_balance`; `ALTER TABLE pending_credit_purchases ADD COLUMN media_credits_amount`; RPC `increment_paid_media_credits` (migration `0002_media_credits.sql`).
+
+---
+
 ### [2026-05-23] — "Unit economics: 1 msg = 5 OnlyCoins, free diário = 25/dia"
 **Impacto:** Médio | **Módulos Afetados:** `funnels/credits.js`, `funnels/engine.js`, `chat.html`
 - **O que foi feito:** Aumentado o custo por mensagem do usuário de 1c → 5c e a cota free diária de 10c → 25c. Pacotes (preço e saldo) mantidos do commit anterior — só mudou quanto cada mensagem custa, o que comprime o número de mensagens por pack.

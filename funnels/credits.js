@@ -157,12 +157,13 @@
         return !!getToken();
     }
 
-    function setSession({ token, paid_balance, user_id, whatsapp }) {
+    function setSession({ token, paid_balance, paid_media_balance, user_id, whatsapp }) {
         try { localStorage.setItem(LS_TOKEN, token); } catch (e) { /* ignore */ }
         saveSession({
             userId: user_id,
             whatsapp,
             paidBalance: Number(paid_balance) || 0,
+            paidMediaBalance: Number(paid_media_balance) || 0,
             updatedAt: Date.now()
         });
         track('credits_session_started', { userId: user_id, paidBalance: paid_balance });
@@ -190,9 +191,16 @@
             if (!res.ok) return null;
             const data = await res.json();
             const paid = Number(data.paid_balance) || 0;
+            const paidMedia = Number(data.paid_media_balance) || 0;
             setPaidBalance(paid);
+            // Atualiza paid media no mesmo objeto de sessão
+            const sess = loadSession() || {};
+            sess.paidMediaBalance = paidMedia;
+            sess.updatedAt = Date.now();
+            saveSession(sess);
             emit();
-            return { paid };
+            if (window.OnlyMedia) OnlyMedia._emitMedia();
+            return { paid, paidMedia };
         } catch (e) {
             console.warn('[OnlyCoins] refresh failed:', e);
             return null;
@@ -267,6 +275,7 @@
             setSession({
                 token: data.token,
                 paid_balance: data.paid_balance,
+                paid_media_balance: data.paid_media_balance,
                 user_id: data.user_id,
                 whatsapp: data.whatsapp
             });
@@ -300,5 +309,131 @@
         buyPack,
         FREE_DAILY,
         MSG_COST
+    };
+})();
+
+// ---------- OnlyMedia module ----------
+// Segunda moeda (roxa) exclusiva para desbloquear fotos da galeria.
+// Free: 2 coins/dia, device-bound (localStorage, reset UTC diário).
+// Paid: persistido em users.paid_media_credits_balance, cacheado na mesma sessão do OnlyCoins.
+// Fotos desbloqueadas ficam em localStorage (ommedia:unlocked:v1) para persistir na sessão.
+(function () {
+    'use strict';
+
+    const FREE_MEDIA_DAILY = 2;
+    const MEDIA_COST = 10;
+    const LS_FREE_MEDIA = 'ommedia:free:v1';
+    const LS_UNLOCKED  = 'ommedia:unlocked:v1';
+    const LS_SESSION   = 'omcoins:session';     // compartilhado com OnlyCoins
+
+    const mediaListeners = new Set();
+
+    function todayUTC() { return new Date().toISOString().slice(0, 10); }
+
+    function readJSON(key) {
+        try { const r = localStorage.getItem(key); return r ? JSON.parse(r) : null; } catch (e) { return null; }
+    }
+    function writeJSON(key, val) {
+        try { localStorage.setItem(key, JSON.stringify(val)); } catch (e) { console.warn('[OnlyMedia] localStorage write failed:', key, e); }
+    }
+
+    // ---- Free bucket ----
+    function loadFreeMedia() {
+        const today = todayUTC();
+        const stored = readJSON(LS_FREE_MEDIA);
+        if (!stored || stored.dateUTC !== today) {
+            const fresh = { balance: FREE_MEDIA_DAILY, dateUTC: today };
+            writeJSON(LS_FREE_MEDIA, fresh);
+            return fresh;
+        }
+        return stored;
+    }
+    function saveFreeMedia(balance) { writeJSON(LS_FREE_MEDIA, { balance, dateUTC: todayUTC() }); }
+
+    // ---- Paid bucket (via OnlyCoins session) ----
+    function getPaidMediaBalance() {
+        const sess = readJSON(LS_SESSION);
+        return sess && typeof sess.paidMediaBalance === 'number' ? sess.paidMediaBalance : 0;
+    }
+    function setPaidMediaBalance(value) {
+        const sess = readJSON(LS_SESSION) || {};
+        sess.paidMediaBalance = Math.max(0, Number(value) || 0);
+        sess.updatedAt = Date.now();
+        writeJSON(LS_SESSION, sess);
+    }
+
+    // ---- Unlocked photo IDs ----
+    function getUnlocked() { return readJSON(LS_UNLOCKED) || []; }
+    function setUnlocked(ids) { writeJSON(LS_UNLOCKED, ids); }
+    function isUnlocked(photoId) { return getUnlocked().includes(photoId); }
+    function markUnlocked(photoId) {
+        const ids = getUnlocked();
+        if (!ids.includes(photoId)) { ids.push(photoId); setUnlocked(ids); }
+    }
+
+    // ---- Emit ----
+    function emitMedia() {
+        const snap = getBalance();
+        for (const cb of mediaListeners) {
+            try { cb(snap); } catch (e) { console.error('[OnlyMedia] listener error:', e); }
+        }
+    }
+
+    // ---- Public API ----
+    function getBalance() {
+        const free = loadFreeMedia().balance;
+        const paid = getPaidMediaBalance();
+        return { free, paid, total: free + paid };
+    }
+
+    function canAfford(amount) {
+        return getBalance().total >= Math.max(1, (amount || MEDIA_COST) | 0);
+    }
+
+    function spend(amount) {
+        const cost = Math.max(1, (amount || MEDIA_COST) | 0);
+        const freeRow = loadFreeMedia();
+        const paid = getPaidMediaBalance();
+
+        if (freeRow.balance + paid < cost) {
+            return { ok: false, fromFree: 0, fromPaid: 0, remaining: getBalance() };
+        }
+
+        const fromFree = Math.min(freeRow.balance, cost);
+        const fromPaid = cost - fromFree;
+
+        saveFreeMedia(freeRow.balance - fromFree);
+        if (fromPaid > 0) setPaidMediaBalance(paid - fromPaid);
+
+        emitMedia();
+        return { ok: true, fromFree, fromPaid, remaining: getBalance() };
+    }
+
+    function unlock(photoId) {
+        if (isUnlocked(photoId)) return { ok: true, alreadyUnlocked: true };
+        const result = spend(MEDIA_COST);
+        if (!result.ok) return { ok: false, reason: 'insufficient_media_credits' };
+        markUnlocked(photoId);
+        return { ok: true };
+    }
+
+    function onChange(cb) {
+        mediaListeners.add(cb);
+        return () => mediaListeners.delete(cb);
+    }
+
+    // Init diário
+    loadFreeMedia();
+
+    window.OnlyMedia = {
+        getBalance,
+        canAfford,
+        spend,
+        unlock,
+        isUnlocked,
+        onChange,
+        _emitMedia: emitMedia,
+        FREE_MEDIA_DAILY,
+        MEDIA_COST,
     };
 })();

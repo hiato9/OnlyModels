@@ -9,11 +9,12 @@ import { createWiinpayPix, buildQrImageUrl } from './_lib/wiinpay.js';
 
 // SKUs hard-coded server-side — cliente NUNCA define preço/quantidade.
 // Valores em reais. Wiinpay exige mínimo R$ 3,00.
+// media_credits são OnlyMedia bundled no mesmo pack (10 coins por foto).
 const PACKS = {
-    starter: { credits: 150,  price: 14.90 },
-    pro:     { credits: 350,  price: 29.90 },
-    boost:   { credits: 800,  price: 59.90 },
-    whale:   { credits: 2500, price: 149.90 },
+    starter: { credits: 150,  media_credits: 30,  price: 14.90 },
+    pro:     { credits: 350,  media_credits: 80,  price: 29.90 },
+    boost:   { credits: 800,  media_credits: 200, price: 59.90 },
+    whale:   { credits: 2500, media_credits: 600, price: 149.90 },
 };
 
 export default async function handler(req, res) {
@@ -50,6 +51,7 @@ export default async function handler(req, res) {
                 payment_id,
                 pack_key,
                 credits_amount: pack.credits,
+                media_credits_amount: pack.media_credits,
                 price_brl: pack.price,
                 status: 'pending',
             });
@@ -59,7 +61,7 @@ export default async function handler(req, res) {
             qr_code,
             qr_code_image_url: buildQrImageUrl(qr_code),
             payment_id,
-            pack: { key: pack_key, credits: pack.credits, price: pack.price },
+            pack: { key: pack_key, credits: pack.credits, media_credits: pack.media_credits, price: pack.price },
         });
     } catch (err) {
         console.error('[credit-pack]', err);
