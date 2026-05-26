@@ -256,6 +256,28 @@
         }
     }
 
+    function pollPackPayment(paymentId, onApproved, onTimeout) {
+        const token = getToken();
+        if (!token) return () => {};
+        const MAX = 120;
+        let attempts = 0;
+        const id = setInterval(async () => {
+            attempts++;
+            if (attempts > MAX) { clearInterval(id); onTimeout?.(); return; }
+            try {
+                const res = await fetch(`${API_BASE}/check-pack?id=${paymentId}`, {
+                    headers: { 'Authorization': 'Bearer ' + token }
+                });
+                const data = await res.json().catch(() => ({}));
+                if (data.status === 'approved') {
+                    clearInterval(id);
+                    onApproved?.(data);
+                }
+            } catch { /* ignora erro de rede, tenta de novo */ }
+        }, 4000);
+        return () => clearInterval(id);
+    }
+
     async function verifyOtp(phone, code) {
         try {
             const res = await fetch(`${API_BASE}/otp-verify`, {
@@ -307,6 +329,7 @@
         requestOtp,
         verifyOtp,
         buyPack,
+        pollPackPayment,
         FREE_DAILY,
         MSG_COST
     };

@@ -1392,6 +1392,8 @@
                 goToPixStep(result.data);
             }
 
+            let _stopPackPoll = null;
+
             function goToPixStep(data) {
                 const pack = data.pack || {};
                 const priceStr = typeof pack.price === 'number'
@@ -1410,6 +1412,21 @@
                         payment_id: data.payment_id || null,
                         flow: 'onlycoins_pack'
                     });
+                }
+                if (data.payment_id && window.OnlyCoins?.pollPackPayment) {
+                    if (_stopPackPoll) _stopPackPoll();
+                    _stopPackPoll = OnlyCoins.pollPackPayment(
+                        data.payment_id,
+                        async (approved) => {
+                            _stopPackPoll = null;
+                            await OnlyCoins.refreshFromServer();
+                            renderCoinsHud();
+                            if (window.OnlyMedia) renderMediaHud();
+                            closeCoinsShop();
+                            showToast(`✅ ${approved.credits} OnlyCoins adicionados!`);
+                        },
+                        () => { _stopPackPoll = null; }
+                    );
                 }
             }
 

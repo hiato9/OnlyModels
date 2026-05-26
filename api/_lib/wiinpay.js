@@ -51,7 +51,34 @@ async function ensureApiKey(forceRefresh = false) {
     return await loginAndFetchApiKey();
 }
 
-export async function createWiinpayPix({ value, description }) {
+export async function checkWiinpayPaymentStatus(paymentId) {
+    const apiKey = await ensureApiKey();
+    const candidates = [
+        { method: 'GET', url: `${WIINPAY_BASE}/payment/${paymentId}`, headers: { 'Authorization': `Bearer ${apiKey}`, 'Accept': 'application/json' } },
+        { method: 'POST', url: `${WIINPAY_BASE}/payment/status`, headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' }, body: { api_key: apiKey, payment_id: paymentId, paymentId } },
+        { method: 'GET', url: `${WIINPAY_BASE}/payment/status/${paymentId}`, headers: { 'Authorization': `Bearer ${apiKey}`, 'Accept': 'application/json' } },
+        { method: 'POST', url: `${WIINPAY_BASE}/payment/check`, headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' }, body: { api_key: apiKey, payment_id: paymentId } },
+    ];
+    for (const c of candidates) {
+        try {
+            const opts = { method: c.method, headers: c.headers, signal: AbortSignal.timeout(8000) };
+            if (c.body) opts.body = JSON.stringify(c.body);
+            const res = await fetch(c.url, opts);
+            if (!res.ok) continue;
+            const data = await res.json().catch(() => null);
+            if (!data) continue;
+            const raw = data?.data?.status || data?.status || data?.payment_status || '';
+            const status = String(raw).toLowerCase();
+            if (status) {
+                console.log(`[wiinpay] status via ${c.method} ${c.url}: ${status}`);
+                return { found: true, status, paid: ['paid','approved','completed','success'].includes(status) };
+            }
+        } catch { /* tenta próximo */ }
+    }
+    return { found: false };
+}
+
+export async function createWiinpayPix({ value, description, callbackUrl }) {
     if (!value || value <= 0) throw new Error('value obrigatório e > 0');
     if (value < 3) throw new Error(`Wiinpay exige valor mínimo R$ 3,00 (recebido R$ ${value.toFixed(2)})`);
 
@@ -68,6 +95,7 @@ export async function createWiinpayPix({ value, description }) {
             name: 'Cliente OnlyModels',
             email: 'cliente@onlymodels.com',
             description: description || `OnlyModels — R$ ${value.toFixed(2)}`,
+            ...(callbackUrl && { callback_url: callbackUrl, notification_url: callbackUrl, postback_url: callbackUrl }),
         };
 
         const res = await fetch(`${WIINPAY_BASE}/payment/create`, {

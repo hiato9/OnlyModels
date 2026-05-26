@@ -39,9 +39,11 @@ export default async function handler(req, res) {
         }
 
         const description = `OnlyCoins ${pack.credits} (pack ${pack_key})`;
+        const callbackUrl = process.env.APP_URL ? `${process.env.APP_URL}/api/wiinpay-webhook` : null;
         const { qr_code, payment_id } = await createWiinpayPix({
             value: pack.price,
             description,
+            callbackUrl,
         });
 
         const { error: insErr } = await supabaseAdmin
